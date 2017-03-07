@@ -1,3 +1,4 @@
 Django==1.10.6
+django-cors-headers==2.0.2
 djangorestframework==3.5.3
 djangorestframework-jwt==1.9.0

@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
-
-from users.serializers import UserSerializer
+from rest_framework_jwt.views import ObtainJSONWebToken
+from users.serializers import UserSerializer, mJSONWebTokenSerializer
 from users.models import User
+
 
 
 class Users(APIView):
@@ -64,3 +65,11 @@ class Users(APIView):
         else:
             # not implemented yet
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class mObtainJSONWebToken(ObtainJSONWebToken):
+
+    serializer_class = mJSONWebTokenSerializer
+
+
+obtain_jwt_token = mObtainJSONWebToken.as_view()

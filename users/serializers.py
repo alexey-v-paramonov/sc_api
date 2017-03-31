@@ -28,7 +28,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password', 'username', 'email')
+        fields = ('password', 'username', 'email', 'id')
 
 
 class mJSONWebTokenSerializer(JSONWebTokenSerializer):

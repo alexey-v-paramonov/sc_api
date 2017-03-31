@@ -9,7 +9,6 @@ from users.serializers import UserSerializer, mJSONWebTokenSerializer
 from users.models import User
 
 
-
 class Users(APIView):
 
     permission_classes = [
@@ -25,19 +24,8 @@ class Users(APIView):
 
     def get(self, request, pk=None):
 
-        if not pk:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            user = User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        if user == request.user:
-            serializer = UserSerializer(snippets, many=True)
-            return Response(serializer.data)
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(request.user, many=False)
+        return Response(serializer.data)
 
     def post(self, request, pk=None, format=None):
 

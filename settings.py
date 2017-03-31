@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 
     # Own apps
     'users.apps.UsersConfig',
+    'radio.apps.RadioConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -112,7 +113,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
         #'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -124,6 +125,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     'sc.local',
     'streaming.center',
+    'radio-tochka.com',
     'localhost',
     '127.0.0.1'
 )

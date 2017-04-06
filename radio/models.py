@@ -26,6 +26,18 @@ class RadioHostingStatus(object):
         (READY, 'Ready'),
     )
 
+class BillingOptions(object):
+
+    SELF_HOSTED_ONETIME_PAYMENT = 0
+    SELF_HOSTED_RECURRING_PAYMENT = 1
+    HOSTED_RECURRING_PAYMENT = 2
+
+    choices = (
+        (SELF_HOSTED_ONETIME_PAYMENT, 'One-time payment'),
+        (SELF_HOSTED_RECURRING_PAYMENT, 'Recurring payment'),
+        (HOSTED_RECURRING_PAYMENT, 'Ready'),
+    )
+
 
 class RadioServer(models.Model):
 
@@ -80,9 +92,17 @@ class Radio(models.Model):
     hosting = models.PositiveSmallIntegerField(
         "Hosting",
         null=False,
-        blank=True,
+        blank=False,
         choices=RadioHostingType.choices,
         default=RadioHostingType.HOSTED,
+    )
+
+    billing = models.PositiveSmallIntegerField(
+        "Billing",
+        null=False,
+        blank=False,
+        choices=BillingOptions.choices,
+        default=BillingOptions.HOSTED_RECURRING_PAYMENT
     )
 
     ts_created = models.DateTimeField(
@@ -121,5 +141,6 @@ class Radio(models.Model):
         "Hosting login name",
         null=True,
         blank=True,
+        unique=True,
         max_length=255
     )

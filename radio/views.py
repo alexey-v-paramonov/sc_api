@@ -3,9 +3,26 @@ from rest_framework import (
     permissions,
     routers
 )
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-from radio.models import Radio
-from radio.serializers import RadioSerializer
+from radio.models import Radio, RadioServer
+from radio.serializers import RadioSerializer, RadioServerSerializer
+
+
+class ServersList(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get(self, request, format=None):
+
+        servers = RadioServer.objects.filter(
+            available=True
+        )
+        serializer = RadioServerSerializer(servers, many=True)
+        return Response(serializer.data)
+
 
 class RadioServiceViewSet(viewsets.ModelViewSet):
 

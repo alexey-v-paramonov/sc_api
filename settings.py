@@ -123,9 +123,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = (
-    'sc.local',
-    'streaming.center',
-    'radio-tochka.com',
-    'localhost',
-    '127.0.0.1'
+    'http://sc.local',
+    'https://streaming.center',
+    'https://radio-tochka.com',
+    'https://www.streaming.center',
+    'https://www.radio-tochka.com',
+    'http://localhost',
+    'http://127.0.0.1'
 )

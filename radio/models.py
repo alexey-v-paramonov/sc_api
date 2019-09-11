@@ -87,6 +87,7 @@ class Radio(models.Model):
         verbose_name="Owner",
         blank=False,
         null=False,
+        on_delete=models.deletion.CASCADE
     )
 
     hosting = models.PositiveSmallIntegerField(
@@ -135,6 +136,7 @@ class Radio(models.Model):
         RadioServer,
         null=True,
         blank=True,
+        on_delete=models.deletion.CASCADE
     )
 
     login = models.CharField(

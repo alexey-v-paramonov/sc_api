@@ -37,5 +37,5 @@ radio_service_router = routers.SimpleRouter()
 radio_service_router.register(
     r'radio_service',
     RadioServiceViewSet,
-    base_name='radio_service'
+    basename='radio_service'
 )

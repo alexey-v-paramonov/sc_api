@@ -1,7 +1,9 @@
-from django.conf.urls import url
+
+from django.urls import path
+
 from users.views import Users
 
 urlpatterns = [
-    url(r'^users/(?P<pk>[0-9]+)/$', Users.as_view()),
-    url(r'^users/$', Users.as_view()),
+    path(r'users/<int:pk>/', Users.as_view()),
+    path(r'users/', Users.as_view()),
 ]

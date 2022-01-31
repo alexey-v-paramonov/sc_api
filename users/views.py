@@ -3,8 +3,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework_jwt.settings import api_settings
-from rest_framework_jwt.views import ObtainJSONWebToken
+#from rest_framework_jwt.settings import api_settings
+#from rest_framework_jwt.views import ObtainJSONWebToken
 from users.serializers import UserSerializer, mJSONWebTokenSerializer
 from users.models import User
 
@@ -55,9 +55,9 @@ class Users(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class mObtainJSONWebToken(ObtainJSONWebToken):
+#class mObtainJSONWebToken(ObtainJSONWebToken):
 
-    serializer_class = mJSONWebTokenSerializer
+#    serializer_class = mJSONWebTokenSerializer
 
 
-obtain_jwt_token = mObtainJSONWebToken.as_view()
+#obtain_jwt_token = mObtainJSONWebToken.as_view()

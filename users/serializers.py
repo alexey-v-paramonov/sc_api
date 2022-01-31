@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework_jwt.serializers import JSONWebTokenSerializer
+# from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from users.models import User
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
@@ -31,7 +31,8 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
         fields = ('password', 'username', 'email', 'id')
 
 
-class mJSONWebTokenSerializer(JSONWebTokenSerializer):
+#class mJSONWebTokenSerializer(JSONWebTokenSerializer):
+class mJSONWebTokenSerializer:
 
     def __init__(self, *args, **kwargs):
 

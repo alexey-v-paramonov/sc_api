@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 
 
-class RadioHostingType(object):
+class RadioHostingType:
 
     SELF_HOSTED = 0
     HOSTED = 1
@@ -13,7 +13,7 @@ class RadioHostingType(object):
     )
 
 
-class RadioHostingStatus(object):
+class RadioHostingStatus:
 
     PENDING = 0
     CHECKING = 1

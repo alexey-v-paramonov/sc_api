@@ -8,12 +8,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'xnn*=rxho)$3f2e^s7h#e6(pnqz9_tnxk92i&x_zg$2&7(-ja^'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -33,8 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Thirdparty
-    'corsheaders'
-
+    'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -120,6 +114,9 @@ REST_FRAMEWORK = {
         #'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
 }
 
 CORS_ORIGIN_WHITELIST = (

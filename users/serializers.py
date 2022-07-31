@@ -1,9 +1,10 @@
 from rest_framework import serializers
-# from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from users.models import User
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
+from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_resolver
+from email_validator import validate_email
 
 
 class UserSerializer(CustomErrorMessagesModelSerializer):
@@ -26,20 +27,20 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
 
         return user
 
+    def validate_email(self, email):
+
+        resolver = caching_resolver(timeout=5)
+
+        try:
+            valid = validate_email(email, dns_resolver=resolver)
+        except EmailSyntaxError:
+            raise serializers.ValidationError("syntax")
+        except EmailUndeliverableError:
+            raise serializers.ValidationError("undeliverable")
+        # If email is correct - return normalized form
+        return valid.email
+
     class Meta:
         model = User
         fields = ('password', 'username', 'email', 'id')
 
-
-#class mJSONWebTokenSerializer(JSONWebTokenSerializer):
-class mJSONWebTokenSerializer:
-
-    def __init__(self, *args, **kwargs):
-
-        super(mJSONWebTokenSerializer, self).__init__(*args, **kwargs)
-
-        # Erors to codes
-        for f in self.fields:
-            self.fields[f].error_messages.update(
-                (k, k) for k, v in self.fields[f].error_messages.items()
-            )

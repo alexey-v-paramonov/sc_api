@@ -6,8 +6,8 @@ from rest_framework import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from radio.models import Radio, RadioServer
-from radio.serializers import RadioSerializer, RadioServerSerializer
+from radio.models import HostedRadio, RadioServer
+from radio.serializers import HostedRadioSerializer, RadioServerSerializer
 
 
 class ServersList(APIView):
@@ -24,18 +24,18 @@ class ServersList(APIView):
         return Response(serializer.data)
 
 
-class RadioServiceViewSet(viewsets.ModelViewSet):
+class HostedRadioViewSet(viewsets.ModelViewSet):
 
     #permission_classes = [
     #    permissions.IsAuthenticated
     #]
 
-    serializer_class = RadioSerializer
-    queryset = Radio.objects.all()
+    serializer_class = HostedRadioSerializer
+    queryset = HostedRadio.objects.all()
 
 radio_service_router = routers.SimpleRouter()
 radio_service_router.register(
-    r'radio_service',
-    RadioServiceViewSet,
+    r'hosted_radio',
+    HostedRadioViewSet,
     basename='radio_service'
 )

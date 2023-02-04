@@ -28,12 +28,10 @@ class RadioHostingStatus:
 
 class BillingOptions(object):
 
-    SELF_HOSTED_ONETIME_PAYMENT = 0
     SELF_HOSTED_RECURRING_PAYMENT = 1
     HOSTED_RECURRING_PAYMENT = 2
 
     choices = (
-        (SELF_HOSTED_ONETIME_PAYMENT, 'One-time payment'),
         (SELF_HOSTED_RECURRING_PAYMENT, 'Recurring payment'),
         (HOSTED_RECURRING_PAYMENT, 'Ready'),
     )
@@ -73,7 +71,7 @@ class RadioServer(models.Model):
     )
 
 
-class Radio(models.Model):
+class HostedRadio(models.Model):
 
     name = models.CharField(
         "Radio station name",
@@ -90,22 +88,6 @@ class Radio(models.Model):
         on_delete=models.deletion.CASCADE
     )
 
-    hosting = models.PositiveSmallIntegerField(
-        "Hosting",
-        null=False,
-        blank=False,
-        choices=RadioHostingType.choices,
-        default=RadioHostingType.HOSTED,
-    )
-
-    billing = models.PositiveSmallIntegerField(
-        "Billing",
-        null=False,
-        blank=False,
-        choices=BillingOptions.choices,
-        default=BillingOptions.HOSTED_RECURRING_PAYMENT
-    )
-
     ts_created = models.DateTimeField(
         "Creation timestamp",
         auto_now_add=True
@@ -117,12 +99,6 @@ class Radio(models.Model):
         blank=True,
         choices=RadioHostingStatus.choices,
         default=RadioHostingStatus.PENDING,
-    )
-
-    ip = models.GenericIPAddressField(
-        "IP address",
-        null=True,
-        blank=True,
     )
 
     domain = models.CharField(

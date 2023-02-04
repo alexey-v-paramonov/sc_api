@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from radio.models import Radio, RadioServer
+from radio.models import HostedRadio, RadioServer
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
@@ -11,8 +11,8 @@ class RadioServerSerializer(serializers.ModelSerializer):
         exclude = ()
 
 
-class RadioSerializer(CustomErrorMessagesModelSerializer):
+class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
-        model = Radio
+        model = HostedRadio
         exclude = ()

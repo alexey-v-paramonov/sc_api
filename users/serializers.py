@@ -13,9 +13,9 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
           write_only=True,
     )
 
-    email = serializers.EmailField(
-          required=True,
-    )
+    # email = serializers.EmailField(
+    #       required=True,
+    # )
 
     def create(self, validated_data):
 
@@ -28,7 +28,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
         return user
 
     def validate_email(self, email):
-
+        print("VALIDATE EMAIL")
         resolver = caching_resolver(timeout=5)
 
         try:

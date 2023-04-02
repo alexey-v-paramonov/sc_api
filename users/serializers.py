@@ -28,7 +28,6 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
         return user
 
     def validate_email(self, email):
-        print("VALIDATE EMAIL")
         resolver = caching_resolver(timeout=5)
 
         try:

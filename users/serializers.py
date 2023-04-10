@@ -5,6 +5,7 @@ from util.serializers import (
 )
 from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_resolver
 from email_validator import validate_email
+from rest_framework.authtoken.models import Token
 
 
 class UserSerializer(CustomErrorMessagesModelSerializer):
@@ -12,13 +13,13 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
     password = serializers.CharField(
           write_only=True,
     )
+    token = serializers.SerializerMethodField(read_only=True)
 
-    # email = serializers.EmailField(
-    #       required=True,
-    # )
+    def get_token(self, user):
+        token, _ = Token.objects.get_or_create(user=user)
+        return token.key
 
     def create(self, validated_data):
-
         user = super(UserSerializer, self).create(validated_data)
 
         if 'password' in validated_data:
@@ -41,5 +42,5 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password', 'username', 'email', 'id')
+        fields = ('password', 'email', 'id', 'token')
 

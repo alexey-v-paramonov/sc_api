@@ -35,7 +35,7 @@ class SCObtainAuthToken(ObtainAuthToken):
             
         user = serializer.validated_data['user']
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        return Response({'token': token.key, 'id': user.id, 'email': user.email})
     
 
 

@@ -50,7 +50,7 @@ class VoiceoverAPI(APIView):
                 return failed_auth_response
         elif billing_type == "standalone":
             try:
-                user_id = billing.get_user_id_by_login(username)
+                user_id = billing.get_user_id_by_ip(client_ip)
             except BillingError:
                 return failed_auth_response
 

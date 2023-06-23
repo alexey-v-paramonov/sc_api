@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from speechkit import Session
 from speechkit import SpeechSynthesis
+from ipware import get_client_ip
 
 
 
@@ -16,6 +17,14 @@ class VoiceoverAPI(APIView):
     ]
 
     def post(self, request, format=None):
+
+        client_ip = get_client_ip()
+
+        if client_ip is None:
+            return Response(
+                {"auth": "failed"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         text = request.data.get("text")
         lang = request.data.get("lang")

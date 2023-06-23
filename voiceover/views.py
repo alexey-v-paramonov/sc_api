@@ -54,7 +54,10 @@ class VoiceoverAPI(APIView):
         process=subprocess.Popen(
             ["lame",
              "-r",
-             "-s", "22.05",
+             "-s", "48",
+             "--signed",
+             "--little-endian",
+             "-m", "m",
              "-b", "320",
              "-q", "0",
              "-S", # Silent

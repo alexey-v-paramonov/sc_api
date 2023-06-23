@@ -1,4 +1,5 @@
 import subprocess
+import base64
 
 from django.conf import settings
 from rest_framework import permissions, status
@@ -42,15 +43,23 @@ class VoiceoverAPI(APIView):
             sampleRateHertz='48000'
         )
         process=subprocess.Popen(
-            ["lame", 
-             "-r", 
-             "-s", "22.05", 
-             "-q", "0", 
-             "-", 
+            ["lame",
+             "-r",
+             "-s", "22.05",
+             "-b", "320",
+             "-q", "0",
+             "-S", # Silent
+             "-",
              "-"
              ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        stdout_data = process.communicate(input=pcm_buff)[0]
 
-        return Response({})
+        lame_output = process.communicate(input=pcm_buff)[0]
+        base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output)}" 
+
+        return Response({
+            "format": "mp3",
+            "bitrate": "320",
+            "audio": base64_audio
+        })
 
 

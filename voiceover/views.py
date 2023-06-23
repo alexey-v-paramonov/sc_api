@@ -28,7 +28,7 @@ class VoiceoverAPI(APIView):
         if client_ip is None:
             return failed_auth_response
             
-        billing_type = request.data.get("billing", "").lower()
+        billing_type = request.data.get("billing", "").lower().strip()
         if not billing_type in ["shared", "standalone"]:
             return failed_auth_response
 
@@ -48,15 +48,21 @@ class VoiceoverAPI(APIView):
                 user_id = billing.get_user_id_by_login(username)
             except BillingError:
                 return failed_auth_response
-            balance = billing.get_user_balance(user_id)
-            if balance <= price:
-                return Response(
-                    {"balance": "insufficient"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        elif billing_type == "standalone":
+            try:
+                user_id = billing.get_user_id_by_login(username)
+            except BillingError:
+                return failed_auth_response
 
         else:
             return failed_auth_response
+
+        balance = billing.get_user_balance(user_id)
+        if balance <= price:
+            return Response(
+                {"balance": "insufficient"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         lang = request.data.get("lang")
 

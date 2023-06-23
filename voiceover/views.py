@@ -9,6 +9,8 @@ from speechkit import Session
 from speechkit import SpeechSynthesis
 from ipware import get_client_ip
 
+from radiotochka.billing import BillingError, RTBilling
+from radio.models import RadioServer
 
 
 class VoiceoverAPI(APIView):
@@ -19,14 +21,43 @@ class VoiceoverAPI(APIView):
     def post(self, request, format=None):
 
         client_ip = get_client_ip()
-
+        failed_auth_response = Response(
+            {"auth": "failed"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
         if client_ip is None:
-            return Response(
-                {"auth": "failed"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return failed_auth_response
+            
+        billing_type = request.data.get("billing", "").lower()
+        if not billing_type in ["shared", "standalone"]:
+            return failed_auth_response
 
         text = request.data.get("text")
+        billing = RTBilling()
+        price = RTBilling.SPEECHKIT_PRICE_PER_SYMBOL * len(text)
+        if billing_type == "shared":
+            username = request.data.get("username", "").lower().strip()
+            if not username:
+                return failed_auth_response
+
+            is_known_instance = RadioServer.objects.filter(ip=client_ip).exists()
+            if not is_known_instance:
+                return failed_auth_response
+
+            try:
+                user_id = billing.get_user_id_by_login(username)
+            except BillingError:
+                return failed_auth_response
+            balance = billing.get_user_balance(user_id)
+            if balance <= price:
+                return Response(
+                    {"balance": "insufficient"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        else:
+            return failed_auth_response
+
         lang = request.data.get("lang")
 
         if not text:
@@ -67,6 +98,7 @@ class VoiceoverAPI(APIView):
 
         lame_output = process.communicate(input=pcm_buff)[0]
         base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output)}" 
+        billing.update_client_balance(user_id, balance - price)
 
         return Response({
             "format": "mp3",

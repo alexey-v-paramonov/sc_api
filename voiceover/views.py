@@ -58,7 +58,7 @@ class VoiceoverAPI(APIView):
             return failed_auth_response
 
         try:
-            balance = billing.get_user_balance(user_id)
+            balance = billing_instance.get_user_balance(user_id)
         except billing.BillingError:
             return failed_auth_response
 
@@ -108,8 +108,8 @@ class VoiceoverAPI(APIView):
              ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
         lame_output = process.communicate(input=pcm_buff)[0]
-        base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output)}" 
-        billing.update_client_balance(user_id, balance - price)
+        base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output).decode('utf-8')}" 
+        billing_instance.update_client_balance(user_id, balance - price)
 
         return Response({
             "format": "mp3",

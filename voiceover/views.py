@@ -57,7 +57,11 @@ class VoiceoverAPI(APIView):
         else:
             return failed_auth_response
 
-        balance = billing.get_user_balance(user_id)
+        try:
+            balance = billing.get_user_balance(user_id)
+        except BillingError:
+            return failed_auth_response
+
         if balance <= price:
             return Response(
                 {"balance": "insufficient"},

@@ -9,7 +9,7 @@ from speechkit import Session
 from speechkit import SpeechSynthesis
 from ipware import get_client_ip
 
-from radiotochka.billing import BillingError, RTBilling
+from radiotochka import billing
 from radio.models import RadioServer
 
 
@@ -20,7 +20,7 @@ class VoiceoverAPI(APIView):
 
     def post(self, request, format=None):
 
-        client_ip = get_client_ip()
+        client_ip = get_client_ip(request)
         failed_auth_response = Response(
             {"auth": "failed"},
             status=status.HTTP_400_BAD_REQUEST
@@ -33,8 +33,8 @@ class VoiceoverAPI(APIView):
             return failed_auth_response
 
         text = request.data.get("text")
-        billing = RTBilling()
-        price = RTBilling.SPEECHKIT_PRICE_PER_SYMBOL * len(text)
+        billing_instance = billing.RTBilling()
+        price = billing.SPEECHKIT_PRICE_PER_SYMBOL * len(text)
         if billing_type == "shared":
             username = request.data.get("username", "").lower().strip()
             if not username:
@@ -45,13 +45,13 @@ class VoiceoverAPI(APIView):
                 return failed_auth_response
 
             try:
-                user_id = billing.get_user_id_by_login(username)
-            except BillingError:
+                user_id = billing_instance.get_user_id_by_login(username)
+            except billing.BillingError:
                 return failed_auth_response
         elif billing_type == "standalone":
             try:
-                user_id = billing.get_user_id_by_ip(client_ip)
-            except BillingError:
+                user_id = billing_instance.get_user_id_by_ip(client_ip)
+            except billing.BillingError:
                 return failed_auth_response
 
         else:
@@ -59,8 +59,9 @@ class VoiceoverAPI(APIView):
 
         try:
             balance = billing.get_user_balance(user_id)
-        except BillingError:
+        except billing.BillingError:
             return failed_auth_response
+
 
         if balance <= price:
             return Response(

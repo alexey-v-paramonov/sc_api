@@ -1,3 +1,5 @@
+import logging
+
 import subprocess
 import base64
 
@@ -12,6 +14,8 @@ from ipware import get_client_ip
 from radiotochka import billing
 from radio.models import RadioServer
 
+logger = logging.getLogger('tts')
+
 
 class VoiceoverAPI(APIView):
     permission_classes = [
@@ -21,6 +25,7 @@ class VoiceoverAPI(APIView):
     def post(self, request, format=None):
 
         client_ip = get_client_ip(request)
+        logger.info("##### New TTS request from %s", client_ip)
         failed_auth_response = Response(
             {"auth": "failed"},
             status=status.HTTP_400_BAD_REQUEST
@@ -29,14 +34,24 @@ class VoiceoverAPI(APIView):
             return failed_auth_response
             
         billing_type = request.data.get("billing", "").lower().strip()
+        logger.info("TTS %s: billing type: %s", client_ip, billing_type)
+
         if not billing_type in ["shared", "standalone"]:
             return failed_auth_response
 
         text = request.data.get("text")
+        logger.info("TTS %s: text: %s", client_ip, text)
+
+        if not text:
+            return Response({"text": "required"}, status=status.HTTP_400_BAD_REQUEST)
+
         billing_instance = billing.RTBilling()
         price = billing.SPEECHKIT_PRICE_PER_SYMBOL * len(text)
+        logger.info("TTS %s: price: %s", client_ip, price)
+
         if billing_type == "shared":
             username = request.data.get("username", "").lower().strip()
+            logger.info("TTS %s: billing: %s, username: %s", client_ip, billing_type, username)
             if not username:
                 return failed_auth_response
 
@@ -53,7 +68,7 @@ class VoiceoverAPI(APIView):
                 user_id = billing_instance.get_user_id_by_ip(client_ip)
             except billing.BillingError:
                 return failed_auth_response
-
+            logger.info("TTS %s: billing: %s, user ID: %s", client_ip, billing_type, user_id)
         else:
             return failed_auth_response
 
@@ -62,6 +77,7 @@ class VoiceoverAPI(APIView):
         except billing.BillingError:
             return failed_auth_response
 
+        logger.info("TTS %s: user ID: %s, balance: %s", client_ip, user_id, balance)
 
         if balance <= price:
             return Response(
@@ -71,15 +87,13 @@ class VoiceoverAPI(APIView):
 
         lang = request.data.get("lang")
 
-        if not text:
-            return Response({"text": "required"}, status=status.HTTP_400_BAD_REQUEST)
-
         if not lang:
             return Response({"lang": "required"}, status=status.HTTP_400_BAD_REQUEST)
         
         voice = request.data.get("voice", "filipp")
         speed = request.data.get("speed", "1")
         emotion = request.data.get("emotion", "neutral")
+        logger.info("TTS %s: user ID: %s, lang: %s, voice: %s, speed: %s, emotion: %s", client_ip, user_id, lang, voice, speed, emotion)
 
         session = Session.from_api_key(settings.SPEECHKIT_API_KEY, settings.SPEECHKIT_FOLDER_ID)
         synthesizeAudio = SpeechSynthesis(session)

@@ -24,7 +24,7 @@ class VoiceoverAPI(APIView):
 
     def post(self, request, format=None):
 
-        client_ip = get_client_ip(request)
+        client_ip, _ = get_client_ip(request)
         logger.info("##### New TTS request from %s", client_ip)
         failed_auth_response = Response(
             {"auth": "failed"},

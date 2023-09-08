@@ -26,7 +26,7 @@ class RadioHostingStatus:
     )
 
 
-class BillingOptions(object):
+class BillingOptions:
 
     SELF_HOSTED_RECURRING_PAYMENT = 1
     HOSTED_RECURRING_PAYMENT = 2

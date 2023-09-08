@@ -42,5 +42,5 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = User
-        fields = ('password', 'email', 'id', 'token')
+        fields = ('password', 'email', 'id', 'token', 'language', 'currency')
 

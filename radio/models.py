@@ -70,6 +70,42 @@ class RadioServer(models.Model):
         default=True,
     )
 
+class SelfHostedRadio(models.Model):
+    name = models.CharField(
+        "Radio station name",
+        null=True,
+        blank=True,
+        max_length=255
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Owner",
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+    ts_created = models.DateTimeField(
+        "Creation timestamp",
+        auto_now_add=True
+    )
+    ip = models.CharField(
+        "IP Address",
+        null=True,
+        blank=True,
+        max_length=255
+    )
+    domain = models.CharField(
+        "Domain name",
+        null=True,
+        blank=True,
+        max_length=255  # 253 actually
+    )
+    blocked = models.BooleanField(
+        default=False,
+    )
+    root_password = ""
+    comment = ""
 
 class HostedRadio(models.Model):
 
@@ -121,4 +157,11 @@ class HostedRadio(models.Model):
         blank=True,
         unique=True,
         max_length=255
+    )
+
+    blocked = models.BooleanField(
+        default=False,
+    )
+    is_demo = models.BooleanField(
+        default=False,
     )

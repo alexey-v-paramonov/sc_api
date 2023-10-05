@@ -36,6 +36,9 @@ class User(AbstractUser):
         choices=Currency.choices,
     )
     balance = models.FloatField(null=False, blank=False, default=0)
+    agreement_accepted = models.BooleanField(
+        default=False,
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

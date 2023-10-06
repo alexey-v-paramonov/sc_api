@@ -70,7 +70,7 @@ class RadioServer(models.Model):
         default=True,
     )
 
-class SelfHostedRadio(models.Model):
+class BaseRadio(models.Model):
     name = models.CharField(
         "Radio station name",
         null=True,
@@ -88,45 +88,12 @@ class SelfHostedRadio(models.Model):
     ts_created = models.DateTimeField(
         "Creation timestamp",
         auto_now_add=True
-    )
-    ip = models.CharField(
-        "IP Address",
-        null=True,
-        blank=True,
-        max_length=255
     )
     domain = models.CharField(
         "Domain name",
         null=True,
         blank=True,
         max_length=255  # 253 actually
-    )
-    blocked = models.BooleanField(
-        default=False,
-    )
-    root_password = ""
-    comment = ""
-
-class HostedRadio(models.Model):
-
-    name = models.CharField(
-        "Radio station name",
-        null=True,
-        blank=True,
-        max_length=255
-    )
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        verbose_name="Owner",
-        blank=False,
-        null=False,
-        on_delete=models.deletion.CASCADE
-    )
-
-    ts_created = models.DateTimeField(
-        "Creation timestamp",
-        auto_now_add=True
     )
 
     status = models.PositiveSmallIntegerField(
@@ -137,12 +104,31 @@ class HostedRadio(models.Model):
         default=RadioHostingStatus.PENDING,
     )
 
-    domain = models.CharField(
-        "Domain name",
+    is_blocked = models.BooleanField(
+        default=False,
+    )
+    comment = models.TextField(null=True, blank=True)
+
+    class Meta(object):
+        abstract = True
+
+
+class SelfHostedRadio(BaseRadio):
+    ip = models.GenericIPAddressField(
+        "IP Address",
+        null=False,
+        blank=False,
+        max_length=255
+    )
+    root_password = models.CharField(
+        "SSH user password",
         null=True,
         blank=True,
-        max_length=255  # 253 actually
+        unique=True,
+        max_length=255
     )
+
+class HostedRadio(BaseRadio):
 
     server = models.ForeignKey(
         RadioServer,
@@ -159,9 +145,6 @@ class HostedRadio(models.Model):
         max_length=255
     )
 
-    blocked = models.BooleanField(
-        default=False,
-    )
     is_demo = models.BooleanField(
         default=False,
     )

@@ -120,12 +120,17 @@ class SelfHostedRadio(BaseRadio):
         blank=False,
         max_length=255
     )
-    root_password = models.CharField(
-        "SSH user password",
+    ssh_username = models.CharField(
+        "SSH user username",
         null=True,
         blank=True,
-        unique=True,
         max_length=255
+    )
+
+    ssh_port = models.PositiveIntegerField(
+        "SSH port",
+        default=22,
+        null=False,
     )
 
 class HostedRadio(BaseRadio):

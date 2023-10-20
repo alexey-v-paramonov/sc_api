@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from radio.models import HostedRadio, RadioServer
+from radio.models import SelfHostedRadio, HostedRadio, RadioServer
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
@@ -15,4 +15,13 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = HostedRadio
+        exclude = ()
+
+class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
+
+    def validate_ip(self, ip):
+        raise serializers.ValidationError("syntax")
+
+    class Meta:
+        model = SelfHostedRadio
         exclude = ()

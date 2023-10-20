@@ -6,8 +6,8 @@ from rest_framework import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from radio.models import HostedRadio, RadioServer
-from radio.serializers import HostedRadioSerializer, RadioServerSerializer
+from radio.models import SelfHostedRadio, HostedRadio, RadioServer
+from radio.serializers import SelfHostedRadioSerializer, HostedRadioSerializer, RadioServerSerializer
 from radiotochka import billing
 
 
@@ -24,22 +24,6 @@ class ServersList(APIView):
         serializer = RadioServerSerializer(servers, many=True)
         return Response(serializer.data)
 
-
-class HostedRadioViewSet(viewsets.ModelViewSet):
-
-    #permission_classes = [
-    #    permissions.IsAuthenticated
-    #]
-
-    serializer_class = HostedRadioSerializer
-    queryset = HostedRadio.objects.all()
-
-radio_service_router = routers.SimpleRouter()
-radio_service_router.register(
-    r'hosted_radio',
-    HostedRadioViewSet,
-    basename='radio_service'
-)
 
 class PricingView(APIView):
     permission_classes = [
@@ -72,3 +56,35 @@ class PricingView(APIView):
             "du_price": du_price
         })
 
+
+class HostedRadioViewSet(viewsets.ModelViewSet):
+
+    #permission_classes = [
+    #    permissions.IsAuthenticated
+    #]
+
+    serializer_class = HostedRadioSerializer
+    queryset = HostedRadio.objects.all()
+
+class SelfHostedRadioViewSet(viewsets.ModelViewSet):
+
+    #permission_classes = [
+    #    permissions.IsAuthenticated
+    #]
+
+    serializer_class = SelfHostedRadioSerializer
+    queryset = SelfHostedRadio.objects.all()
+
+hosted_radio_service_router = routers.SimpleRouter()
+hosted_radio_service_router.register(
+    r'hosted_radio',
+    HostedRadioViewSet,
+    basename='hosted_radio'
+)
+
+self_hosted_radio_service_router = routers.SimpleRouter()
+self_hosted_radio_service_router.register(
+    r'self_hosted_radio',
+    SelfHostedRadioViewSet,
+    basename='self_hosted_radio'
+)

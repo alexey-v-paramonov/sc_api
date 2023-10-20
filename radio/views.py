@@ -68,9 +68,9 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
 
 class SelfHostedRadioViewSet(viewsets.ModelViewSet):
 
-    #permission_classes = [
-    #    permissions.IsAuthenticated
-    #]
+    permission_classes = [
+        permissions.AllowAny
+    ]
 
     serializer_class = SelfHostedRadioSerializer
     queryset = SelfHostedRadio.objects.all()

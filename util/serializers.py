@@ -14,10 +14,7 @@ class CustomErrorMessagesModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
 
-        super(
-            CustomErrorMessagesModelSerializer,
-            self
-        ).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # All object validators (non_field_errors)
         for v in self.validators:

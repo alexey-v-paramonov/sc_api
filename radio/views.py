@@ -59,22 +59,17 @@ class PricingView(APIView):
 
 class HostedRadioViewSet(viewsets.ModelViewSet):
 
-    #permission_classes = [
-    #    permissions.IsAuthenticated
-    #]
-
     serializer_class = HostedRadioSerializer
     queryset = HostedRadio.objects.all()
 
 class SelfHostedRadioViewSet(viewsets.ModelViewSet):
 
-    permission_classes = [
-        permissions.AllowAny
-    ]
 
     serializer_class = SelfHostedRadioSerializer
     queryset = SelfHostedRadio.objects.all()
 
+
+# Routers
 hosted_radio_service_router = routers.SimpleRouter()
 hosted_radio_service_router.register(
     r'hosted_radio',

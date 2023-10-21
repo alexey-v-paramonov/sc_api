@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from django.core.validators import RegexValidator
 
 class RadioHostingType:
 
@@ -154,7 +154,11 @@ class HostedRadio(BaseRadio):
         null=True,
         blank=True,
         unique=True,
-        max_length=255
+        max_length=255,
+        validators=[
+            RegexValidator("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$"),
+        ],
+
     )
 
     is_demo = models.BooleanField(

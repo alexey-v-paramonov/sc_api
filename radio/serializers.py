@@ -62,11 +62,11 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             ssh.close()        
             raise serializers.ValidationError({"ip": "ssh_connection_failed"})
 
-        _, stdout, stderr = ssh.exec_command('cat /etc/system-release /etc/issue 2>/dev/null')
-        data = stdout.read().lower().decode("utf-8") 
+        _, stdout, _ = ssh.exec_command('cat /etc/system-release /etc/issue 2>/dev/null')
+        ssh_output = stdout.read().lower().decode("utf-8") 
         ssh.close()        
 
-        if data.find("centos") == -1 and data.find("ubuntu") == -1:
+        if ssh_output.find("centos") == -1 and ssh_output.find("ubuntu") == -1:
             raise serializers.ValidationError({"ip": "wrong_os"})
             
         return data

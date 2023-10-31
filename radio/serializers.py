@@ -28,16 +28,17 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
         ssh_username  = data['ssh_username']
         ssh_password = data['ssh_password']
         ssh_port = data['ssh_port']
-        domain = data['domain']
+        domain = data.get('domain', None)
+        if domain:
 
-        # Check if domain resolves to the IP specified
-        try:
-            domain_ip = socket.gethostbyname(domain)
-        except:
-            raise serializers.ValidationError({"domain": "wrong_ip_resolved"})
+            # Check if domain resolves to the IP specified
+            try:
+                domain_ip = socket.gethostbyname(domain)
+            except:
+                raise serializers.ValidationError({"domain": "wrong_ip_resolved"})
 
-        if domain_ip != ip:
-            raise serializers.ValidationError({"domain": "wrong_ip"})
+            if domain_ip != ip:
+                raise serializers.ValidationError({"domain": "wrong_ip"})
 
         # Check SSH port connection
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

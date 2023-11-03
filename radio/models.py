@@ -2,6 +2,17 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
 
+class AudioFormat:
+    MP3 = 0
+    AACPP = 1
+    FLAC = 2
+
+    choices = (
+        (MP3, 'Mp3'),
+        (AACPP, 'AAC++'),
+        (FLAC, 'FLAC'),
+    )
+
 class RadioHostingType:
 
     SELF_HOSTED = 0
@@ -154,12 +165,23 @@ class HostedRadio(BaseRadio):
         null=True,
         blank=True,
         unique=True,
-        max_length=255,
+        max_length=32,
         validators=[
             RegexValidator("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$"),
         ],
 
     )
+    initial_audio_format = models.CharField(
+        "Audio format",
+        max_length=10,
+        choices=AudioFormat.choices,
+        blank=True,
+        null=True,
+    )
+
+    initial_bitrate = models.PositiveIntegerField("Bitrate", null=True, blank=True)
+    initial_listeners = models.PositiveIntegerField("Maximum number of listeners", null=True, blank=True)
+    initial_du = models.PositiveIntegerField("Disk quota", null=True, blank=True)
 
     is_demo = models.BooleanField(
         default=False,

@@ -3,9 +3,9 @@ from django.conf import settings
 from django.core.validators import RegexValidator
 
 class AudioFormat:
-    MP3 = 0
-    AACPP = 1
-    FLAC = 2
+    MP3 = "mp3"
+    AACPP = "aac++"
+    FLAC = "flac"
 
     choices = (
         (MP3, 'Mp3'),

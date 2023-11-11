@@ -58,12 +58,18 @@ class PricingView(APIView):
 
 
 class HostedRadioViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
 
     serializer_class = HostedRadioSerializer
     queryset = HostedRadio.objects.all()
 
 class SelfHostedRadioViewSet(viewsets.ModelViewSet):
 
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
 
     serializer_class = SelfHostedRadioSerializer
     queryset = SelfHostedRadio.objects.all()

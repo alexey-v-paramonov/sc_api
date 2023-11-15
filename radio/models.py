@@ -29,11 +29,19 @@ class RadioHostingStatus:
     PENDING = 0
     CHECKING = 1
     READY = 2
+    BEING_CREATED = 3
+    BEING_DELETED = 4
+    SUSPENDED = 5
+    ERROR = 5
 
     choices = (
         (PENDING, 'Pending'),
         (CHECKING, 'Checking'),
         (READY, 'Ready'),
+        (BEING_CREATED, 'Being created'),
+        (BEING_DELETED, 'Being deleted'),
+        (SUSPENDED, 'Suspended'),
+        (ERROR, 'Error'),
     )
 
 

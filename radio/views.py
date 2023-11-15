@@ -6,7 +6,7 @@ from rest_framework import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from radio.models import SelfHostedRadio, HostedRadio, RadioServer
+from radio.models import SelfHostedRadio, HostedRadio, RadioServer, RadioHostingStatus
 from radio.serializers import SelfHostedRadioSerializer, HostedRadioSerializer, RadioServerSerializer
 from radiotochka import billing
 
@@ -64,6 +64,10 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
 
     serializer_class = HostedRadioSerializer
     queryset = HostedRadio.objects.all()
+
+    def perform_destroy(self, instance):
+        instance.status = RadioHostingStatus.BEING_DELETED
+        instance.save()
 
 class SelfHostedRadioViewSet(viewsets.ModelViewSet):
 

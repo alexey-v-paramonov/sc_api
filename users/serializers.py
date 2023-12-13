@@ -2,7 +2,10 @@ from rest_framework import serializers
 from users.models import User
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
+    CustomErrorMessagesSerializer
 )
+from django.contrib.auth.tokens import default_token_generator
+
 from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_resolver
 from email_validator import validate_email
 from rest_framework.authtoken.models import Token
@@ -44,3 +47,31 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
         model = User
         fields = ('password', 'email', 'id', 'token', 'language', 'currency', 'balance', 'agreement_accepted')
 
+class PasswordResetConfirmSerializer(CustomErrorMessagesSerializer):
+
+    """
+    Serializer for updating a password with a token.
+    """
+
+    password = serializers.CharField(required=True)
+    uid = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+
+    def validate_uid(self, value):
+
+        try:
+            uid = urlsafe_base64_decode(value).decode()
+            User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise serializers.ValidationError("user_not_found")
+
+        return uid
+
+    def validate(self, data):
+        uid = data["uid"]
+        token = data["token"]
+        user = User.objects.get(pk=uid)
+        if not default_token_generator.check_token(user, token):
+            raise serializers.ValidationError("token_invalid")
+
+        return data

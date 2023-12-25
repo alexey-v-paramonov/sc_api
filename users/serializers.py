@@ -5,7 +5,7 @@ from util.serializers import (
     CustomErrorMessagesSerializer
 )
 from django.contrib.auth.tokens import default_token_generator
-
+from django.utils.http import urlsafe_base64_decode
 from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_resolver
 from email_validator import validate_email
 from rest_framework.authtoken.models import Token

@@ -50,6 +50,7 @@ class PasswordResetView(APIView):
 
     def post(self, request):
         email = request.data.get("email", "").strip()
+        lang = request.data.get("lang", "en").strip()
         if email:
             try:
                 user = User.objects.get(email__iexact=email, is_superuser=False)
@@ -63,15 +64,24 @@ class PasswordResetView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            domain = "streaming.center"
+            template = "email/password_reset_en.html"
+            subject = "Reset your Streaming.center password"
+            if lang == "ru":
+                domain = "radio-tochka.com"
+                template = "email/password_reset_ru.html"
+                subject = "Сброс пароля Radio-Tochka.com"
+
             ctx = {
                 "user": user,
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": default_token_generator.make_token(user),
-                "domain": "streaming.center",
+                "domain": domain
             }
-            template = get_template('email/password_reset.html')
+            template = get_template(template)
             content = template.render(ctx)
-            msg = EmailMessage("Reset your Streaming.center password", content, settings.ADMIN_EMAIL, to=[user.email,])
+            print(request.META)
+            msg = EmailMessage(subject, content, settings.ADMIN_EMAIL, to=[user.email,])
             msg.send()
 
             return Response({})

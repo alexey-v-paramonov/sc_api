@@ -80,7 +80,6 @@ class PasswordResetView(APIView):
             }
             template = get_template(template)
             content = template.render(ctx)
-            print(request.META)
             msg = EmailMessage(subject, content, settings.ADMIN_EMAIL, to=[user.email,])
             msg.send()
 

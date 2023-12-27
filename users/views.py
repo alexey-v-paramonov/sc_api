@@ -9,6 +9,9 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import strip_tags
+
 
 from users.serializers import UserSerializer, PasswordResetConfirmSerializer
 from users.models import User
@@ -80,7 +83,9 @@ class PasswordResetView(APIView):
             }
             template = get_template(template)
             content = template.render(ctx)
-            msg = EmailMessage(subject, content, settings.ADMIN_EMAIL, to=[user.email,])
+            text_content = strip_tags(content)
+            msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+            msg.attach_alternative(content, "text/html")
             msg.send()
 
             return Response({})

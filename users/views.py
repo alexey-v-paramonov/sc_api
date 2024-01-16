@@ -36,7 +36,7 @@ class UsersView(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @action(detail=True, methods=['put'])
-    def settings(self, request, pk=None):
+    def profile(self, request, pk=None):
 
         user = self.get_object()
 

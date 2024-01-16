@@ -38,22 +38,11 @@ class UsersView(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'])
     def profile(self, request, pk=None):
 
-        user = self.get_object()
         serializer = UserSettingsSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
+
         return Response()
-        # return Response()
-
-        # if new_email := request.data.get('new_email', None):
-        #     user.email = new_email
-        #     user.save()
-
-        # if new_password := request.data.get('new_password', None):
-        #     user.set_password(new_password)
-        #     user.save()
-
-        
 
 class SCObtainAuthToken(ObtainAuthToken):
 

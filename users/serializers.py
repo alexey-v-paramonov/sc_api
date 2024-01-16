@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_resolver
 from email_validator import validate_email
 from rest_framework.authtoken.models import Token
+from rest_framework.validators import UniqueValidator
 
 class EmailValidatiorBase:
 
@@ -26,7 +27,7 @@ class EmailValidatiorBase:
 
 class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
-    email =  serializers.EmailField(required=False)
+    email = serializers.EmailField(required=False, validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(required=False)
 
     def validate_password(self, password):

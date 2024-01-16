@@ -31,7 +31,10 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
     password = serializers.CharField(required=False)
 
     def validate_password(self, password):
-        pass
+        if len(password) > 0 and password < 8:
+            raise serializers.ValidationError("length")
+        return password
+    
     class Meta:
         model = User
         fields = ('password', 'email',)

@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+from rest_framework.decorators import action
+
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
@@ -32,6 +34,21 @@ class UsersView(viewsets.ModelViewSet):
             self.permission_classes = (permissions.AllowAny,)
 
         return super().get_permissions()
+
+    @action(detail=True, methods=['put'])
+    def settings(self, request, pk=None):
+
+        user = self.get_object()
+
+        if new_email := request.data.get('new_email', None):
+            user.email = new_email
+            user.save()
+
+        if new_password := request.data.get('new_password', None):
+            user.set_password(new_password)
+            user.save()
+
+        return Response()
 
 class SCObtainAuthToken(ObtainAuthToken):
 

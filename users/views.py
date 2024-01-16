@@ -15,7 +15,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 
-from users.serializers import UserSerializer, PasswordResetConfirmSerializer
+from users.serializers import UserSerializer, PasswordResetConfirmSerializer, UserSettingsSerializer
 from users.models import User
 from rest_framework import viewsets
 from rest_framework import routers
@@ -39,16 +39,21 @@ class UsersView(viewsets.ModelViewSet):
     def profile(self, request, pk=None):
 
         user = self.get_object()
-
-        if new_email := request.data.get('new_email', None):
-            user.email = new_email
-            user.save()
-
-        if new_password := request.data.get('new_password', None):
-            user.set_password(new_password)
-            user.save()
-
+        serializer = UserSettingsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
         return Response()
+        # return Response()
+
+        # if new_email := request.data.get('new_email', None):
+        #     user.email = new_email
+        #     user.save()
+
+        # if new_password := request.data.get('new_password', None):
+        #     user.set_password(new_password)
+        #     user.save()
+
+        
 
 class SCObtainAuthToken(ObtainAuthToken):
 

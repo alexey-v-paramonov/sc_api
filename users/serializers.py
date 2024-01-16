@@ -10,8 +10,32 @@ from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_r
 from email_validator import validate_email
 from rest_framework.authtoken.models import Token
 
+class EmailValidatiorBase:
 
-class UserSerializer(CustomErrorMessagesModelSerializer):
+    def validate_email(self, email):
+        resolver = caching_resolver(timeout=5)
+
+        try:
+            valid = validate_email(email, dns_resolver=resolver)
+        except EmailSyntaxError:
+            raise serializers.ValidationError("syntax")
+        except EmailUndeliverableError:
+            raise serializers.ValidationError("undeliverable")
+        # If email is correct - return normalized form
+        return valid.email
+
+class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
+
+    email =  serializers.EmailField(required=False)
+    password = serializers.CharField(required=False)
+
+    def validate_password(self, password):
+        pass
+    class Meta:
+        model = User
+        fields = ('password', 'email',)
+
+class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
     password = serializers.CharField(
           write_only=True,
@@ -30,19 +54,6 @@ class UserSerializer(CustomErrorMessagesModelSerializer):
             user.save()
 
         return user
-
-    def validate_email(self, email):
-        resolver = caching_resolver(timeout=5)
-
-        try:
-            valid = validate_email(email, dns_resolver=resolver)
-        except EmailSyntaxError:
-            raise serializers.ValidationError("syntax")
-        except EmailUndeliverableError:
-            raise serializers.ValidationError("undeliverable")
-        # If email is correct - return normalized form
-        return valid.email
-
     class Meta:
         model = User
         fields = ('password', 'email', 'id', 'token', 'language', 'currency', 'balance', 'agreement_accepted')

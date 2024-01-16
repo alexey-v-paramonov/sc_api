@@ -38,7 +38,7 @@ class UsersView(viewsets.ModelViewSet):
     @action(detail=True, methods=['put'])
     def profile(self, request, pk=None):
 
-        serializer = UserSettingsSerializer(data=request.data)
+        serializer = UserSettingsSerializer(data=request.data, instance=self.get_object())
         if serializer.is_valid(raise_exception=True):
             serializer.save()
 

@@ -31,7 +31,7 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
     password = serializers.CharField(required=False)
 
     def validate_password(self, password):
-        if len(password) > 0 and password < 8:
+        if password and len(password) < 8:
             raise serializers.ValidationError("length")
         return password
     

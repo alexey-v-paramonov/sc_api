@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     # Own apps
     'users.apps.UsersConfig',
     'radio.apps.RadioConfig',
+    'payments.apps.PaymentsConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

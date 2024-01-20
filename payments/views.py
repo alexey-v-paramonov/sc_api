@@ -31,7 +31,7 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
 
 class CustomPaymentMethodsView(generics.RetrieveAPIView):
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
 
     def get(self, request, format=None):

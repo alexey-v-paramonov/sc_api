@@ -7,10 +7,11 @@ from rest_framework import (
     routers
 )
 from rest_framework.response import Response
+from rest_framework import generics
 
 from payments.models import InvoiceRequest
 from payments.serializers import InvoiceRequestSerializer
-
+from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS
 class HostedRadioViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
@@ -27,6 +28,15 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
             msg.send()
         except:
             pass
+
+class CustomPaymentMethodsView(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def get(self, request, format=None):
+
+        return Response(CUSTOM_PAYMENT_OPTIONS)
 
 
 invoice_request_router = routers.SimpleRouter()

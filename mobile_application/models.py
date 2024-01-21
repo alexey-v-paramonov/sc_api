@@ -1,6 +1,46 @@
 from django.db import models
 from django.conf import settings
+from radio.models import AudioFormat
 
+
+class AppStatus:
+
+    DEFAULT = 0
+    QUEUED = 1
+    DONE = 2
+    ERROR = 3
+    # Archieved?
+
+    choices = (
+        (DEFAULT, 'Default'),
+        (QUEUED, 'Queued to build'),
+        (DONE, 'Done'),
+        (ERROR, 'Build error'),
+    )
+
+
+class CopyrightType:
+
+    SC = 0
+    WHITELABEL = 1
+    CUSTOM = 2
+
+    choices = (
+        (SC, 'Streaming.center'),
+        (WHITELABEL, 'Whitelabel'),
+        (CUSTOM, 'Custom'),
+    )
+
+
+class ServerType:
+
+    SHOUTCAST = 0
+    ICECAST = 1
+
+    choices = (
+        (SHOUTCAST, 'Shoutcast'),
+        (ICECAST, 'Icecast'),
+    )
 
 class BaseApplication(models.Model):
 
@@ -39,22 +79,87 @@ class BaseApplication(models.Model):
         max_length=255
     )
 
-    # status
-    #+ Archive
+    status = models.PositiveSmallIntegerField(
+        "Status",
+        null=False,
+        blank=True,
+        choices=AppStatus.choices,
+        default=AppStatus.DEFAULT,
+    )
 
     # Colors
-    tabs_color
-    tabs_icon_color
-    tabs_icon_selected_color
-    main_theme_color
-    text_secondary_color
-    play_button_border_color
-    volume_buttons_color
-    volume_bar_active_color
-    volume_bar_inactive_color
-    bg_color
-    bg_color_gradient
-    font_color
+    tabs_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#161616"
+    )
+    tabs_icon_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#dadada"
+    )
+    tabs_icon_selected_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#ff9500"
+    )
+    main_theme_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#333333"
+    )
+    text_secondary_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#333333"
+    )
+    play_button_border_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#8f8e94"
+    )
+    volume_buttons_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#333333"
+    )
+    volume_bar_active_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#333333"
+    )
+    volume_bar_inactive_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#dddddd"
+    )
+    bg_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#f2f2f2"
+    )
+    bg_color_gradient = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#f2f2f2"
+    )
+    font_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#000000"
+    )
 
     enable_push = models.BooleanField(
         default=False,
@@ -65,8 +170,16 @@ class BaseApplication(models.Model):
         blank=True,
         max_length=255
     )
-    #
-    # copyright_type - own, custom, none
+
+    # Copyright
+    copyright_type = models.PositiveSmallIntegerField(
+        "Copyright",
+        null=False,
+        blank=True,
+        choices=CopyrightType.choices,
+        default=CopyrightType.SC,
+    )
+
     copyright_title = models.CharField(
         null=True,
         blank=True,
@@ -116,6 +229,17 @@ class ApplicationRadioBase(models.Model):
     )
 
     description = models.TextField(null=False, blank=False)
+    logo = models.FileField(
+        "Logo",
+    )
+    order = models.SmallPositiveIntegerField(
+        null=False,
+        blank=False,
+        default=0
+    )
+
+    class Meta(object):
+        abstract = True
 
 
 class AndroidApplicationRadio(ApplicationRadioBase):
@@ -135,7 +259,41 @@ class IosApplicationRadio(ApplicationRadioBase):
         on_delete=models.deletion.CASCADE
     )
 
-class AndroidApplicationRadioChannel(models.Model):
+
+class ApplicationRadioChannelBase(models.Model):
+
+    stream_url = models.URLField(null=False, blank=False)
+    stream_url_fallback = models.URLField(null=True, blank=True)
+    bitrate = models.SmallPositiveIntegerField(
+        null=False,
+        blank=True,
+        default=128,
+    )
+    audio_format = models.SmallPositiveIntegerField(
+        "Audio format",
+        choices=AudioFormat.choices,
+        blank=False,
+        null=False,
+        default=AudioFormat.MP3,
+    )
+
+    server_type = models.SmallPositiveIntegerField(
+        "Server type",
+        choices=ServerType.choices,
+        blank=False,
+        null=False,
+        default=ServerType.SHOUTCAST,
+    )
+    order = models.SmallPositiveIntegerField(
+        null=False,
+        blank=False,
+        default=0
+    )
+
+    class Meta(object):
+        abstract = True
+
+class AndroidApplicationRadioChannel(ApplicationRadioChannelBase):
 
     radio = models.ForeignKey(
         AndroidApplicationRadio,
@@ -144,7 +302,7 @@ class AndroidApplicationRadioChannel(models.Model):
         on_delete=models.deletion.CASCADE
     )
 
-class IosApplicationRadioChannel(models.Model):
+class IosApplicationRadioChannel(ApplicationRadioChannelBase):
 
     radio = models.ForeignKey(
         IosApplicationRadio,

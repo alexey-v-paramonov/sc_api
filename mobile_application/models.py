@@ -232,6 +232,27 @@ class ApplicationRadioBase(models.Model):
     logo = models.FileField(
         "Logo",
     )
+    sc_api_url = models.URLField(null=True, blank=True)
+    sc_server_id = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+    allow_shoutbox =  models.BooleanField(
+        default=True,
+    )
+    allow_likes =  models.BooleanField(
+        default=True,
+    )
+    allow_dislikes = models.BooleanField(
+        default=True,
+    )
+    allow_website_url = models.BooleanField(
+        default=True,
+    )
+    hide_metadata =  models.BooleanField(
+        default=True,
+    )
+
     order = models.PositiveSmallIntegerField(
         null=False,
         blank=False,

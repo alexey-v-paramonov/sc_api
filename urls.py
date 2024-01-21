@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/v1/',       include('radio.urls')),
     path('api/v1/',       include('voiceover.urls')),
     path('api/v1/',       include('payments.urls')),
+    path('api/v1/mobile_apps/',       include('mobile_application.urls')),
 ]

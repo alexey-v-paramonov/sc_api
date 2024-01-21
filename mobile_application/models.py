@@ -232,7 +232,7 @@ class ApplicationRadioBase(models.Model):
     logo = models.FileField(
         "Logo",
     )
-    order = models.SmallPositiveIntegerField(
+    order = models.PositiveSmallIntegerField(
         null=False,
         blank=False,
         default=0
@@ -264,12 +264,12 @@ class ApplicationRadioChannelBase(models.Model):
 
     stream_url = models.URLField(null=False, blank=False)
     stream_url_fallback = models.URLField(null=True, blank=True)
-    bitrate = models.SmallPositiveIntegerField(
+    bitrate = models.PositiveSmallIntegerField(
         null=False,
         blank=True,
         default=128,
     )
-    audio_format = models.SmallPositiveIntegerField(
+    audio_format = models.PositiveSmallIntegerField(
         "Audio format",
         choices=AudioFormat.choices,
         blank=False,
@@ -277,14 +277,14 @@ class ApplicationRadioChannelBase(models.Model):
         default=AudioFormat.MP3,
     )
 
-    server_type = models.SmallPositiveIntegerField(
+    server_type = models.PositiveSmallIntegerField(
         "Server type",
         choices=ServerType.choices,
         blank=False,
         null=False,
         default=ServerType.SHOUTCAST,
     )
-    order = models.SmallPositiveIntegerField(
+    order = models.PositiveSmallIntegerField(
         null=False,
         blank=False,
         default=0

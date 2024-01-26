@@ -192,7 +192,7 @@ class BaseApplication(models.Model):
     )
 
     is_sc_publishing = models.BooleanField(
-        default=True,
+        null=True,
     )
 
     store_url = models.URLField(null=True, blank=True)
@@ -200,6 +200,7 @@ class BaseApplication(models.Model):
     display_timer = models.BooleanField(
         default=True,
     )
+    comment = models.TextField(null=True, blank=True)
 
     class Meta(object):
         abstract = True

@@ -59,7 +59,7 @@ class BaseApplication(models.Model):
         on_delete=models.deletion.CASCADE
     )
 
-    description = models.TextField(null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
     website_url = models.URLField(null=True, blank=True)
     email = models.EmailField(null=False, blank=False)
 
@@ -208,8 +208,8 @@ class BaseApplication(models.Model):
 class AndroidApplication(BaseApplication):
 
     description_short  = models.CharField(
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         max_length=80
     )
 

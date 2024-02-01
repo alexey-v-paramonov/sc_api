@@ -58,6 +58,21 @@ class BaseApplication(models.Model):
         null=False,
         on_delete=models.deletion.CASCADE
     )
+    icon = models.ImageField(
+        upload_to="app_icons",
+        blank=True,
+        verbose_name="App icon",
+        null=True,
+        default=None,
+    )
+
+    logo = models.ImageField(
+        upload_to="app_logos",
+        blank=True,
+        verbose_name="App logo",
+        null=True,
+        default=None,
+    )
 
     description = models.TextField(null=True, blank=True)
     website_url = models.URLField(null=True, blank=True)
@@ -161,6 +176,14 @@ class BaseApplication(models.Model):
         default="#000000"
     )
 
+    button_text_color = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        default="#000000"
+    )
+    
+
     enable_push = models.BooleanField(
         default=False,
     )
@@ -230,9 +253,15 @@ class ApplicationRadioBase(models.Model):
     )
 
     description = models.TextField(null=False, blank=False)
-    logo = models.FileField(
-        "Logo",
+
+    logo = models.ImageField(
+        upload_to="app_radio_logos",
+        blank=True,
+        verbose_name="Radio logo",
+        null=True,
+        default=None,
     )
+    
     sc_api_url = models.URLField(null=True, blank=True)
     sc_server_id = models.PositiveSmallIntegerField(
         null=True,

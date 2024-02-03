@@ -32,7 +32,7 @@ class RadioHostingStatus:
     BEING_CREATED = 3
     BEING_DELETED = 4
     SUSPENDED = 5
-    ERROR = 5
+    ERROR = 6
 
     choices = (
         (PENDING, 'Pending'),

@@ -223,6 +223,10 @@ class BaseApplication(models.Model):
     display_timer = models.BooleanField(
         default=True,
     )
+    allow_website_url = models.BooleanField(
+        default=True,
+    )
+
     comment = models.TextField(null=True, blank=True)
 
     class Meta(object):
@@ -274,9 +278,6 @@ class ApplicationRadioBase(models.Model):
         default=True,
     )
     allow_dislikes = models.BooleanField(
-        default=True,
-    )
-    allow_website_url = models.BooleanField(
         default=True,
     )
     hide_metadata =  models.BooleanField(

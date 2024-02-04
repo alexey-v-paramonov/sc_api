@@ -5,7 +5,7 @@ from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
 
-class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
+class AndroidApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = AndroidApplicationRadio
@@ -17,7 +17,7 @@ class IosApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
         model = IosApplicationRadio
         exclude = ()
 
-class AndroidApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
+class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     class Meta:
         model = AndroidApplication

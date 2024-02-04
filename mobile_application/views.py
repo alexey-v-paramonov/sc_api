@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.db.models import Max
+
+
 from payments.models import InvoiceRequest
 from rest_framework import (
     viewsets,
@@ -24,8 +27,14 @@ class IosApplicationViewSet(viewsets.ModelViewSet):
     serializer_class = IosApplicationSerializer
     queryset = IosApplication.objects.all()
 
+class SetOrderOnCreate:
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        instance.order = self.queryset.filter(app=instance.app).aggregate(Max('order'))['order__max'] + 1
+        instance.save()
+        return instance
 
-class AndroidApplicationRadioViewSet(viewsets.ModelViewSet):
+class AndroidApplicationRadioViewSet(SetOrderOnCreate, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -33,14 +42,14 @@ class AndroidApplicationRadioViewSet(viewsets.ModelViewSet):
     serializer_class = AndroidApplicationRadioSerializer
     queryset = AndroidApplicationRadio.objects.all()
 
-
-class IosApplicationRadioViewSet(viewsets.ModelViewSet):
+class IosApplicationRadioViewSet(SetOrderOnCreate, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
     ]
 
     serializer_class = IosApplicationRadioSerializer
     queryset = IosApplicationRadio.objects.all()
+
 
 android_app_router = routers.SimpleRouter()
 ios_app_router = routers.SimpleRouter()
@@ -61,13 +70,13 @@ ios_app_router.register(
 )
 
 android_radio_router.register(
-    r'android_radio',
+    r'radio/android',
     AndroidApplicationRadioViewSet,
     basename='android_radio'
 )
 
 ios_radio_router.register(
-    r'ios_radio',
+    r'radio/ios',
     IosApplicationRadioViewSet,
     basename='ios_radio'
 )

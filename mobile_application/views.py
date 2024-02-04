@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.db.models import Max
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.db.models import Case, When
 
 
 from payments.models import InvoiceRequest
@@ -11,21 +14,33 @@ from rest_framework import (
 from mobile_application.serializers import AndroidApplicationSerializer, IosApplicationSerializer, AndroidApplicationRadioSerializer, IosApplicationRadioSerializer
 from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio
 
-class AndroidApplicationViewSet(viewsets.ModelViewSet):
+
+class UpdateRadioOrder:
+    @action(detail=True, methods=['put'])
+    def set_radio_order(self, request, pk=None):
+        ids = request.data
+        id_to_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
+        self.radio_model.objects.filter(id__in=ids).update(order=id_to_order)
+        return Response()
+
+class AndroidApplicationViewSet(UpdateRadioOrder, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
     ]
 
     serializer_class = AndroidApplicationSerializer
     queryset = AndroidApplication.objects.all()
+    radio_model = AndroidApplicationRadio
 
-class IosApplicationViewSet(viewsets.ModelViewSet):
+
+class IosApplicationViewSet(UpdateRadioOrder, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
     ]
 
     serializer_class = IosApplicationSerializer
     queryset = IosApplication.objects.all()
+    radio_model = IosApplicationRadio
 
 class SetOrderOnCreate:
     def perform_create(self, serializer):

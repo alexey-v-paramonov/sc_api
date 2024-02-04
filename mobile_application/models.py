@@ -302,6 +302,9 @@ class AndroidApplicationRadio(ApplicationRadioBase):
         null=False,
         on_delete=models.deletion.CASCADE
     )
+    class Meta(object):
+        ordering = ["order"]
+
 
 class IosApplicationRadio(ApplicationRadioBase):
     app = models.ForeignKey(
@@ -310,6 +313,8 @@ class IosApplicationRadio(ApplicationRadioBase):
         null=False,
         on_delete=models.deletion.CASCADE
     )
+    class Meta(object):
+        ordering = ["order"]
 
 
 class ApplicationRadioChannelBase(models.Model):

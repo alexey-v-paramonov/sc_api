@@ -271,6 +271,9 @@ class ApplicationRadioBase(models.Model):
         null=True,
         blank=True,
     )
+    covert_art_discovery = models.BooleanField(
+        default=False,
+    )
     allow_shoutbox =  models.BooleanField(
         default=True,
     )

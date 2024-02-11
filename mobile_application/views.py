@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.db.models import Case, When
 
 
-from payments.models import InvoiceRequest
+from mobile_application.permissions import UserOwnsApp
 from rest_framework import (
     viewsets,
     permissions,
@@ -15,7 +15,11 @@ from mobile_application.serializers import AndroidApplicationSerializer, IosAppl
 from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio
 
 
-class UpdateRadioOrder:
+class AppBase:
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+        
     @action(detail=True, methods=['put'])
     def set_radio_order(self, request, pk=None):
         ids = request.data
@@ -23,9 +27,10 @@ class UpdateRadioOrder:
         self.radio_model.objects.filter(id__in=ids).update(order=id_to_order)
         return Response()
 
-class AndroidApplicationViewSet(UpdateRadioOrder, viewsets.ModelViewSet):
+class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
+        # permissions.AllowAny,
     ]
 
     serializer_class = AndroidApplicationSerializer
@@ -33,44 +38,53 @@ class AndroidApplicationViewSet(UpdateRadioOrder, viewsets.ModelViewSet):
     radio_model = AndroidApplicationRadio
 
 
-class IosApplicationViewSet(UpdateRadioOrder, viewsets.ModelViewSet):
+class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
+        # permissions.AllowAny,
     ]
 
     serializer_class = IosApplicationSerializer
     queryset = IosApplication.objects.all()
     radio_model = IosApplicationRadio
 
-class SetOrderOnCreate:
+class AppRadioBase:
+
+    def get_queryset(self):
+        return self.queryset.filter(app_id=self.kwargs["app_id"])
+
     def perform_create(self, serializer):
-        instance = serializer.save()
+        instance = serializer.save(app_id=self.kwargs["app_id"])
         instance.order = self.queryset.filter(app=instance.app).aggregate(Max('order'))['order__max'] + 1
         instance.save()
         return instance
 
-class AndroidApplicationRadioViewSet(SetOrderOnCreate, viewsets.ModelViewSet):
+class AndroidApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticated,
+        UserOwnsApp
+        # permissions.AllowAny
     ]
-
     serializer_class = AndroidApplicationRadioSerializer
     queryset = AndroidApplicationRadio.objects.all()
+    app_model = AndroidApplication
 
-class IosApplicationRadioViewSet(SetOrderOnCreate, viewsets.ModelViewSet):
+
+class IosApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticated,
+        UserOwnsApp
+        # permissions.AllowAny
     ]
 
     serializer_class = IosApplicationRadioSerializer
     queryset = IosApplicationRadio.objects.all()
+    app_model = IosApplication
 
 
 android_app_router = routers.SimpleRouter()
 ios_app_router = routers.SimpleRouter()
 
-android_radio_router = routers.SimpleRouter()
-ios_radio_router = routers.SimpleRouter()
 
 android_app_router.register(
     r'android',
@@ -83,15 +97,14 @@ ios_app_router.register(
     IosApplicationViewSet,
     basename='ios_app'
 )
-
-android_radio_router.register(
-    r'radio/android',
+android_app_router.register(
+    "android/(?P<app_id>[^/.]+)/radios",
     AndroidApplicationRadioViewSet,
-    basename='android_radio'
+    basename="android-app-radio",
 )
 
-ios_radio_router.register(
-    r'radio/ios',
+android_app_router.register(
+    "ios/(?P<app_id>[^/.]+)/radios",
     IosApplicationRadioViewSet,
-    basename='ios_radio'
+    basename="ios-app-radio",
 )

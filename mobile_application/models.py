@@ -34,8 +34,8 @@ class CopyrightType:
 
 class ServerType:
 
-    SHOUTCAST = 0
-    ICECAST = 1
+    SHOUTCAST = 'shoutcast'
+    ICECAST = 'icecast'
 
     choices = (
         (SHOUTCAST, 'Shoutcast'),
@@ -329,16 +329,18 @@ class ApplicationRadioChannelBase(models.Model):
         blank=True,
         default=128,
     )
-    audio_format = models.PositiveSmallIntegerField(
+    audio_format = models.CharField(
         "Audio format",
+        max_length=10,
         choices=AudioFormat.choices,
         blank=False,
         null=False,
         default=AudioFormat.MP3,
     )
 
-    server_type = models.PositiveSmallIntegerField(
+    server_type = models.CharField(
         "Server type",
+        max_length=20,
         choices=ServerType.choices,
         blank=False,
         null=False,
@@ -357,6 +359,7 @@ class AndroidApplicationRadioChannel(ApplicationRadioChannelBase):
 
     radio = models.ForeignKey(
         AndroidApplicationRadio,
+        related_name='channels',
         blank=False,
         null=False,
         on_delete=models.deletion.CASCADE
@@ -366,6 +369,7 @@ class IosApplicationRadioChannel(ApplicationRadioChannelBase):
 
     radio = models.ForeignKey(
         IosApplicationRadio,
+        related_name='channels',
         blank=False,
         null=False,
         on_delete=models.deletion.CASCADE

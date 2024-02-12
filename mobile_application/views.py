@@ -3,7 +3,8 @@ from django.db.models import Max
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Case, When
-
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
+import json
 
 from mobile_application.permissions import UserOwnsApp
 from rest_framework import (
@@ -54,7 +55,8 @@ class AppRadioBase:
         return self.queryset.filter(app_id=self.kwargs["app_id"])
 
     def perform_create(self, serializer):
-        instance = serializer.save(app_id=self.kwargs["app_id"])
+        channels_json = json.loads(self.request.data['channels'])
+        instance = serializer.save(app_id=self.kwargs["app_id"], channels=channels_json)
         instance.order = self.queryset.filter(app=instance.app).aggregate(Max('order'))['order__max'] + 1
         instance.save()
         return instance
@@ -65,6 +67,7 @@ class AndroidApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
         UserOwnsApp
         # permissions.AllowAny
     ]
+
     serializer_class = AndroidApplicationRadioSerializer
     queryset = AndroidApplicationRadio.objects.all()
     app_model = AndroidApplication

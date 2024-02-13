@@ -3,8 +3,7 @@ from django.db.models import Max
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Case, When
-from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
-import json
+from rest_framework.parsers import MultiPartParser, JSONParser
 
 from mobile_application.permissions import UserOwnsApp
 from rest_framework import (
@@ -14,6 +13,32 @@ from rest_framework import (
 )
 from mobile_application.serializers import AndroidApplicationSerializer, IosApplicationSerializer, AndroidApplicationRadioSerializer, IosApplicationRadioSerializer
 from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio
+
+
+class MultiPartJSONParser(MultiPartParser):
+    def parse(self, stream, *args, **kwargs):
+
+        data = super().parse(stream, *args, **kwargs)
+
+        # Any 'File' found having application/json as type will be moved to data
+        mutable_data = data.data.copy()
+        unmarshaled_blob_names = []
+        json_parser = JSONParser()
+        for name, blob in data.files.items():
+            if blob.content_type == 'application/json' and name not in data.data:
+                parsed = json_parser.parse(blob)
+                if isinstance(parsed, list):
+                    # need to break it out into [0], [1] etc
+                    for idx, item in enumerate(parsed):
+                        mutable_data[name+f"[{str(idx)}]"] = item
+                else:
+                    mutable_data[name] = parsed
+                unmarshaled_blob_names.append(name)
+        for name in unmarshaled_blob_names:
+            del data.files[name]
+        data.data = mutable_data
+
+        return data
 
 
 class AppBase:
@@ -55,8 +80,7 @@ class AppRadioBase:
         return self.queryset.filter(app_id=self.kwargs["app_id"])
 
     def perform_create(self, serializer):
-        channels_json = json.loads(self.request.data['channels'])
-        instance = serializer.save(app_id=self.kwargs["app_id"], channels=channels_json)
+        instance = serializer.save(app_id=self.kwargs["app_id"])
         instance.order = self.queryset.filter(app=instance.app).aggregate(Max('order'))['order__max'] + 1
         instance.save()
         return instance
@@ -67,6 +91,7 @@ class AndroidApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
         UserOwnsApp
         # permissions.AllowAny
     ]
+    parser_classes = [MultiPartJSONParser]
 
     serializer_class = AndroidApplicationRadioSerializer
     queryset = AndroidApplicationRadio.objects.all()
@@ -79,6 +104,7 @@ class IosApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
         UserOwnsApp
         # permissions.AllowAny
     ]
+    parser_classes = [MultiPartJSONParser]
 
     serializer_class = IosApplicationRadioSerializer
     queryset = IosApplicationRadio.objects.all()

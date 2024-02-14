@@ -155,6 +155,8 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost',
     'http://localhost:3000',
     'http://127.0.0.1'
+    'https://app.streaming.center',
+    'https://app.radio-tochka.com',
 )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

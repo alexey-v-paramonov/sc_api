@@ -12,11 +12,11 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
         model = AndroidApplication
         exclude = ()
 
+
 class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
     class Meta:
         model = IosApplication
         exclude = ()
-        extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
 class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):
     class Meta:
@@ -24,19 +24,19 @@ class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerialize
         exclude = ()
         extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
+
 class IosApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):
 
-    channels = AndroidApplicationRadioChannelSerializer(many=True, required=False)
+    channels = AndroidApplicationRadioChannelSerializer(
+        many=True, required=False)
 
     class Meta:
         model = IosApplicationRadioChannel
         exclude = ()
-        
+        extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
-class AndroidApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
 
-    channels = AndroidApplicationRadioChannelSerializer(many=True)
-
+class ApplicationRadioSerializerBase:
     def create(self, validated_data):
 
         channels = validated_data.pop("channels")
@@ -46,17 +46,36 @@ class AndroidApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
             for i, c in enumerate(channels):
                 c['order'] = i
                 c['radio_id'] = instance.id
-                AndroidApplicationRadioChannel.objects.create(**c)
+                self.Meta.model_channels.objects.create(**c)
         return instance
+
+    def update(self, radio, validated_data):
+        channels = validated_data.pop("channels")
+        super().update(radio, validated_data)
+
+        radio.channels.all().delete()
+        for i, c in enumerate(channels):
+            c['order'] = i
+            c['radio_id'] = radio.id
+            self.Meta.model_channels.objects.create(**c)
+        return radio
+
+
+class AndroidApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
+
+    channels = AndroidApplicationRadioChannelSerializer(many=True)
 
     class Meta:
         model = AndroidApplicationRadio
+        model_channels = AndroidApplicationRadioChannel
         exclude = ()
 
 
-class IosApplicationRadioSerializer(CustomErrorMessagesModelSerializer):
+class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
 
-    channels = IosApplicationRadioChannelSerializer(many=True)    
+    channels = IosApplicationRadioChannelSerializer(many=True)
+
     class Meta:
         model = IosApplicationRadio
+        model_channels = IosApplicationRadioChannel
         exclude = ()

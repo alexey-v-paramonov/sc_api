@@ -10,3 +10,4 @@ django-ipware==5.0.0
 Jinja2==3.1.2
 paramiko==3.3.1
 pillow==10.2.0
+pytz==2024.1

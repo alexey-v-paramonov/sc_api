@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from radio.models import SelfHostedRadio, HostedRadio, RadioServer, RadioHostingStatus
+from users.models import Currency
 from radio.serializers import SelfHostedRadioSerializer, HostedRadioSerializer, RadioServerSerializer
 from radiotochka import billing
 
@@ -34,6 +35,7 @@ class PricingView(APIView):
         bitrate = request.query_params.get('bitrate', None)
         listeners = request.query_params.get('listeners', None)
         disk_quota = request.query_params.get('disk_quota', None)
+        currency = request.query_params.get('currency', Currency.RUB)
         if not all([bitrate, listeners, disk_quota]):
             return Response({
                 "error": "missing_params"
@@ -43,7 +45,12 @@ class PricingView(APIView):
             bitrate = int(bitrate)
             listeners = int(listeners)
             disk_quota = int(disk_quota)
+            currency = int(currency)
         except ValueError:
+            return Response({
+                "error": "invalid_params"
+            }, status=400)
+        if currency not in (Currency.USD, Currency.RUB):
             return Response({
                 "error": "invalid_params"
             }, status=400)
@@ -51,6 +58,10 @@ class PricingView(APIView):
         billing_instance = billing.RTBilling()
         traffic_price  =  billing_instance.calc_price(bitrate, listeners)
         du_price = billing_instance.get_du_price(disk_quota)
+        if currency == Currency.USD:
+            traffic_price = round(traffic_price / 65., 2)
+            du_price = round(du_price / 55., 2)
+
         return Response({
             "price": traffic_price,
             "du_price": du_price

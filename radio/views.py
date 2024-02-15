@@ -56,7 +56,7 @@ class PricingView(APIView):
             }, status=400)
 
         billing_instance = billing.RTBilling()
-        traffic_price  =  billing_instance.calc_price(bitrate, listeners)
+        traffic_price  =  billing_instance.calc_price(bitrate, listeners, None, True)
         du_price = billing_instance.get_du_price(disk_quota)
         if currency == Currency.USD:
             traffic_price = round(traffic_price / 65., 2)

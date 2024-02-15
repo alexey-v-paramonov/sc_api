@@ -16,10 +16,12 @@ class Currency:
 
     USD = 0
     RUB = 1
+    EUR = 2
 
     choices = (
         (USD, '$'),
         (RUB, '₽'),
+        (EUR, '€'),
     )
 
 

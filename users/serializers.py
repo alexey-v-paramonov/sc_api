@@ -64,7 +64,6 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
         template = "email/registration/reg_en.html"
         subject = "Welcome to Streaming.center!"
         if user.is_russian():
-            domain = "Radio-Tochka.com"
             template = "email/registration/reg_ru.html"
             subject = "Добро пожаловать на Radio-Tochka.com!"
 

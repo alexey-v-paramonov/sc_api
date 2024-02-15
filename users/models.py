@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from users.managers import UserManager
 
 class Language:
 
@@ -22,6 +22,8 @@ class Currency:
         (RUB, '₽'),
     )
 
+
+
 class User(AbstractUser):
     username = None
     email = models.EmailField("Email address", unique=True)
@@ -42,6 +44,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    objects = UserManager()
 
     def is_english(self):
         return self.language == Language.ENG

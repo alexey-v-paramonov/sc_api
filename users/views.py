@@ -44,6 +44,7 @@ class UsersView(viewsets.ModelViewSet):
 
         return Response()
 
+
 class SCObtainAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):

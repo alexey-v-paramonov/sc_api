@@ -42,3 +42,9 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def is_english(self):
+        return self.language == Language.ENG
+
+    def is_russian(self):
+        return self.language == Language.RU

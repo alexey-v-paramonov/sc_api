@@ -10,6 +10,10 @@ from email_validator import EmailSyntaxError, EmailUndeliverableError, caching_r
 from email_validator import validate_email
 from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
+from django.template.loader import get_template
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
 class EmailValidatiorBase:
 
@@ -57,7 +61,22 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
             user.set_password(validated_data['password'])
             user.save()
 
+        template = "email/registration/reg_en.html"
+        subject = "Welcome to Streaming.center!"
+        if user.is_russian():
+            domain = "Radio-Tochka.com"
+            template = "email/registration/reg_ru.html"
+            subject = "Добро пожаловать на Radio-Tochka.com!"
+
+        template = get_template(template)
+        content = template.render(validated_data)
+        text_content = strip_tags(content)
+        msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+        msg.attach_alternative(content, "text/html")
+        msg.send()
+
         return user
+    
     class Meta:
         model = User
         fields = ('password', 'email', 'id', 'token', 'language', 'currency', 'balance', 'agreement_accepted')

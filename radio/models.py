@@ -127,6 +127,7 @@ class BaseRadio(models.Model):
         default=False,
     )
     comment = models.TextField(null=True, blank=True)
+    debug_msg = models.TextField(null=True, blank=True)
 
     class Meta(object):
         abstract = True

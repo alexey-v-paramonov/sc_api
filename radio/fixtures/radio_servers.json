@@ -1,0 +1,13 @@
+[
+{
+    "model": "radio.radioserver",
+    "pk": 1,
+    "fields": {
+        "ip": "136.243.75.182",
+        "nodename": "s02",
+        "country": "Germany",
+        "provider": "Hetzner",
+        "available": true
+    }
+}
+]

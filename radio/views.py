@@ -80,11 +80,6 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
         instance.status = RadioHostingStatus.BEING_DELETED
         instance.save()
 
-    def perform_create(self, serializer):
-        radio_server = RadioServer.objects.filter(available=True).first()
-        instance = serializer.save(server=radio_server)
-        return instance
-
 class SelfHostedRadioViewSet(viewsets.ModelViewSet):
 
     permission_classes = [

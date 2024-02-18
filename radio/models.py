@@ -185,7 +185,6 @@ class HostedRadio(BaseRadio):
         "Hosting login name",
         null=True,
         blank=True,
-        unique=True,
         max_length=32,
         validators=[
             RegexValidator("^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$"),
@@ -207,6 +206,10 @@ class HostedRadio(BaseRadio):
     is_demo = models.BooleanField(
         default=False,
     )
+    class Meta(object):
+        unique_together = (
+            ("login", "server"),
+        )
 
 class HostedRadioService(models.Model):
     radio = models.ForeignKey(

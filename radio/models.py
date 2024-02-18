@@ -176,8 +176,8 @@ class HostedRadio(BaseRadio):
 
     server = models.ForeignKey(
         RadioServer,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         on_delete=models.deletion.CASCADE
     )
 

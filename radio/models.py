@@ -23,6 +23,16 @@ class RadioHostingType:
         (HOSTED, 'Hosted'),
     )
 
+class ServiceType:
+
+    STREAM = 1
+    DISK = 2
+
+    choices = (
+        (STREAM, 'Stream traffic'),
+        (DISK, 'Disk usage'),
+    )
+
 
 class RadioHostingStatus:
 
@@ -195,3 +205,28 @@ class HostedRadio(BaseRadio):
     is_demo = models.BooleanField(
         default=False,
     )
+
+class HostedRadioService(models.Model):
+    radio = models.ForeignKey(
+        HostedRadio,
+        null=False,
+        blank=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+    service_type = models.PositiveSmallIntegerField(
+        "Service type",
+        choices=AudioFormat.choices,
+        blank=False,
+        null=False,
+    )
+
+    channel_id = models.PositiveIntegerField(
+        "Stream channel ID",
+        blank=True,
+        null=True,
+    )
+    bitrate = models.PositiveIntegerField("Bitrate", null=True, blank=True)
+    listeners = models.PositiveIntegerField("Maximum number of listeners", null=True, blank=True)
+    du = models.PositiveIntegerField("Disk quota", null=True, blank=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2)

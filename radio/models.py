@@ -235,3 +235,7 @@ class HostedRadioService(models.Model):
     listeners = models.PositiveIntegerField("Maximum number of listeners", null=True, blank=True)
     du = models.PositiveIntegerField("Disk quota", null=True, blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    class Meta(object):
+        unique_together = (
+            ("channel_id", "radio"),
+        )

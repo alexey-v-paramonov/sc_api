@@ -57,7 +57,7 @@ class Charge(models.Model):
         max_length=255
     )
 
-    price = models.DecimalField(max_digits=6, decimal_places=6, default=0)
+    price = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     currency = models.PositiveSmallIntegerField(
         "Currency",
         default=Currency.USD,

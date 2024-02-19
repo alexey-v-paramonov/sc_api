@@ -169,7 +169,7 @@ class SelfHostedRadio(BaseRadio):
         default=22,
         null=False,
     )
-    custom_price = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    custom_price = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
 
 
 class HostedRadio(BaseRadio):

@@ -39,7 +39,7 @@ class User(AbstractUser):
         default=Currency.USD,
         choices=Currency.choices,
     )
-    balance = models.DecimalField(max_digits=6, decimal_places=6, default=0)
+    balance = models.DecimalField(max_digits=12, decimal_places=6, default=0)
 
     agreement_accepted = models.BooleanField(
         default=False,

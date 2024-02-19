@@ -37,6 +37,14 @@ class ChargedServiceType:
 
 class Charge(models.Model):
     created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="User",
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+
     service_type = models.PositiveSmallIntegerField(
         "Service type",
         default=ChargedServiceType.OTHER,
@@ -49,7 +57,7 @@ class Charge(models.Model):
         max_length=255
     )
 
-    price = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+    price = models.DecimalField(max_digits=6, decimal_places=6, default=0)
     currency = models.PositiveSmallIntegerField(
         "Currency",
         default=Currency.USD,

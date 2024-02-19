@@ -39,7 +39,7 @@ class User(AbstractUser):
         default=Currency.USD,
         choices=Currency.choices,
     )
-    balance = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+    balance = models.DecimalField(max_digits=6, decimal_places=6, default=0)
 
     agreement_accepted = models.BooleanField(
         default=False,
@@ -55,3 +55,10 @@ class User(AbstractUser):
 
     def is_russian(self):
         return self.language == Language.RU
+    
+    
+    def is_usd(self):
+        return self.currency == Currency.USD
+
+    def is_rub(self):
+        return self.currency == Currency.RUB

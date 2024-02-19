@@ -39,7 +39,8 @@ class User(AbstractUser):
         default=Currency.USD,
         choices=Currency.choices,
     )
-    balance = models.FloatField(null=False, blank=False, default=0)
+    balance = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+
     agreement_accepted = models.BooleanField(
         default=False,
     )

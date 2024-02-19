@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from users.models import Currency
 
 class InvoiceRequest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -49,3 +50,8 @@ class Charge(models.Model):
     )
 
     price = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+    currency = models.PositiveSmallIntegerField(
+        "Currency",
+        default=Currency.USD,
+        choices=Currency.choices,
+    )

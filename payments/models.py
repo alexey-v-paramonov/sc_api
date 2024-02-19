@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-# Create your models here.
 class InvoiceRequest(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
@@ -21,4 +20,32 @@ class InvoiceRequest(models.Model):
         default=False,
     )
 
+class ChargedServiceType:
 
+    OTHER = 0
+    RADIO_SELF_HOSTED = 1
+    RADIO_HOSTED_STREAM = 2
+    RADIO_HOSTED_DU = 3
+
+    choices = (
+        (OTHER, 'Other services'),
+        (RADIO_SELF_HOSTED, 'Self hosted radio service'),
+        (RADIO_HOSTED_STREAM, 'Hosted radio stream (traffic)'),
+        (RADIO_HOSTED_DU, 'Hosted radio disk usage'),
+    )
+
+class Charge(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    service_type = models.PositiveSmallIntegerField(
+        "Service type",
+        default=ChargedServiceType.OTHER,
+        choices=ChargedServiceType.choices,
+    )
+    description = models.CharField(
+        "Service description",
+        null=True,
+        blank=True,
+        max_length=255
+    )
+
+    price = models.DecimalField(max_digits=6, decimal_places=3, default=0)

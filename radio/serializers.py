@@ -6,6 +6,8 @@ from radio.models import SelfHostedRadio, HostedRadio, RadioServer
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
+from django.conf import settings
+from django.db.models import Sum
 
 class RadioServerSerializer(serializers.ModelSerializer):
 
@@ -15,6 +17,11 @@ class RadioServerSerializer(serializers.ModelSerializer):
 
 
 class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
+
+    price = serializers.SerializerMethodField()
+
+    def get_price(self, radio):
+        return radio.hostedradioservice_set.aggregate(Sum('price'))['price__sum'] or 0.
 
     def to_internal_value(self, data):
         data['server'] = RadioServer.objects.filter(available=True).first().id
@@ -26,6 +33,15 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
 class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
+    price = serializers.SerializerMethodField()
+
+    def get_price(self, radio):
+        if radio.custom_price is not None:
+            return radio.custom_price
+        if radio.user.is_rub():
+            return settings.BASE_PRICE_RUB
+        return settings.BASE_PRICE_USD
+        
     def validate(self, data):
 
         ip = data['ip']

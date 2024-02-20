@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
+from django.db.models import Sum
 
 class AudioFormat:
     MP3 = "mp3"
@@ -171,6 +172,13 @@ class SelfHostedRadio(BaseRadio):
     )
     custom_price = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
 
+    def price(self):
+        if self.custom_price is not None:
+            return self.custom_price
+        if self.user.is_rub():
+            return settings.BASE_PRICE_RUB
+        return settings.BASE_PRICE_USD
+
 
 class HostedRadio(BaseRadio):
 
@@ -206,6 +214,10 @@ class HostedRadio(BaseRadio):
     is_demo = models.BooleanField(
         default=False,
     )
+
+    def price(self):
+        return self.hostedradioservice_set.aggregate(Sum('price'))['price__sum'] or 0.
+
     class Meta(object):
         unique_together = (
             ("login", "server"),

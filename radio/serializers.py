@@ -9,6 +9,7 @@ from util.serializers import (
 from django.conf import settings
 from django.db.models import Sum
 
+
 class RadioServerSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -18,34 +19,43 @@ class RadioServerSerializer(serializers.ModelSerializer):
 
 class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
-    price = serializers.SerializerMethodField()
-
-    def get_price(self, radio):
-        return radio.hostedradioservice_set.aggregate(Sum('price'))['price__sum'] or 0.
-
     def to_internal_value(self, data):
         data['server'] = RadioServer.objects.filter(available=True).first().id
         return super().to_internal_value(data)
 
     class Meta:
         model = HostedRadio
-        exclude = ()
+        fields = (
+            'comment',
+            'debug_msg',
+            'domain',
+            'id',
+            'initial_audio_format',
+            'initial_bitrate',
+            'initial_du',
+            'initial_listeners',
+            'is_blocked',
+            'is_demo',
+            'login',
+            'name',
+            'server',
+            'status',
+            'ts_created',
+            'user',
+            'price',
+        )
+        extra_kwargs = {"price": {"read_only": True}}
+
 
 class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
-    price = serializers.SerializerMethodField()
+    # price = serializers.SerializerMethodField()
 
-    def get_price(self, radio):
-        if radio.custom_price is not None:
-            return radio.custom_price
-        if radio.user.is_rub():
-            return settings.BASE_PRICE_RUB
-        return settings.BASE_PRICE_USD
-        
+
     def validate(self, data):
 
         ip = data['ip']
-        ssh_username  = data.get('ssh_username', None)
+        ssh_username = data.get('ssh_username', None)
         ssh_password = data.get('ssh_password', None)
         ssh_port = data.get('ssh_port', None)
         domain = data.get('domain', None)
@@ -55,7 +65,8 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             try:
                 domain_ip = socket.gethostbyname(domain)
             except:
-                raise serializers.ValidationError({"domain": "wrong_ip_resolved"})
+                raise serializers.ValidationError(
+                    {"domain": "wrong_ip_resolved"})
 
             if domain_ip != ip:
                 raise serializers.ValidationError({"domain": "wrong_ip"})
@@ -68,7 +79,8 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             try:
                 s.connect((ip, int(ssh_port)))
             except Exception:
-                raise serializers.ValidationError({"ip": "ssh_port_connection_failed"})
+                raise serializers.ValidationError(
+                    {"ip": "ssh_port_connection_failed"})
             finally:
                 s.shutdown(socket.SHUT_RDWR)
                 s.close()
@@ -78,20 +90,43 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 print(ip, ssh_username, ssh_password, ssh_port)
-                ssh.connect(ip, username=ssh_username, password=ssh_password, port=ssh_port, allow_agent=False, look_for_keys=False)
+                ssh.connect(ip, username=ssh_username, password=ssh_password,
+                            port=ssh_port, allow_agent=False, look_for_keys=False)
             except Exception:
-                ssh.close()        
-                raise serializers.ValidationError({"ip": "ssh_connection_failed"})
+                ssh.close()
+                raise serializers.ValidationError(
+                    {"ip": "ssh_connection_failed"})
 
-            _, stdout, _ = ssh.exec_command('cat /etc/system-release /etc/issue 2>/dev/null')
-            ssh_output = stdout.read().lower().decode("utf-8") 
-            ssh.close()        
+            _, stdout, _ = ssh.exec_command(
+                'cat /etc/system-release /etc/issue 2>/dev/null')
+            ssh_output = stdout.read().lower().decode("utf-8")
+            ssh.close()
 
             if ssh_output.find("centos") == -1 and ssh_output.find("ubuntu") == -1:
                 raise serializers.ValidationError({"ip": "wrong_os"})
-            
+
         return data
 
     class Meta:
         model = SelfHostedRadio
-        exclude = ()
+        fields = (
+            'comment',
+            'debug_msg',
+            'domain',
+            'id',
+            'is_blocked',
+            'name',
+            'status',
+            'ts_created',
+            'user',
+            'price',
+            'ip',
+            'ssh_username',
+            'ssh_password',
+            'ssh_port',
+            'custom_price',
+        )
+        extra_kwargs = {
+            "price": {"read_only": True},
+            "custom_price": {"read_only": True},
+        }

@@ -216,6 +216,8 @@ class HostedRadio(BaseRadio):
     )
 
     def price(self):
+        if self.status != RadioHostingStatus.READY or self.is_demo:
+            return 0
         return self.hostedradioservice_set.aggregate(Sum('price'))['price__sum'] or 0.
 
     class Meta(object):
@@ -251,3 +253,26 @@ class HostedRadioService(models.Model):
         unique_together = (
             ("channel_id", "radio"),
         )
+
+
+class PortRegistry(models.Model):
+
+    radio = models.ForeignKey(
+        HostedRadio,
+        null=False,
+        blank=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+    channel_id = models.PositiveIntegerField(null=True, blank=True)
+    dj_id = models.PositiveIntegerField(null=True, blank=True)
+
+    port = models.PositiveIntegerField(null=False, blank=False)
+
+    server_type = models.CharField(
+        null=True,
+        blank=True,
+        max_length=20
+    )
+    mount = models.CharField(max_length=255, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)

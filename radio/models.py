@@ -79,7 +79,8 @@ class RadioServer(models.Model):
         "Node subdomain name",
         null=False,
         blank=False,
-        max_length=255
+        max_length=255, 
+        unique=True
     )
 
     country = models.CharField(
@@ -276,3 +277,7 @@ class PortRegistry(models.Model):
     )
     mount = models.CharField(max_length=255, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
+    class Meta(object):
+        unique_together = (
+            ("radio", "port"),
+        )

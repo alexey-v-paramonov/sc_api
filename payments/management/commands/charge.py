@@ -37,7 +37,8 @@ class Command(BaseCommand):
                     user.save()
 
             # Hosted radios
-            for hosted_radio in user.hostedradio_set.all():
+            for hosted_radio in user.hostedradio_set.exclude(is_demo=True):
+                # Skip 5 days trial
                 price = hosted_radio.price()
                 if price > 0:
                     daily_price = price / float(n_month_days)

@@ -215,6 +215,7 @@ class HostedRadio(BaseRadio):
     is_demo = models.BooleanField(
         default=False,
     )
+    disk_usage = models.PositiveIntegerField("Disk usage", null=False, default=0, blank=True)
 
     def price(self):
         if self.status != RadioHostingStatus.READY or self.is_demo:
@@ -249,6 +250,7 @@ class HostedRadioService(models.Model):
     bitrate = models.PositiveIntegerField("Bitrate", null=True, blank=True)
     listeners = models.PositiveIntegerField("Maximum number of listeners", null=True, blank=True)
     du = models.PositiveIntegerField("Disk quota", null=True, blank=True)
+
     price = models.DecimalField(max_digits=6, decimal_places=2)
     class Meta(object):
         unique_together = (

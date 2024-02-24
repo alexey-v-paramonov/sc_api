@@ -172,6 +172,9 @@ class SelfHostedRadio(BaseRadio):
         null=False,
     )
     custom_price = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
+    is_unbranded = models.BooleanField(
+        default=False,
+    )
 
     def price(self):
         if self.custom_price is not None:

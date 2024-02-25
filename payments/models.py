@@ -63,3 +63,22 @@ class Charge(models.Model):
         default=Currency.USD,
         choices=Currency.choices,
     )
+
+class UserPayment(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="User",
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    transaction_id = models.PositiveIntegerField(null=True, blank=True)
+
+    price = models.DecimalField(max_digits=12, decimal_places=6, default=0)
+    currency = models.PositiveSmallIntegerField(
+        "Currency",
+        default=Currency.RUB,
+        choices=Currency.choices,
+    )

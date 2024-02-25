@@ -35,7 +35,7 @@ class Command(BaseCommand):
                         currency=user.currency,
                         price=daily_price
                     )
-                    user.balance = user.balance - daily_price
+                    user.balance = user.balance - Decimal(daily_price)
                     user.save()
 
             # Hosted radios
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 # Skip 5 days trial
                 price = hosted_radio.price()
                 if price > 0:
-                    daily_price = price / float(n_month_days)
+                    daily_price = price / Decimal(n_month_days)
                     total_daily += daily_price
                     Charge.objects.create(
                         user=user,

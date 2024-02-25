@@ -219,6 +219,11 @@ class HostedRadio(BaseRadio):
         default=False,
     )
     disk_usage = models.PositiveIntegerField("Disk usage", null=False, default=0, blank=True)
+    def get_disk_quota(self):
+        disk_quota = self.hosted_radio.services.filter(service_type=ServiceType.DISK).last()
+        if not disk_quota:
+            return 0
+        return disk_quota.du
 
     def price(self):
         if self.status != RadioHostingStatus.READY or self.is_demo:
@@ -235,12 +240,13 @@ class HostedRadioService(models.Model):
         HostedRadio,
         null=False,
         blank=False,
-        on_delete=models.deletion.CASCADE
+        on_delete=models.deletion.CASCADE,
+        related_name='services'
     )
 
     service_type = models.PositiveSmallIntegerField(
         "Service type",
-        choices=AudioFormat.choices,
+        choices=ServiceType.choices,
         blank=False,
         null=False,
     )

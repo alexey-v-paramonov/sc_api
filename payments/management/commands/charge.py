@@ -8,6 +8,7 @@ from payments.models import Charge, ChargedServiceType
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from radiotochka.billing import PRICE_PER_EXTRA_GB
 
 class Command(BaseCommand):
     help = "Charge users daily"
@@ -52,7 +53,25 @@ class Command(BaseCommand):
                     )
                     user.balance = user.balance - daily_price
                     user.save()
-                
+                    # Disk usage extra
+                    disk_quota = hosted_radio.get_disk_quota()
+                    disk_quota_mb = disk_quota * 1024.
+                    above_allowed_du = hosted_radio.disk_usage - disk_quota_mb
+                    if above_allowed_du > 0:
+                        price_du_day = PRICE_PER_EXTRA_GB / n_month_days * (above_allowed_du / 1024.)
+                        total_daily += price_du_day
+                        Charge.objects.create(
+                            user=user,
+                            service_type=ChargedServiceType.RADIO_HOSTED_DU,
+                            description=str(above_allowed_du),
+                            currency=user.currency,
+                            price=price_du_day
+                        )
+
+                        user.balance = user.balance - price_du_day
+                        user.save()
+
+
             # Send payment notification
             if user.balance < total_daily * 7:
                 template = "email/payment_reminder_en.html"

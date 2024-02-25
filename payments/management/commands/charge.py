@@ -2,6 +2,7 @@ import calendar
 import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import get_template
+from decimal import Decimal
 
 from users.models import User
 from payments.models import Charge, ChargedServiceType
@@ -68,7 +69,7 @@ class Command(BaseCommand):
                             price=price_du_day
                         )
 
-                        user.balance = user.balance - price_du_day
+                        user.balance = user.balance - Decimal(price_du_day)
                         user.save()
 
 

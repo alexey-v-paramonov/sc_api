@@ -220,7 +220,7 @@ class HostedRadio(BaseRadio):
     )
     disk_usage = models.PositiveIntegerField("Disk usage", null=False, default=0, blank=True)
     def get_disk_quota(self):
-        disk_quota = self.hosted_radio.services.filter(service_type=ServiceType.DISK).last()
+        disk_quota = self.services.filter(service_type=ServiceType.DISK).last()
         if not disk_quota:
             return 0
         return disk_quota.du

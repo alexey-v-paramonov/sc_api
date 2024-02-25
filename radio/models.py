@@ -228,7 +228,7 @@ class HostedRadio(BaseRadio):
     def price(self):
         if self.status != RadioHostingStatus.READY or self.is_demo:
             return 0
-        return self.hostedradioservice_set.aggregate(Sum('price'))['price__sum'] or 0.
+        return self.services.aggregate(Sum('price'))['price__sum'] or 0.
 
     class Meta(object):
         unique_together = (

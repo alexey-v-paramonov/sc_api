@@ -76,6 +76,9 @@ class HostedRadioViewSet(viewsets.ModelViewSet):
     serializer_class = HostedRadioSerializer
     queryset = HostedRadio.objects.all()
 
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
     def perform_destroy(self, instance):
         instance.status = RadioHostingStatus.BEING_DELETED
         instance.save()
@@ -89,6 +92,8 @@ class SelfHostedRadioViewSet(viewsets.ModelViewSet):
     serializer_class = SelfHostedRadioSerializer
     queryset = SelfHostedRadio.objects.all()
 
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 
 # Routers
 hosted_radio_service_router = routers.SimpleRouter()

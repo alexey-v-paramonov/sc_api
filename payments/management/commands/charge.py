@@ -21,12 +21,12 @@ class Command(BaseCommand):
         for user in User.objects.filter(balance__gt=0, is_staff=False):
             
             # Self hosted radios
-            total_daily = 0
+            total_daily = Decimal(0)
 
             for self_hosted_radio in user.selfhostedradio_set.all():
                 price = self_hosted_radio.price()
                 if price > 0:
-                    daily_price = price / float(n_month_days)
+                    daily_price = Decimal(price / float(n_month_days))
                     total_daily += daily_price
                     Charge.objects.create(
                         user=user,
@@ -35,7 +35,7 @@ class Command(BaseCommand):
                         currency=user.currency,
                         price=daily_price
                     )
-                    user.balance = user.balance - Decimal(daily_price)
+                    user.balance = user.balance - daily_price
                     user.save()
 
             # Hosted radios
@@ -60,7 +60,7 @@ class Command(BaseCommand):
                     above_allowed_du = hosted_radio.disk_usage - disk_quota_mb
                     if above_allowed_du > 0:
                         price_du_day = PRICE_PER_EXTRA_GB / n_month_days * (above_allowed_du / 1024.)
-                        total_daily += price_du_day
+                        total_daily += Decimal(price_du_day)
                         Charge.objects.create(
                             user=user,
                             service_type=ChargedServiceType.RADIO_HOSTED_DU,

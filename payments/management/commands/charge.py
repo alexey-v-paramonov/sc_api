@@ -47,7 +47,7 @@ class Command(BaseCommand):
                     total_daily += daily_price
                     Charge.objects.create(
                         user=user,
-                        service_type=ChargedServiceType.RADIO_HOSTED,
+                        service_type=ChargedServiceType.RADIO_HOSTED_STREAM,
                         description=hosted_radio.login,
                         currency=user.currency,
                         price=daily_price

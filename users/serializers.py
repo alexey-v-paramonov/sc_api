@@ -49,6 +49,10 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
           write_only=True,
     )
     token = serializers.SerializerMethodField(read_only=True)
+    balance = serializers.SerializerMethodField()
+
+    def get_balance(self, user):
+        return round(float(user.balance), 2)
 
     def get_token(self, user):
         token, _ = Token.objects.get_or_create(user=user)

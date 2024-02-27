@@ -34,6 +34,18 @@ class ServiceType:
         (DISK, 'Disk usage'),
     )
 
+class CopyrightType:
+
+    LEGAL = 1
+    NO_COPYRIGHT = 2
+    TEST = 3
+
+    choices = (
+        (LEGAL, 'Has legal documents'),
+        (NO_COPYRIGHT, 'No copyrighted content is used'),
+        (TEST, 'Test account'),
+    )
+
 
 class RadioHostingStatus:
 
@@ -214,6 +226,13 @@ class HostedRadio(BaseRadio):
     initial_bitrate = models.PositiveIntegerField("Bitrate", null=True, blank=True)
     initial_listeners = models.PositiveIntegerField("Maximum number of listeners", null=True, blank=True)
     initial_du = models.PositiveIntegerField("Disk quota", null=True, blank=True)
+
+    copyright_type = models.PositiveSmallIntegerField(
+        "Copyright settings",
+        choices=CopyrightType.choices,
+        blank=True,
+        null=True,
+    )
 
     is_demo = models.BooleanField(
         default=False,

@@ -45,11 +45,12 @@ class MonthTotalChargeView(generics.RetrieveAPIView):
 
     def get(self, request, format=None):
         billing_instance = SCBilling()
-        monthly = billing_instance.get_month_charge(self.request.user.email, self.request.user.id)
+        monthly = billing_instance.get_month_charge(self.request.user.email, self.request.user.id, True)
         return Response({
-            "month_streams": round(monthly[0], 2), 
+            "month_hosted": round(monthly[0], 2), 
             "month_du": round(monthly[1], 2),
-            "total": round(monthly[0] + monthly[1], 2),
+            "month_self_hosted": round(monthly[2], 2), 
+            "total": round(monthly[0] + monthly[1] + monthly[2], 2),
         })
 
 

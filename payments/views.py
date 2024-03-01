@@ -53,6 +53,27 @@ class MonthTotalChargeView(generics.RetrieveAPIView):
             "total": round(monthly[0] + monthly[1] + monthly[2], 2),
         })
 
+class UserPaymentsView(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get(self, request, format=None):
+        billing_instance = SCBilling()
+        return Response({
+            "payments": billing_instance.get_payment_history(self.request.user.id)
+        })
+
+class UserChargesView(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get(self, request, format=None):
+        billing_instance = SCBilling()
+        return Response({
+            "charges": billing_instance.get_charge_history(self.request.user.id)
+        })
 
 invoice_request_router = routers.SimpleRouter()
 invoice_request_router.register(

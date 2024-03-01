@@ -11,7 +11,7 @@ from rest_framework import generics
 
 from payments.models import InvoiceRequest
 from payments.serializers import InvoiceRequestSerializer
-from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS
+from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS, SCBilling
 class HostedRadioViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
@@ -37,6 +37,20 @@ class CustomPaymentMethodsView(generics.RetrieveAPIView):
     def get(self, request, format=None):
 
         return Response(CUSTOM_PAYMENT_OPTIONS)
+
+class MonthTotalChargeView(generics.RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get(self, request, format=None):
+        billing_instance = SCBilling()
+        monthly = billing_instance.get_month_charge(self.request.user.email, self.request.user.id)
+        return Response({
+            "month_streams": round(monthly[0], 2), 
+            "month_du": round(monthly[1], 2),
+            "total": round(monthly[0] + monthly[1], 2),
+        })
 
 
 invoice_request_router = routers.SimpleRouter()

@@ -19,9 +19,12 @@ class RadioServerSerializer(serializers.ModelSerializer):
 
 class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
+    server = RadioServerSerializer(read_only=True)
+    
     def to_internal_value(self, data):
         data['server'] = RadioServer.objects.filter(available=True).first().id
         return super().to_internal_value(data)
+        
 
     class Meta:
         model = HostedRadio

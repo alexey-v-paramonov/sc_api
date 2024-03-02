@@ -38,6 +38,7 @@ class Command(BaseCommand):
                     )
                     user.balance = user.balance - daily_price
                     user.save()
+                    print(f"User {user.email} self hosted radio charged {daily_price}, balance: {user.balance}")
 
             # Hosted radios
             for hosted_radio in user.hostedradio_set.exclude(is_demo=True):
@@ -55,6 +56,7 @@ class Command(BaseCommand):
                     )
                     user.balance = user.balance - daily_price
                     user.save()
+                    print(f"User {user.email} hosted radio {hosted_radio.login} charged {daily_price}, balance: {user.balance}")
                     # Disk usage extra
                     disk_quota = hosted_radio.get_disk_quota()
                     disk_quota_mb = disk_quota * 1024.
@@ -73,6 +75,7 @@ class Command(BaseCommand):
 
                         user.balance = user.balance - Decimal(price_du_day)
                         user.save()
+                        print(f"User {user.email} disk usage {above_allowed_du} charged {price_du_day}, balance: {user.balance}")
 
 
             # Send payment notification

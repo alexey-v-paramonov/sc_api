@@ -48,6 +48,7 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
             'user',
             'price',
             'copyright_type',
+            'server_data'
         )
         extra_kwargs = {"price": {"read_only": True}}
 

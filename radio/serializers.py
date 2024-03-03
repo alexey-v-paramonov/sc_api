@@ -19,7 +19,8 @@ class RadioServerSerializer(serializers.ModelSerializer):
 
 class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
-    server = RadioServerSerializer(read_only=True)
+    # server = RadioServerSerializer(read_only=True)
+    server_data = RadioServerSerializer(source='server', read_only=True)
     
     def to_internal_value(self, data):
         data['server'] = RadioServer.objects.filter(available=True).first().id

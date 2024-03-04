@@ -8,12 +8,42 @@ from util.serializers import (
 
 class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
+    missing_parts = serializers.SerializerMethodField(read_only=True)
+
+    def get_missing_parts(self, app):
+        missing_parts = []
+        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website:
+            missing_parts.append('info')
+
+        if app.androidapplicationradio_set.count() == 0:
+            missing_parts.append('radio')
+
+        if not app.is_paid:
+            missing_parts.append('payment')
+        return missing_parts
+
+
     class Meta:
         model = AndroidApplication
         exclude = ()
 
 
 class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
+
+    missing_parts = serializers.SerializerMethodField(read_only=True)
+
+    def get_missing_parts(self, app):
+        missing_parts = []
+        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website:
+            missing_parts.append('info')
+
+        if app.iosapplicationradio_set.count() == 0:
+            missing_parts.append('radio')
+
+        if not app.is_paid:
+            missing_parts.append('payment')
+        return missing_parts
+
     class Meta:
         model = IosApplication
         exclude = ()

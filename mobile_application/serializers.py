@@ -9,6 +9,8 @@ from util.serializers import (
 class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
+    build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+
 
     def get_missing_parts(self, app):
         missing_parts = []
@@ -31,6 +33,7 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
+    build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     def get_missing_parts(self, app):
         missing_parts = []

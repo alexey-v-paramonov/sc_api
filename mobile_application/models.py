@@ -77,6 +77,12 @@ class BaseApplication(models.Model):
     description = models.TextField(null=True, blank=True)
     website_url = models.URLField(null=True, blank=True)
     email = models.EmailField(null=False, blank=False)
+    user_agent = models.CharField(
+        "Player user-agent",
+        null=True,
+        blank=True,
+        max_length=255
+    )
 
     is_paid = models.BooleanField(
         default=False,
@@ -86,6 +92,11 @@ class BaseApplication(models.Model):
         null=False,
         blank=True,
         default=1,
+    )
+
+    build_date = models.DateTimeField(
+        null=True,
+        blank=True,
     )
     
     yandex_appmetrica_key = models.CharField(

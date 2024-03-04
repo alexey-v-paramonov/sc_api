@@ -12,13 +12,13 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     def get_missing_parts(self, app):
         missing_parts = []
-        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website:
+        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website_url:
             missing_parts.append('info')
 
         if app.androidapplicationradio_set.count() == 0:
             missing_parts.append('radio')
 
-        if not app.is_paid:
+        if not app.is_paid and app.user.balance < app.price:
             missing_parts.append('payment')
         return missing_parts
 
@@ -34,13 +34,13 @@ class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     def get_missing_parts(self, app):
         missing_parts = []
-        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website:
+        if not app.title or not app.icon or not app.logo or not app.description or not app.email or not app.website_url:
             missing_parts.append('info')
 
         if app.iosapplicationradio_set.count() == 0:
             missing_parts.append('radio')
 
-        if not app.is_paid:
+        if not app.is_paid and app.user.balance < app.price:
             missing_parts.append('payment')
         return missing_parts
 

@@ -250,6 +250,24 @@ class AndroidApplication(BaseApplication):
         blank=True,
         max_length=80
     )
+    
+    @property
+    def price(self):
+        if self.user.is_rub():
+            price = 15000
+            if not self.is_sc_publishing:
+                price += 1500
+            if self.copyright_type != 1:
+                price += 1500
+
+        elif self.user.is_usd():
+            price = 250
+            if not self.is_sc_publishing:
+                price += 30
+            if self.copyright_type != 1:
+                price += 30
+
+        return price
 
 class IosApplication(BaseApplication):
 
@@ -258,6 +276,20 @@ class IosApplication(BaseApplication):
         blank=True,
         max_length=100
     )
+
+    @property
+    def price(self):
+        if self.user.is_rub():
+            price = 18000
+            if self.copyright_type != 1:
+                price += 1500
+
+        elif self.user.is_usd():
+            price = 300
+            if self.copyright_type != 1:
+                price += 30
+
+        return price
 
 class ApplicationRadioBase(models.Model):
 

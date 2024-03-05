@@ -8,6 +8,9 @@ from rest_framework import (
     permissions,
     routers
 )
+from django.template.loader import get_template
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 
 from mobile_application.permissions import UserOwnsApp
@@ -28,6 +31,18 @@ class AppBase:
         ids = request.data
         id_to_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
         self.radio_model.objects.filter(id__in=ids).update(order=id_to_order)
+        return Response()
+
+    @action(detail=True, methods=['patch'])
+    def build(self, request, pk=None):
+        app = self.get_object()
+        app.schedule_build()
+
+        template = get_template('email/app_build_requested.html')
+        content = template.render({'app': app})
+        msg = EmailMessage("New app build request", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
+        msg.send()
+
         return Response()
 
 class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):

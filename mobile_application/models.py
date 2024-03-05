@@ -240,6 +240,10 @@ class BaseApplication(models.Model):
 
     comment = models.TextField(null=True, blank=True)
 
+    def schedule_build(self):
+        self.status = AppStatus.QUEUED
+        self.save()
+
     class Meta(object):
         abstract = True
 

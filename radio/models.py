@@ -192,6 +192,12 @@ class SelfHostedRadio(BaseRadio):
     def price(self):
         if self.custom_price is not None:
             return self.custom_price
+        if self.is_blocked:
+            return 0
+
+        if self.status != RadioHostingStatus.READY:
+            return 0
+
         if self.user.is_rub():
             return settings.BASE_PRICE_RUB
         return settings.BASE_PRICE_USD
@@ -248,6 +254,8 @@ class HostedRadio(BaseRadio):
     def price(self):
         if self.status != RadioHostingStatus.READY or self.is_demo:
             return 0
+        if self.is_blocked:
+            return 0        
         return self.services.aggregate(Sum('price'))['price__sum'] or 0.
 
     class Meta(object):

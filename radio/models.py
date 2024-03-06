@@ -160,9 +160,10 @@ class BaseRadio(models.Model):
 class SelfHostedRadio(BaseRadio):
     ip = models.GenericIPAddressField(
         "IP Address",
+        unique=True,
         null=False,
         blank=False,
-        max_length=255
+        max_length=255,
     )
     ssh_username = models.CharField(
         "SSH user username",

@@ -124,6 +124,7 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             'name',
             'status',
             'ts_created',
+            'is_trial_period',
             'user',
             'price',
             'ip',

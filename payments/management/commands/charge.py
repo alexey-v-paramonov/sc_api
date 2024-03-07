@@ -1,5 +1,4 @@
 import calendar
-import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import get_template
 from decimal import Decimal
@@ -11,12 +10,13 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from radiotochka.billing import PRICE_PER_EXTRA_GB, PRICE_PER_EXTRA_GB_USD
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = "Charge users daily"
 
     def handle(self, *args, **options):
-        now = datetime.datetime.now()
+        now = timezone.now()
         n_month_days = calendar.monthrange(now.year, now.month)[1]
 
         for user in User.objects.filter(balance__gt=0, is_staff=False):

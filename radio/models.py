@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db.models import Sum
+from django.utils import timezone
 
 class AudioFormat:
     MP3 = "mp3"
@@ -188,6 +189,9 @@ class SelfHostedRadio(BaseRadio):
     is_unbranded = models.BooleanField(
         default=False,
     )
+
+    def is_trial_period(self):
+        return (timezone.now() - self.ts_created).days < settings.FREE_TRIAL_DAYS
 
     def price(self):
         if self.custom_price is not None:

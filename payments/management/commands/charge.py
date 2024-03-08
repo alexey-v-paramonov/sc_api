@@ -27,7 +27,7 @@ class Command(BaseCommand):
             for self_hosted_radio in user.selfhostedradio_set.all():
                 price = self_hosted_radio.price()
                 if price > 0:
-                    daily_price = Decimal(price / Decimal(n_month_days))
+                    daily_price = Decimal(Decimal(price) / Decimal(n_month_days))
                     total_daily += daily_price
                     Charge.objects.create(
                         user=user,
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 # Skip 5 days trial
                 price = hosted_radio.price()
                 if price > 0:
-                    daily_price = price / Decimal(n_month_days)
+                    daily_price = Decimal(price) / Decimal(n_month_days)
                     total_daily += daily_price
                     Charge.objects.create(
                         user=user,

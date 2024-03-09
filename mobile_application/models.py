@@ -249,6 +249,12 @@ class BaseApplication(models.Model):
 
 class AndroidApplication(BaseApplication):
 
+    package_name  = models.CharField(
+        null=True,
+        blank=True,
+        max_length=80
+    )
+
     description_short  = models.CharField(
         null=True,
         blank=True,

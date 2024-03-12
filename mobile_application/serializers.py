@@ -9,8 +9,14 @@ from util.serializers import (
 class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
+    short_package_name = serializers.SerializerMethodField(read_only=True)
+
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
+    def get_short_package_name(self, app):
+        if not app.package_name:
+            return None
+        return app.package_name.replace("ua.radio.", "").replace("center.streaming.", "")
 
     def get_missing_parts(self, app):
         missing_parts = []

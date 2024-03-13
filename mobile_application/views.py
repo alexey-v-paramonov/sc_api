@@ -1,3 +1,6 @@
+from pyfcm import FCMNotification
+
+
 from django.shortcuts import render
 from django.db.models import Max
 from rest_framework.decorators import action
@@ -6,7 +9,8 @@ from django.db.models import Case, When
 from rest_framework import (
     viewsets,
     permissions,
-    routers
+    routers,
+    status
 )
 from django.template.loader import get_template
 from django.core.mail import EmailMessage
@@ -57,9 +61,32 @@ class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def send_push(self, request, pk=None):
+        
         app = self.get_object()
+        title = request.data.get('title')
+        text = request.data.get('text')
+        if not title or not text or not app.package_name:
+            return Response(
+                {"non_field_errors": "bad_params"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        message_payload = {
+            "title": title,
+            "message": text,
+            "awake": "true"
+            # "mutable_content": True
+        }
 
-        return Response()
+        push_service = FCMNotification(api_key=settings.FCM_KEY)
+
+        result = push_service.notify_topic_subscribers(
+            topic_name=app.package_name,
+            badge=1,
+            content_available=True,
+            data_message=message_payload,
+        )
+
+        return Response({"result": result})
 
 
 class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
@@ -74,8 +101,24 @@ class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def send_push(self, request, pk=None):
         app = self.get_object()
+        title = request.data.get('title')
+        text = request.data.get('text')
+        if not title or not text or not app.package_name:
+            return Response(
+                {"non_field_errors": "bad_params"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        return Response()
+        push_service = FCMNotification(api_key=settings.FCM_KEY)
+        result = push_service.notify_topic_subscribers(
+            topic_name=app.package_name,
+            message_title=title,
+            message_body=text,
+            sound="Default",
+            badge=1,
+        )
+
+        return Response({"result": result})
 
 class AppRadioBase:
 

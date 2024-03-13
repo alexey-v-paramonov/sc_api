@@ -55,6 +55,12 @@ class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
     queryset = AndroidApplication.objects.all()
     radio_model = AndroidApplicationRadio
 
+    @action(detail=True, methods=['post'])
+    def send_push(self, request, pk=None):
+        app = self.get_object()
+
+        return Response()
+
 
 class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
     permission_classes = [
@@ -65,6 +71,11 @@ class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
     serializer_class = IosApplicationSerializer
     queryset = IosApplication.objects.all()
     radio_model = IosApplicationRadio
+    @action(detail=True, methods=['post'])
+    def send_push(self, request, pk=None):
+        app = self.get_object()
+
+        return Response()
 
 class AppRadioBase:
 

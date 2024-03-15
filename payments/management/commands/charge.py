@@ -89,8 +89,7 @@ class Command(BaseCommand):
                 template = get_template(template)
                 content = template.render({"balance": round(user.balance, 2), "email": user.email, "currency": user.get_currency_display()})
                 text_content = strip_tags(content)
-                #msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
-                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [settings.ADMIN_EMAIL,])
+                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
                 msg.attach_alternative(content, "text/html")
                 msg.send()
 

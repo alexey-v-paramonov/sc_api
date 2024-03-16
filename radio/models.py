@@ -6,12 +6,12 @@ from django.utils import timezone
 
 class AudioFormat:
     MP3 = "mp3"
-    AACPP = "aac++"
+    AAC = "aac"
     FLAC = "flac"
 
     choices = (
         (MP3, 'Mp3'),
-        (AACPP, 'AAC++'),
+        (AAC, 'AAC'),
         (FLAC, 'FLAC'),
     )
 

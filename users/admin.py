@@ -8,4 +8,4 @@ class UserAdmin(admin.ModelAdmin):
     list_per_page = 1500
     search_fields = ['email', ]
 
-admin.site.register(UserAdmin)
+admin.site.register(User, UserAdmin)

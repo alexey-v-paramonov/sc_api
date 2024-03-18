@@ -16,5 +16,7 @@ class UserAdmin(UserAdmin):
         "currency",
         "language",
     )
+    ordering = ('-date_joined',)
+
 
 admin.site.register(User, UserAdmin)

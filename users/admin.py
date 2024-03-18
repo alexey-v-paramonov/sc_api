@@ -17,6 +17,10 @@ class UserAdmin(UserAdmin):
         "language",
     )
     ordering = ('-date_joined',)
+    exclude = ('username',)
+    fieldsets = (
+        (None, {'fields': ( 'email', 'password',  'balance', 'currency', 'language')}),
+    )
 
 
 admin.site.register(User, UserAdmin)

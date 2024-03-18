@@ -1,9 +1,10 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
 from users.models import User
 
 
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     model = User
     list_per_page = 1500
     search_fields = ['email', ]

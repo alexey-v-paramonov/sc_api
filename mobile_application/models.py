@@ -244,6 +244,9 @@ class BaseApplication(models.Model):
         self.status = AppStatus.QUEUED
         self.save()
 
+    def __str__(self):
+        return f"{self.title} ({self.user.email})"
+
     class Meta(object):
         abstract = True
 

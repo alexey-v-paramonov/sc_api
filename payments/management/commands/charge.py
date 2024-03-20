@@ -2,7 +2,6 @@ import calendar
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import get_template
 from decimal import Decimal
-from users.models import Currency
 
 from users.models import User
 from payments.models import Charge, ChargedServiceType
@@ -11,13 +10,19 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from radiotochka.billing import PRICE_PER_EXTRA_GB, PRICE_PER_EXTRA_GB_USD
 from django.utils import timezone
+from django.core.mail import EmailMessage
 
 class Command(BaseCommand):
     help = "Charge users daily"
 
     def handle(self, *args, **options):
         now = timezone.now()
+        print(f"Charge at {now}")
         n_month_days = calendar.monthrange(now.year, now.month)[1]
+        paid_clients_rub = 0
+        paid_clients_usd = 0
+        total_rub = 0
+        total_usd = 0
 
         for user in User.objects.filter(balance__gt=0, is_staff=False):
             
@@ -77,6 +82,13 @@ class Command(BaseCommand):
                         user.save()
                         print(f"User {user.email} disk usage {above_allowed_du} charged {price_du_day}, balance: {user.balance}")
 
+            if total_daily > 0:
+                if user.is_rub():
+                    total_rub += total_daily
+                    paid_clients_rub += 1
+                else:
+                    total_usd += total_daily
+                    paid_clients_usd += 1
 
             # Send payment notification
             if user.balance < total_daily * 7:
@@ -93,3 +105,8 @@ class Command(BaseCommand):
                 msg.attach_alternative(content, "text/html")
                 msg.send()
 
+        #total_rub = round(total_rub, 2)
+        #total_usd = round(total_usd, 2)
+        content = f"RUB paid clients: {paid_clients_rub}\nUSD paid clients: {paid_clients_usd}\n"
+        msg = EmailMessage(f"Daily Income: {total_rub:.2f} RUB, {total_usd:.2f} USD", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
+        msg.send()

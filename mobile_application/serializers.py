@@ -34,6 +34,9 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
     class Meta:
         model = AndroidApplication
         exclude = ()
+        read_only_fields = (
+            "is_paid",
+        )
 
 
 class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
@@ -56,6 +59,9 @@ class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
     class Meta:
         model = IosApplication
         exclude = ()
+        read_only_fields = (
+            "is_paid",
+        )
 
 class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):
     class Meta:

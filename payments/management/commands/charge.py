@@ -105,8 +105,6 @@ class Command(BaseCommand):
                 msg.attach_alternative(content, "text/html")
                 msg.send()
 
-        #total_rub = round(total_rub, 2)
-        #total_usd = round(total_usd, 2)
         content = f"RUB paid clients: {paid_clients_rub}\nUSD paid clients: {paid_clients_usd}\n"
         msg = EmailMessage(f"Daily Income: {total_rub:.2f} RUB, {total_usd:.2f} USD", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
         msg.send()

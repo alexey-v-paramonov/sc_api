@@ -91,7 +91,20 @@ class Command(BaseCommand):
                     paid_clients_usd += 1
 
             # Send payment notification
-            if user.balance < total_daily * 7:
+            if user.balance <= 0:
+                template = "email/service_stop_en.html"
+                subject = f"Streaming.center: account balance is negative, service have been suspended: {round(user.balance, 2)} {user.get_currency_display()}"
+                if user.is_russian():
+                    template = "email/service_stop_ru.html"
+                    subject = f"Radio-Tochka.com: деньги закончились, услуги приостановлены {round(user.balance, 2)} {user.get_currency_display()}"
+
+                template = get_template(template)
+                content = template.render({"balance": round(user.balance, 2), "email": user.email, "currency": user.get_currency_display()})
+                text_content = strip_tags(content)
+                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+                msg.attach_alternative(content, "text/html")
+                msg.send()
+            elif user.balance < total_daily * 7:
                 template = "email/payment_reminder_en.html"
                 subject = f"Streaming.center: Low balance notification: {round(user.balance, 2)} {user.get_currency_display()}"
                 if user.is_russian():

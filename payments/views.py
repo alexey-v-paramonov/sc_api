@@ -12,7 +12,8 @@ from rest_framework import generics
 from payments.models import InvoiceRequest
 from payments.serializers import InvoiceRequestSerializer
 from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS, SCBilling
-class HostedRadioViewSet(viewsets.ModelViewSet):
+
+class InvoiceRequestViewSet(viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated
     ]
@@ -78,6 +79,6 @@ class UserChargesView(generics.RetrieveAPIView):
 invoice_request_router = routers.SimpleRouter()
 invoice_request_router.register(
     r'invoice_request',
-    HostedRadioViewSet,
+    InvoiceRequestViewSet,
     basename='invoice_request'
 )

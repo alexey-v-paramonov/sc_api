@@ -237,6 +237,11 @@ class BaseApplication(models.Model):
     allow_website_url = models.BooleanField(
         default=True,
     )
+    package_name  = models.CharField(
+        null=True,
+        blank=True,
+        max_length=80
+    )
 
     comment = models.TextField(null=True, blank=True)
 
@@ -252,11 +257,6 @@ class BaseApplication(models.Model):
 
 class AndroidApplication(BaseApplication):
 
-    package_name  = models.CharField(
-        null=True,
-        blank=True,
-        max_length=80
-    )
 
     description_short  = models.CharField(
         null=True,

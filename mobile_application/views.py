@@ -111,7 +111,7 @@ class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
 
         push_service = FCMNotification(api_key=settings.FCM_KEY)
         result = push_service.notify_topic_subscribers(
-            topic_name=app.package_name,
+            topic_name=f"{app.package_name}_ios",
             message_title=title,
             message_body=text,
             sound="Default",

@@ -190,6 +190,12 @@ class SelfHostedRadio(BaseRadio):
         default=False,
     )
 
+    radios_num = models.PositiveIntegerField(
+        "The number of radios on the server",
+        default=0,
+    )
+
+
     def is_trial_period(self):
         return (timezone.now() - self.ts_created).days < settings.FREE_TRIAL_DAYS
 

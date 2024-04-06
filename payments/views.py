@@ -11,7 +11,7 @@ from rest_framework import generics
 
 from payments.models import InvoiceRequest
 from payments.serializers import InvoiceRequestSerializer
-from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS, SCBilling
+from radiotochka.billing import CUSTOM_PAYMENT_OPTIONS, RTBilling
 
 class InvoiceRequestViewSet(viewsets.ModelViewSet):
     permission_classes = [
@@ -45,7 +45,7 @@ class MonthTotalChargeView(generics.RetrieveAPIView):
     ]
 
     def get(self, request, format=None):
-        billing_instance = SCBilling()
+        billing_instance = RTBilling()
         monthly = billing_instance.get_month_charge(self.request.user.email, self.request.user.id, True)
         return Response({
             "month_hosted": round(monthly[0], 2), 
@@ -60,7 +60,7 @@ class UserPaymentsView(generics.RetrieveAPIView):
     ]
 
     def get(self, request, format=None):
-        billing_instance = SCBilling()
+        billing_instance = RTBilling()
         return Response({
             "payments": billing_instance.get_payment_history(self.request.user.id)
         })
@@ -71,7 +71,7 @@ class UserChargesView(generics.RetrieveAPIView):
     ]
 
     def get(self, request, format=None):
-        billing_instance = SCBilling()
+        billing_instance = RTBilling()
         return Response({
             "charges": billing_instance.get_charge_history(self.request.user.id)
         })

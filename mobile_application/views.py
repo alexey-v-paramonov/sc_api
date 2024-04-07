@@ -123,7 +123,7 @@ class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
 class AppRadioBase:
 
     def get_queryset(self):
-        return self.queryset.filter(app_id=self.kwargs["app_id"])
+        return self.queryset.filter(app_id=self.kwargs["app_id"], app__user=self.request.user)
 
     def perform_create(self, serializer):
         instance = serializer.save(app_id=self.kwargs["app_id"])

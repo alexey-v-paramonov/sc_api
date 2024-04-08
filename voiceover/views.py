@@ -12,7 +12,7 @@ from speechkit import SpeechSynthesis
 from ipware import get_client_ip
 
 from radiotochka import billing
-from radio.models import RadioServer
+from radio.models import RadioServer, HostedRadio, SelfHostedRadio
 
 logger = logging.getLogger('tts')
 
@@ -60,24 +60,21 @@ class VoiceoverAPI(APIView):
                 return failed_auth_response
 
             try:
-                user_id = billing_instance.get_user_id_by_login(username)
-            except billing.BillingError:
+                radio = HostedRadio.objects.get(login=username)
+            except HostedRadio.DoesNotExist:
                 return failed_auth_response
         elif billing_type == "standalone":
             try:
-                user_id = billing_instance.get_user_id_by_ip(client_ip)
-            except billing.BillingError:
+                radio = SelfHostedRadio.objects.get(ip=client_ip)
+            except SelfHostedRadio.DoesNotExist:
                 return failed_auth_response
-            logger.info("TTS %s: billing: %s, user ID: %s", client_ip, billing_type, user_id)
+            logger.info("TTS %s: billing: %s, Radio ID: %s", client_ip, billing_type, radio.id)
         else:
             return failed_auth_response
 
-        try:
-            balance = billing_instance.get_user_balance(user_id)
-        except billing.BillingError:
-            return failed_auth_response
+        balance = radio.user.balance
 
-        logger.info("TTS %s: user ID: %s, balance: %s", client_ip, user_id, balance)
+        logger.info("TTS %s: radio ID: %s, balance: %s", client_ip, radio.id, balance)
 
         if balance <= price:
             return Response(
@@ -93,7 +90,7 @@ class VoiceoverAPI(APIView):
         voice = request.data.get("voice", "filipp")
         speed = request.data.get("speed", "1")
         emotion = request.data.get("emotion", "neutral")
-        logger.info("TTS %s: user ID: %s, lang: %s, voice: %s, speed: %s, emotion: %s", client_ip, user_id, lang, voice, speed, emotion)
+        logger.info("TTS %s: radio ID: %s, lang: %s, voice: %s, speed: %s, emotion: %s", client_ip, radio.id, lang, voice, speed, emotion)
 
         session = Session.from_api_key(settings.SPEECHKIT_API_KEY, settings.SPEECHKIT_FOLDER_ID)
         synthesizeAudio = SpeechSynthesis(session)
@@ -122,8 +119,10 @@ class VoiceoverAPI(APIView):
              ], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
         lame_output = process.communicate(input=pcm_buff)[0]
-        base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output).decode('utf-8')}" 
-        billing_instance.update_client_balance(user_id, balance - price)
+        base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output).decode('utf-8')}"
+        radio.user.balance = balance - price
+        radio.user.balance.save()
+        # billing_instance.update_client_balance(user_id, balance - price)
 
         return Response({
             "format": "mp3",

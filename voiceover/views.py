@@ -13,6 +13,8 @@ from ipware import get_client_ip
 
 from radiotochka import billing
 from radio.models import RadioServer, HostedRadio, SelfHostedRadio
+from payments.models import ChargedServiceType, Charge
+from users.models import Currency
 
 logger = logging.getLogger('tts')
 
@@ -45,7 +47,7 @@ class VoiceoverAPI(APIView):
         if not text:
             return Response({"text": "required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        billing_instance = billing.RTBilling()
+        # billing_instance = billing.RTBilling()
         price = billing.SPEECHKIT_PRICE_PER_SYMBOL * len(text)
         logger.info("TTS %s: price: %s", client_ip, price)
 
@@ -90,6 +92,7 @@ class VoiceoverAPI(APIView):
         voice = request.data.get("voice", "filipp")
         speed = request.data.get("speed", "1")
         emotion = request.data.get("emotion", "neutral")
+        currency = Currency.RUB
         logger.info("TTS %s: radio ID: %s, lang: %s, voice: %s, speed: %s, emotion: %s", client_ip, radio.id, lang, voice, speed, emotion)
 
         session = Session.from_api_key(settings.SPEECHKIT_API_KEY, settings.SPEECHKIT_FOLDER_ID)
@@ -122,6 +125,13 @@ class VoiceoverAPI(APIView):
         base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output).decode('utf-8')}"
         radio.user.balance = balance - price
         radio.user.balance.save()
+        Charge.objects.create(
+            user=radio.user,
+            service_type=ChargedServiceType.VOICEOVER,
+            description=str(len(text)), 
+            price=price,
+            currency=currency
+        )
         # billing_instance.update_client_balance(user_id, balance - price)
 
         return Response({

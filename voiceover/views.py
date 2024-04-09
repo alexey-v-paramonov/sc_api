@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 import subprocess
 import base64
@@ -71,7 +72,7 @@ class VoiceoverAPI(APIView):
             return failed_auth_response
 
         balance = radio.user.balance
-        price = (settings.SPEECHKIT_PRICE_PER_SYMBOL_RUB if radio.user.is_rub() else settings.SPEECHKIT_PRICE_PER_SYMBOL_USD)  * len(text)
+        price = Decimal((settings.SPEECHKIT_PRICE_PER_SYMBOL_RUB if radio.user.is_rub() else settings.SPEECHKIT_PRICE_PER_SYMBOL_USD)  * len(text))
 
         logger.info("TTS %s: radio ID: %s, balance: %s, price: %s", client_ip, radio.id, balance, price)
 
@@ -120,7 +121,7 @@ class VoiceoverAPI(APIView):
         lame_output = process.communicate(input=pcm_buff)[0]
         base64_audio = f"data:audio/mpeg;base64,{base64.b64encode(lame_output).decode('utf-8')}"
         radio.user.balance = balance - price
-        radio.user.balance.save()
+        radio.user.save()
         Charge.objects.create(
             user=radio.user,
             service_type=ChargedServiceType.VOICEOVER,

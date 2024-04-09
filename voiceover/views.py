@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from speechkit import Session
 from speechkit import SpeechSynthesis
 from ipware import get_client_ip
+from django.utils import timezone
 
 from radio.models import RadioServer, HostedRadio, SelfHostedRadio
 from payments.models import ChargedServiceType, Charge
@@ -27,7 +28,7 @@ class VoiceoverAPI(APIView):
     def post(self, request, format=None):
 
         client_ip, _ = get_client_ip(request)
-        logger.info("##### New TTS request from %s", client_ip)
+        logger.info("##### New TTS request from %s, time: %s", client_ip, timezone.now())
         failed_auth_response = Response(
             {"auth": "failed"},
             status=status.HTTP_400_BAD_REQUEST

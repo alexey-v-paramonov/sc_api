@@ -27,7 +27,7 @@ class ChargedServiceType:
     RADIO_SELF_HOSTED = 1
     RADIO_HOSTED_STREAM = 2
     RADIO_HOSTED_DU = 3
-    VOICEOVER = 3
+    VOICEOVER = 4
 
     choices = (
         (OTHER, 'Other services'),

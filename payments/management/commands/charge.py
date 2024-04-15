@@ -104,7 +104,7 @@ class Command(BaseCommand):
                 msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
                 msg.attach_alternative(content, "text/html")
                 msg.send()
-            elif user.balance < total_daily * 7:
+            elif user.balance < total_daily * 5:
                 template = "email/payment_reminder_en.html"
                 subject = f"Streaming.center: Low balance notification: {round(user.balance, 2)} {user.get_currency_display()}"
                 if user.is_russian():

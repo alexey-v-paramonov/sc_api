@@ -41,7 +41,7 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
     
     class Meta:
         model = User
-        fields = ('password', 'email',)
+        fields = ('password', 'email', 'subscribed')
 
 class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
@@ -82,7 +82,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
     
     class Meta:
         model = User
-        fields = ('password', 'email', 'id', 'token', 'language', 'currency', 'balance', 'agreement_accepted')
+        fields = ('password', 'email', 'id', 'token', 'language', 'currency', 'balance', 'agreement_accepted', 'subscribed')
 
 class PasswordResetConfirmSerializer(CustomErrorMessagesSerializer):
 

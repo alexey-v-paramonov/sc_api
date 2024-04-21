@@ -44,6 +44,9 @@ class User(AbstractUser):
     agreement_accepted = models.BooleanField(
         default=False,
     )
+    subscribed = models.BooleanField(
+        default=True,
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

@@ -13,6 +13,10 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
+    def validate_allow_website_url(self, _):
+        # Parse formData boolean value
+        return self.initial_data.get('allow_website_url', "true") == 'true'
+
     def get_short_package_name(self, app):
         if not app.package_name:
             return None
@@ -43,6 +47,10 @@ class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+
+    def validate_allow_website_url(self, _):
+        # Parse formData boolean value
+        return self.initial_data.get('allow_website_url', "true") == 'true'
 
     def get_missing_parts(self, app):
         missing_parts = []

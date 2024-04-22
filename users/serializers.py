@@ -46,7 +46,7 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
 class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
     password = serializers.CharField(
-          write_only=True,
+          write_only=True
     )
     token = serializers.SerializerMethodField(read_only=True)
     balance = serializers.SerializerMethodField()

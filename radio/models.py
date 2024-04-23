@@ -209,12 +209,22 @@ class SelfHostedRadio(BaseRadio):
             return 0
 
         if self.user.is_rub():
+            price = settings.BASE_PRICE_RUB
+            if self.is_unbranded:
+                price += 300
+
             if self.radios_num > 5:
-                return (self.radios_num - 5) * 80 + settings.BASE_PRICE_RUB
-            return settings.BASE_PRICE_RUB
+                return (self.radios_num - 5) * 80 + price
+            return price
 
         if self.radios_num > 5:
-            return (self.radios_num - 5) + settings.BASE_PRICE_USD
+            price = settings.BASE_PRICE_USD
+            if self.is_unbranded:
+                price += 5
+
+            if self.radios_num > 5:
+                return (self.radios_num - 5) + price
+            return price
 
 
 class HostedRadio(BaseRadio):

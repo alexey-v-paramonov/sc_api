@@ -137,6 +137,7 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             'ssh_password',
             'ssh_port',
             'custom_price',
+            'is_unbranded'
         )
         extra_kwargs = {
             "price": {"read_only": True},

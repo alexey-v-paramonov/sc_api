@@ -35,6 +35,13 @@ class UsersView(viewsets.ModelViewSet):
 
         return super().get_permissions()
 
+    @action(detail=True, methods=['post'])
+    def request_account_deletion(self, request, pk=None):
+        user = self.get_object()
+        EmailMessage("User requested to delete his account", f"User: {user.email}", settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,]).send()
+        return Response()
+
+
     @action(detail=True, methods=['put'])
     def profile(self, request, pk=None):
         serializer = UserSettingsSerializer(data=request.data, instance=self.get_object())

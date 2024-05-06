@@ -24,6 +24,8 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
     
     def to_internal_value(self, data):
         data['server'] = RadioServer.objects.filter(available=True).first().id
+        data['login'] = data['login'].lower()
+        
         return super().to_internal_value(data)
         
     def validate_is_demo(self, is_demo):

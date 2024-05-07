@@ -29,7 +29,7 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
         return super().to_internal_value(data)
 
     def validate_login(self, login):
-        if login.isdigit():
+        if login.isdigit() or not login[0].isalpha():
             raise serializers.ValidationError("regex")
 
         return login

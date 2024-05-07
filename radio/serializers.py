@@ -27,6 +27,12 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
         data['login'] = data['login'].lower()
         
         return super().to_internal_value(data)
+
+    def validate_login(self, login):
+        if login.isdigit():
+            raise serializers.ValidationError("regex")
+
+        return login
         
     def validate_is_demo(self, is_demo):
         if HostedRadio.objects.filter(user=self.context['request'].user, is_demo=True).exists():

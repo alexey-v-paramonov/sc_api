@@ -153,6 +153,7 @@ class BaseRadio(models.Model):
     )
     comment = models.TextField(null=True, blank=True)
     debug_msg = models.TextField(null=True, blank=True)
+    custom_price = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
 
     class Meta(object):
         abstract = True
@@ -185,7 +186,7 @@ class SelfHostedRadio(BaseRadio):
         default=22,
         null=False,
     )
-    custom_price = models.DecimalField(max_digits=12, decimal_places=6, blank=True, null=True)
+    
     is_unbranded = models.BooleanField(
         default=False,
     )
@@ -200,13 +201,15 @@ class SelfHostedRadio(BaseRadio):
         return (timezone.now() - self.ts_created).days < settings.FREE_TRIAL_DAYS
 
     def price(self):
-        if self.custom_price is not None:
-            return self.custom_price
         if self.is_blocked:
             return 0
 
+
         if self.status != RadioHostingStatus.READY:
             return 0
+
+        if self.custom_price is not None:
+            return self.custom_price
 
         if self.user.is_rub():
             price = settings.BASE_PRICE_RUB
@@ -276,10 +279,15 @@ class HostedRadio(BaseRadio):
         return disk_quota.du
 
     def price(self):
+
         if self.status != RadioHostingStatus.READY or self.is_demo:
             return 0
         if self.is_blocked:
             return 0        
+
+        if self.custom_price is not None:
+            return self.custom_price
+
         return self.services.aggregate(Sum('price'))['price__sum'] or 0.
 
     class Meta(object):

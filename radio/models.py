@@ -47,6 +47,32 @@ class CopyrightType:
         (TEST, 'Test account'),
     )
 
+class BrandedURLStatus:
+
+    INACTIVE = 0
+    WORKING = 1
+    ACTIVE = 2
+
+    ERROR_DNS = 3
+    ERROR_APACHE = 4
+    ERROR_SSL = 5
+    ERROR_NGINX = 6
+    ERROR_PANEL = 7
+    ERROR_STREAM = 8
+    ERROR_OTHER = 9
+
+    choices = (
+        (INACTIVE, "Inactive"),
+        (WORKING, "Working"),
+        (ACTIVE, "Active"),
+        (ERROR_DNS, "Error setting up DNS"),
+        (ERROR_APACHE, "Error configuring Apache"),
+        (ERROR_SSL, "Error setting up SSL certificate"),
+        (ERROR_NGINX, "Error configuring Nginx"),
+        (ERROR_PANEL, "Error in broadcaster interface"),
+        (ERROR_STREAM, "Other error"),
+    )
+
 
 class RadioHostingStatus:
 
@@ -272,6 +298,13 @@ class HostedRadio(BaseRadio):
         default=False,
     )
     disk_usage = models.PositiveIntegerField("Disk usage", null=False, default=0, blank=True)
+
+    branded_url = models.CharField(blank=True, max_length=255, null=True)
+    branded_url_status = models.PositiveIntegerField(
+        default=BrandedURLStatus.INACTIVE,
+        choices=BrandedURLStatus.choices
+    )
+
     def get_disk_quota(self):
         disk_quota = self.services.filter(service_type=ServiceType.DISK).last()
         if not disk_quota:

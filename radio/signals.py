@@ -7,7 +7,7 @@ from django.conf import settings
 
 
 @receiver(post_save, sender=HostedRadio)
-def send_email_notification(sender, instance, created, **kwargs):
+def send_email_notification_hosted(sender, instance, created, **kwargs):
     if created:
         template = get_template('email/hosted_created.html')
         content = template.render({'radio': instance})
@@ -15,7 +15,7 @@ def send_email_notification(sender, instance, created, **kwargs):
         msg.send()
 
 @receiver(post_save, sender=SelfHostedRadio)
-def send_email_notification(sender, instance, created, **kwargs):
+def send_email_notification_selfhosted(sender, instance, created, **kwargs):
     if created:
         template = get_template('email/self_hosted_created.html')
         content = template.render({'radio': instance})

@@ -408,6 +408,14 @@ class ApplicationRadioChannelBase(models.Model):
         default=0
     )
 
+    encoding = models.CharField(
+        "Stream metadata character encoding, mostly utf8/cp1251",
+        default="utf8",
+        null=False,
+        blank=True,
+        max_length=10
+    )
+
     class Meta(object):
         abstract = True
 

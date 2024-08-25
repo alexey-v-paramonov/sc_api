@@ -36,10 +36,12 @@ class ServerType:
 
     SHOUTCAST = 'shoutcast'
     ICECAST = 'icecast'
+    HLS = 'hls'
 
     choices = (
         (SHOUTCAST, 'Shoutcast'),
         (ICECAST, 'Icecast'),
+        (HLS, 'HLS'),
     )
 
 class BaseApplication(models.Model):

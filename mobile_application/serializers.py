@@ -1,5 +1,10 @@
+import pathlib
+from urllib.parse import urlparse
+
 from rest_framework import serializers
-from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio, AndroidApplicationRadioChannel, IosApplicationRadioChannel
+from rest_framework.exceptions import ValidationError
+
+from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio, AndroidApplicationRadioChannel, IosApplicationRadioChannel, ServerType
 
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
@@ -72,6 +77,19 @@ class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
         )
 
 class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):
+
+    def validate(self, data):
+        server_type = data.get('server_type', None)
+        stream_url = data.get('stream_url', None)
+
+        if stream_url and server_type == ServerType.HLS:
+            path = urlparse(stream_url).path
+            extension = pathlib.Path(path).suffix.lower()
+            if extension != ".m3u8":
+                raise ValidationError("hls_not_m3u8")
+
+        return data
+
     class Meta:
         model = AndroidApplicationRadioChannel
         exclude = ()

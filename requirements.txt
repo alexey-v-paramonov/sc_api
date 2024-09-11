@@ -11,4 +11,4 @@ Jinja2==3.1.2
 paramiko==3.3.1
 pillow==10.2.0
 pytz==2024.1
-pyfcm==1.5.4
+pyfcm==2.0.6

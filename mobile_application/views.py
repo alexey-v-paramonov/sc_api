@@ -77,12 +77,10 @@ class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
             # "mutable_content": True
         }
 
-        push_service = FCMNotification(api_key=settings.FCM_KEY)
+        push_service = FCMNotification(service_account_file=settings.FCM_SERVICE_JSON_PATH, project_id=settings.FCM_PROJECT_ID)
 
-        result = push_service.notify_topic_subscribers(
+        result = push_service.notify(
             topic_name=app.package_name,
-            badge=1,
-            content_available=True,
             data_message=message_payload,
         )
 
@@ -109,13 +107,14 @@ class IosApplicationViewSet(AppBase, viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        push_service = FCMNotification(api_key=settings.FCM_KEY)
-        result = push_service.notify_topic_subscribers(
+        push_service = FCMNotification(service_account_file=settings.FCM_SERVICE_JSON_PATH, project_id=settings.FCM_PROJECT_ID)
+
+        result = push_service.notify(
             topic_name=f"{app.package_name}_ios",
-            message_title=title,
-            message_body=text,
-            sound="Default",
-            badge=1,
+            notification_title=title,
+            notification_body=text,
+            #sound="Default",
+            #badge=1,
         )
 
         return Response({"result": result})

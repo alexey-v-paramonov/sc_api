@@ -81,7 +81,7 @@ class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
 
         result = push_service.notify(
             topic_name=app.package_name,
-            data_message=message_payload,
+            data_payload=message_payload,
         )
 
         return Response({"result": result})

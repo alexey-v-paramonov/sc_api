@@ -1,5 +1,6 @@
 import pathlib
 from urllib.parse import urlparse
+from PIL import Image
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -10,17 +11,40 @@ from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
 
-
-class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
-
-    missing_parts = serializers.SerializerMethodField(read_only=True)
-    short_package_name = serializers.SerializerMethodField(read_only=True)
-
+class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     def validate_allow_website_url(self, _):
         # Parse formData boolean value
         return self.initial_data.get('allow_website_url', "true") == 'true'
+
+    def validate_icon(self, i):
+        try:
+            im = Image.open(i)
+        except:
+            raise ValidationError("image_is_not_png")
+
+        if im.format != 'PNG':
+            raise ValidationError("image_is_not_png")
+        return i
+
+    def validate_logo(self, i):
+
+        try:
+            im = Image.open(i)
+        except:
+            raise ValidationError("image_is_not_png")
+
+        if im.format != 'PNG':
+            raise ValidationError("image_is_not_png")
+
+        return i
+
+class AndroidApplicationSerializer(ApplicationBaseSerializer):
+
+    missing_parts = serializers.SerializerMethodField(read_only=True)
+    short_package_name = serializers.SerializerMethodField(read_only=True)
+
 
     def get_short_package_name(self, app):
         if not app.package_name:
@@ -51,11 +75,17 @@ class AndroidApplicationSerializer(CustomErrorMessagesModelSerializer):
 class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
-    build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
-    def validate_allow_website_url(self, _):
-        # Parse formData boolean value
-        return self.initial_data.get('allow_website_url', "true") == 'true'
+    def validate_icon(self, i):
+        try:
+            im = Image.open(i)
+        except:
+            raise ValidationError("image_is_not_png")
+
+        if im.mode == 'RGBA':
+            raise ValidationError("png_is_transparent")
+
+        return super().validate_icon(i)
 
     def get_missing_parts(self, app):
         missing_parts = []

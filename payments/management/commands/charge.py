@@ -34,10 +34,13 @@ class Command(BaseCommand):
                 if price > 0:
                     daily_price = Decimal(Decimal(price) / Decimal(n_month_days))
                     total_daily += daily_price
+                    description = self_hosted_radio.ip
+                    if self_hosted_radio.domain:
+                        description += f" ({self_hosted_radio.domain})"
                     Charge.objects.create(
                         user=user,
                         service_type=ChargedServiceType.RADIO_SELF_HOSTED,
-                        description=self_hosted_radio.ip,
+                        description=description,
                         currency=user.currency,
                         price=daily_price
                     )

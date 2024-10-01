@@ -1,3 +1,5 @@
+import random
+from time import time
 from rest_framework import serializers
 from users.models import User
 from util.serializers import (
@@ -14,6 +16,7 @@ from django.template.loader import get_template
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
 
 class EmailValidatiorBase:
 
@@ -64,6 +67,27 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
         if 'password' in validated_data:
             user.set_password(validated_data['password'])
             user.save()
+        # No password: generate the password automatically, create demo account
+        else:
+            passstr = "qwertyuiopasdfghjkzxcvbnmQWERTYUIPASDFGHJKLZXCVBNM234567890"
+            random.seed(time())
+            pwd = ""
+            for i in range(0, 12):
+                c = random.randint(0, len(passstr) - 1)
+                pwd = pwd + passstr[c]
+            user.set_password(pwd)
+            user.save()
+            validated_data['password'] = pwd
+            HostedRadio.objects.create(
+                server=RadioServer.objects.filter(available=True).first(),
+                login=f"radio{user.id}",
+                initial_audio_format=AudioFormat.MP3,
+                initial_bitrate=AudioFormat.MP3,
+                initial_listeners=5,
+                initial_du=5,
+                copyright_type=CopyrightType.TEST,
+                is_demo=True,
+            )
 
         template = "email/registration/reg_en.html"
         subject = "Welcome to Streaming.center!"

@@ -154,7 +154,8 @@ CORS_ORIGIN_WHITELIST = (
     'https://www.radio-tochka.com',
     'http://localhost',
     'http://localhost:3000',
-    'http://127.0.0.1',
+    'http://localhost:1313',
+    'http://localhost:1314',
     'https://app.streaming.center',
     'https://app.radio-tochka.com',
 )

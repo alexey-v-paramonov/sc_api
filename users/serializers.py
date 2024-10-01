@@ -79,6 +79,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
             user.save()
             validated_data['password'] = pwd
             HostedRadio.objects.create(
+                user=user,
                 server=RadioServer.objects.filter(available=True).first(),
                 login=f"radio{user.id}",
                 initial_audio_format=AudioFormat.MP3,

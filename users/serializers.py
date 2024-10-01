@@ -49,7 +49,7 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
 class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
     password = serializers.CharField(
-          write_only=True
+          write_only=True, required=False
     )
     token = serializers.SerializerMethodField(read_only=True)
     balance = serializers.SerializerMethodField()
@@ -82,7 +82,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
                 server=RadioServer.objects.filter(available=True).first(),
                 login=f"radio{user.id}",
                 initial_audio_format=AudioFormat.MP3,
-                initial_bitrate=AudioFormat.MP3,
+                initial_bitrate=128,
                 initial_listeners=5,
                 initial_du=5,
                 copyright_type=CopyrightType.TEST,

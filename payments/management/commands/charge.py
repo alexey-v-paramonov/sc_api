@@ -37,16 +37,23 @@ class Command(BaseCommand):
                     description = self_hosted_radio.ip
                     if self_hosted_radio.domain:
                         description += f" ({self_hosted_radio.domain})"
-                    Charge.objects.create(
+
+                    if not Charge.objects.filter(
                         user=user,
                         service_type=ChargedServiceType.RADIO_SELF_HOSTED,
-                        description=description,
-                        currency=user.currency,
-                        price=daily_price
-                    )
-                    user.balance = user.balance - daily_price
-                    user.save()
-                    print(f"User {user.email} self hosted radio charged {daily_price}, balance: {user.balance}")
+                        created__date=timezone.now().date(),
+                        description=description
+                    ).exists():
+                        Charge.objects.create(
+                            user=user,
+                            service_type=ChargedServiceType.RADIO_SELF_HOSTED,
+                            description=description,
+                            currency=user.currency,
+                            price=daily_price
+                        )
+                        user.balance = user.balance - daily_price
+                        user.save()
+                        print(f"User {user.email} self hosted radio charged {daily_price}, balance: {user.balance}")
 
             # Hosted radios
             for hosted_radio in user.hostedradio_set.exclude(is_demo=True):
@@ -55,16 +62,22 @@ class Command(BaseCommand):
                 if price > 0:
                     daily_price = Decimal(price) / Decimal(n_month_days)
                     total_daily += daily_price
-                    Charge.objects.create(
+                    if not Charge.objects.filter(
                         user=user,
                         service_type=ChargedServiceType.RADIO_HOSTED_STREAM,
+                        created__date=timezone.now().date(),
                         description=hosted_radio.login,
-                        currency=user.currency,
-                        price=daily_price
-                    )
-                    user.balance = user.balance - daily_price
-                    user.save()
-                    print(f"User {user.email} hosted radio {hosted_radio.login} charged {daily_price}, balance: {user.balance}")
+                    ).exists():
+                        Charge.objects.create(
+                            user=user,
+                            service_type=ChargedServiceType.RADIO_HOSTED_STREAM,
+                            description=hosted_radio.login,
+                            currency=user.currency,
+                            price=daily_price
+                        )
+                        user.balance = user.balance - daily_price
+                        user.save()
+                        print(f"User {user.email} hosted radio {hosted_radio.login} charged {daily_price}, balance: {user.balance}")
                     # Disk usage extra
                     disk_quota = hosted_radio.get_disk_quota()
                     disk_quota_mb = disk_quota * 1024.
@@ -73,17 +86,22 @@ class Command(BaseCommand):
                         du_price = PRICE_PER_EXTRA_GB_USD if user.is_usd() else PRICE_PER_EXTRA_GB
                         price_du_day = du_price / n_month_days * (above_allowed_du / 1024.)
                         total_daily += Decimal(price_du_day)
-                        Charge.objects.create(
+                        if not Charge.objects.filter(
                             user=user,
                             service_type=ChargedServiceType.RADIO_HOSTED_DU,
-                            description=str(above_allowed_du),
-                            currency=user.currency,
-                            price=price_du_day
-                        )
+                            created__date=timezone.now().date(),
+                        ).exists():
+                            Charge.objects.create(
+                                user=user,
+                                service_type=ChargedServiceType.RADIO_HOSTED_DU,
+                                description=str(above_allowed_du),
+                                currency=user.currency,
+                                price=price_du_day
+                            )
 
-                        user.balance = user.balance - Decimal(price_du_day)
-                        user.save()
-                        print(f"User {user.email} disk usage {above_allowed_du} charged {price_du_day}, balance: {user.balance}")
+                            user.balance = user.balance - Decimal(price_du_day)
+                            user.save()
+                            print(f"User {user.email} disk usage {above_allowed_du} charged {price_du_day}, balance: {user.balance}")
 
             if total_daily > 0:
                 if user.is_rub():

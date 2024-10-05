@@ -246,14 +246,14 @@ class SelfHostedRadio(BaseRadio):
                 return (self.radios_num - 5) * 80 + price
             return price
 
-        if self.radios_num > 5:
-            price = settings.BASE_PRICE_USD
-            if self.is_unbranded:
-                price += 5
+        # Eng
+        price = settings.BASE_PRICE_USD
+        if self.is_unbranded:
+            price += 5
 
-            if self.radios_num > 5:
-                return (self.radios_num - 5) + price
-            return price
+        if self.radios_num > 5:
+            return (self.radios_num - 5) + price
+        return price
 
 
 class HostedRadio(BaseRadio):

@@ -72,7 +72,7 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
         )
 
 
-class IosApplicationSerializer(CustomErrorMessagesModelSerializer):
+class IosApplicationSerializer(ApplicationBaseSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
 

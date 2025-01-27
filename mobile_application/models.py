@@ -272,7 +272,7 @@ class AndroidApplication(BaseApplication):
             price = 15000
             if not self.is_sc_publishing:
                 price += 1500
-            if self.copyright_type != 1:
+            if self.copyright_type != CopyrightType.SC:
                 price += 1500
 
         elif self.user.is_usd():

@@ -260,7 +260,7 @@ class BaseApplication(models.Model):
 class AndroidApplication(BaseApplication):
 
 
-    description_short  = models.CharField(
+    description_short = models.CharField(
         null=True,
         blank=True,
         max_length=80
@@ -279,7 +279,7 @@ class AndroidApplication(BaseApplication):
             price = 250
             if not self.is_sc_publishing:
                 price += 30
-            if self.copyright_type != 1:
+            if self.copyright_type != CopyrightType.SC:
                 price += 30
 
         return price
@@ -296,12 +296,12 @@ class IosApplication(BaseApplication):
     def price(self):
         if self.user.is_rub():
             price = 18000
-            if self.copyright_type != 1:
+            if self.copyright_type != CopyrightType.SC:
                 price += 1500
 
         elif self.user.is_usd():
             price = 300
-            if self.copyright_type != 1:
+            if self.copyright_type != CopyrightType.SC:
                 price += 30
 
         return price

@@ -31,6 +31,18 @@ class CopyrightType:
         (CUSTOM, 'Custom'),
     )
 
+class PublicationType:
+
+    SC_ACCOUNT = 0
+    THIRDPARTY_ACCOUNT = 1
+    NO = 2
+
+    choices = (
+        (SC_ACCOUNT, 'Streaming.Center developer account'),
+        (THIRDPARTY_ACCOUNT, 'Third party developer account'),
+        (NO, 'No need to publish the app'),
+    )
+
 
 class ServerType:
 
@@ -227,8 +239,11 @@ class BaseApplication(models.Model):
         max_length=255
     )
 
-    is_sc_publishing = models.BooleanField(
+    publication_type = models.PositiveSmallIntegerField(
         null=True,
+        blank=True,
+        choices=PublicationType.choices,
+        default=PublicationType.SC_ACCOUNT,
     )
 
     store_url = models.URLField(null=True, blank=True)
@@ -270,14 +285,14 @@ class AndroidApplication(BaseApplication):
     def price(self):
         if self.user.is_rub():
             price = 15000
-            if not self.is_sc_publishing:
+            if self.publication_type in (PublicationType.SC_ACCOUNT, PublicationType.THIRDPARTY_ACCOUNT):   
                 price += 1500
             if self.copyright_type != CopyrightType.SC:
                 price += 1500
 
         elif self.user.is_usd():
             price = 250
-            if not self.is_sc_publishing:
+            if self.publication_type in (PublicationType.SC_ACCOUNT, PublicationType.THIRDPARTY_ACCOUNT):
                 price += 30
             if self.copyright_type != CopyrightType.SC:
                 price += 30

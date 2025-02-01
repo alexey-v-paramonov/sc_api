@@ -284,18 +284,18 @@ class AndroidApplication(BaseApplication):
     @property
     def price(self):
         if self.user.is_rub():
-            price = 15000
+            price = 17000
             if self.publication_type in (PublicationType.SC_ACCOUNT, PublicationType.THIRDPARTY_ACCOUNT):   
-                price += 1500
+                price += 3000
             if self.copyright_type != CopyrightType.SC:
-                price += 1500
+                price += 2500
 
         elif self.user.is_usd():
             price = 250
             if self.publication_type in (PublicationType.SC_ACCOUNT, PublicationType.THIRDPARTY_ACCOUNT):
-                price += 30
+                price += 40
             if self.copyright_type != CopyrightType.SC:
-                price += 30
+                price += 40
 
         return price
 
@@ -310,14 +310,14 @@ class IosApplication(BaseApplication):
     @property
     def price(self):
         if self.user.is_rub():
-            price = 18000
+            price = 20000
             if self.copyright_type != CopyrightType.SC:
-                price += 1500
+                price += 2500
 
         elif self.user.is_usd():
             price = 300
             if self.copyright_type != CopyrightType.SC:
-                price += 30
+                price += 40
 
         return price
 

@@ -222,6 +222,12 @@ class SelfHostedRadio(BaseRadio):
         default=0,
     )
 
+    fixed_version = models.CharField(
+        "Fixed version number (for old lifetime licenses)",
+        null=True,
+        blank=True,
+        max_length=20
+    )
 
     def is_trial_period(self):
         return (timezone.now() - self.ts_created).days < settings.FREE_TRIAL_DAYS

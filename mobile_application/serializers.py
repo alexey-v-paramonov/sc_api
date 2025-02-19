@@ -11,8 +11,10 @@ from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
 
+print(dir(serializers))
 class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    price = serializers.IntegerField(read_only=True)
 
     def validate_allow_website_url(self, _):
         # Parse formData boolean value

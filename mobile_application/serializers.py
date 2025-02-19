@@ -69,6 +69,7 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
         exclude = ()
         read_only_fields = (
             "is_paid",
+            "price",
         )
 
 
@@ -104,6 +105,7 @@ class IosApplicationSerializer(ApplicationBaseSerializer):
         exclude = ()
         read_only_fields = (
             "is_paid",
+            "price",
         )
 
 class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):

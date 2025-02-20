@@ -50,7 +50,9 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
     test_days_left = serializers.SerializerMethodField(read_only=True)
 
     def get_test_days_left(self, app):
-        return 5 - min( abs((app.created - timezone.now()).days), 5)
+        if app.is_paid:
+            return 0
+        return 5 - min( abs((app.created - timezone.now()).days + 1), 5)
 
     def get_short_package_name(self, app):
         if not app.package_name:

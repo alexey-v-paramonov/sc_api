@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from radio.models import AudioFormat
+from django.utils import timezone
 
 
 class AppStatus:
@@ -261,6 +262,7 @@ class BaseApplication(models.Model):
     )
 
     comment = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=False, blank=True)
 
     def schedule_build(self):
         self.status = AppStatus.QUEUED

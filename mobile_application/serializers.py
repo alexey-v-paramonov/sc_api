@@ -1,6 +1,7 @@
 import pathlib
 from urllib.parse import urlparse
 from PIL import Image
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError

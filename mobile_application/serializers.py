@@ -68,8 +68,7 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
             missing_parts.append('radio')
 
         if not app.is_paid and app.user.balance < app.price:
-            if self.get_test_days_left(app) <= 0:
-                missing_parts.append('payment')
+            missing_parts.append('payment')
         return missing_parts
 
 

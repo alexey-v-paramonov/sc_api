@@ -84,6 +84,10 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
 class IosApplicationSerializer(ApplicationBaseSerializer):
 
     missing_parts = serializers.SerializerMethodField(read_only=True)
+    test_days_left = serializers.SerializerMethodField(read_only=True)
+
+    def get_test_days_left(self, app):
+        return 0
 
     def validate_icon(self, i):
         try:

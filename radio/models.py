@@ -391,3 +391,68 @@ class PortRegistry(models.Model):
         unique_together = (
             ("radio", "port"),
         )
+
+class SocialNetwork:
+
+    WEBSITE = "website"
+    INSTAGRAM = "instagram"
+    FACEBOOK = "facebook"
+    YOUTUBE = "youtube"
+    WATSAPP = "watsapp"
+    TELEGRAM = "telegram"
+    PHONE = "phone"
+    EMAIL = "email"
+    LINKEDIN = "linkedin"
+    TOKTOK = "tiktok"
+    PINTEREST = "pinterest"
+    SNAPCHAT = "snapchat"
+    REDDIT = "reddit"
+    DISCORD = "discord"
+    WECHAT = "wechat"
+    X = "x"
+    TWITCH = "twitch"
+    VK = "vk"
+    RUTUBE = "rutube"
+    OK = "ok"
+
+    choices = (
+        (WEBSITE, "Website"),
+        (INSTAGRAM, "Instagram"),
+        (FACEBOOK, "Facebook"),
+        (YOUTUBE, "YouTube"),
+        (WATSAPP, "WhatsApp"),
+        (TELEGRAM, "Telegram"),
+        (PHONE, "Phone"),
+        (EMAIL, "Email"),
+        (LINKEDIN, "LinkedIn"),
+        (TOKTOK, "TikTok"),
+        (PINTEREST, "Pinterest"),
+        (SNAPCHAT, "Snapchat"),
+        (REDDIT, "Reddit"),
+        (DISCORD, "Discord"),
+        (WECHAT, "WeChat"),
+        (X, "X"),
+        (TWITCH, "Twitch"),
+        (VK, "VK"),
+        (RUTUBE, "RuTube"),
+        (OK, "Odnoklassniki"),
+    )
+
+
+class RadioSocialNetworkLink(models.Model):
+
+    network = models.CharField(
+        "Social network",
+        null=False,
+        blank=False,
+        max_length=30,
+        choices=SocialNetwork.choices,
+    )
+
+    url = models.URLField(null=True, blank=True)
+
+    order = models.PositiveSmallIntegerField(
+        null=False,
+        blank=False,
+        default=0
+    )

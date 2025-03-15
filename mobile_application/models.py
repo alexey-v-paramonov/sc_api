@@ -457,3 +457,100 @@ class IosApplicationRadioChannel(ApplicationRadioChannelBase):
         null=False,
         on_delete=models.deletion.CASCADE
     )
+
+class SocialType:
+
+    WEBSITE = "website"
+    INSTAGRAM = "instagram"
+    FACEBOOK = "facebook"
+    YOUTUBE = "youtube"
+    WATSAPP = "watsapp"
+    TELEGRAM = "telegram"
+    PHONE = "phone"
+    EMAIL = "email"
+    LINKEDIN = "linkedin"
+    TOKTOK = "tiktok"
+    PINTEREST = "pinterest"
+    SNAPCHAT = "snapchat"
+    REDDIT = "reddit"
+    DISCORD = "discord"
+    WECHAT = "wechat"
+    X = "x"
+    TWITCH = "twitch"
+    VK = "vk"
+    RUTUBE = "rutube"
+    OK = "ok"
+
+    choices = (
+        (WEBSITE, "Website"),
+        (INSTAGRAM, "Instagram"),
+        (FACEBOOK, "Facebook"),
+        (YOUTUBE, "YouTube"),
+        (WATSAPP, "WhatsApp"),
+        (TELEGRAM, "Telegram"),
+        (PHONE, "Phone"),
+        (EMAIL, "Email"),
+        (LINKEDIN, "LinkedIn"),
+        (TOKTOK, "TikTok"),
+        (PINTEREST, "Pinterest"),
+        (SNAPCHAT, "Snapchat"),
+        (REDDIT, "Reddit"),
+        (DISCORD, "Discord"),
+        (WECHAT, "WeChat"),
+        (X, "X"),
+        (TWITCH, "Twitch"),
+        (VK, "VK"),
+        (RUTUBE, "RuTube"),
+        (OK, "Odnoklassniki"),
+    )
+
+
+class SocialLinkBase(models.Model):
+
+    type = models.CharField(
+        null=False,
+        blank=False,
+        max_length=20,
+        choices=SocialType.choices,
+    )
+
+    title = models.CharField(                     
+        null=True,
+        blank=True,
+        max_length=20,
+    )
+
+    value = models.CharField(                     
+        null=False,
+        blank=False,
+        max_length=255,
+    )
+
+    order = models.PositiveSmallIntegerField(
+        null=False,
+        blank=False,
+        default=0
+    )
+    class Meta(object):
+        abstract = True
+    
+class AndroidSocialLink(SocialLinkBase):
+
+    radio = models.ForeignKey(
+        AndroidApplicationRadio,
+        related_name='social_links',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+class IosSocialLink(SocialLinkBase):
+
+    radio = models.ForeignKey(
+        IosApplicationRadio,
+        related_name='social_links',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+    

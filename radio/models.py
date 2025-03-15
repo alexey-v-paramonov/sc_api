@@ -439,17 +439,26 @@ class SocialNetwork:
     )
 
 
-class RadioSocialNetworkLink(models.Model):
+class RadioSocialLink(models.Model):
 
-    network = models.CharField(
-        "Social network",
+    type = models.CharField(
         null=False,
         blank=False,
         max_length=30,
         choices=SocialNetwork.choices,
     )
 
-    url = models.URLField(null=True, blank=True)
+    title = models.CharField(                     
+        null=True,
+        blank=True,
+        max_length=255,
+    )
+
+    value = models.CharField(                     
+        null=False,
+        blank=False,
+        max_length=255,
+    )
 
     order = models.PositiveSmallIntegerField(
         null=False,

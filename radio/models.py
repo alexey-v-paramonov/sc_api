@@ -444,14 +444,14 @@ class RadioSocialLink(models.Model):
     type = models.CharField(
         null=False,
         blank=False,
-        max_length=30,
+        max_length=20,
         choices=SocialNetwork.choices,
     )
 
     title = models.CharField(                     
         null=True,
         blank=True,
-        max_length=255,
+        max_length=20,
     )
 
     value = models.CharField(                     

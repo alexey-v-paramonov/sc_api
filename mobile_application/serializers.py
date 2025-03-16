@@ -6,7 +6,17 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio, AndroidApplicationRadioChannel, IosApplicationRadioChannel, ServerType
+from mobile_application.models import (
+    AndroidApplication, 
+    IosApplication,
+    AndroidApplicationRadio,
+    IosApplicationRadio,
+    AndroidApplicationRadioChannel,
+    IosApplicationRadioChannel,
+    ServerType,
+    AndroidSocialLink,
+    IosSocialLink
+)
 
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
@@ -143,11 +153,27 @@ class AndroidApplicationRadioChannelSerializer(CustomErrorMessagesModelSerialize
 
 class IosApplicationRadioChannelSerializer(CustomErrorMessagesModelSerializer):
 
-    channels = AndroidApplicationRadioChannelSerializer(
-        many=True, required=False)
+    # channels = AndroidApplicationRadioChannelSerializer(
+    #     many=True, required=False)
 
     class Meta:
         model = IosApplicationRadioChannel
+        exclude = ()
+        extra_kwargs = {"radio": {"required": False, "allow_null": True}}
+
+
+class AndroidSocialLinkSerializer(CustomErrorMessagesModelSerializer):
+
+    class Meta:
+        model = AndroidSocialLink
+        exclude = ()
+        extra_kwargs = {"radio": {"required": False, "allow_null": True}}
+
+
+class IosSocialLinkSerializer(CustomErrorMessagesModelSerializer):
+
+    class Meta:
+        model = IosSocialLink
         exclude = ()
         extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
@@ -156,6 +182,7 @@ class ApplicationRadioSerializerBase:
     def create(self, validated_data):
 
         channels = validated_data.pop("channels")
+        social_links = validated_data.pop("social_links")
         instance = self.Meta.model.objects.create(**validated_data)
 
         if instance:
@@ -163,10 +190,17 @@ class ApplicationRadioSerializerBase:
                 c['order'] = i
                 c['radio_id'] = instance.id
                 self.Meta.model_channels.objects.create(**c)
+
+            for i, l in enumerate(social_links):
+                l['order'] = i
+                l['radio_id'] = instance.id
+                self.Meta.model_social_links.objects.create(**l)
+
         return instance
 
     def update(self, radio, validated_data):
         channels = validated_data.pop("channels")
+        social_links = validated_data.pop("social_links")
         super().update(radio, validated_data)
 
         radio.channels.all().delete()
@@ -174,24 +208,34 @@ class ApplicationRadioSerializerBase:
             c['order'] = i
             c['radio_id'] = radio.id
             self.Meta.model_channels.objects.create(**c)
-        return radio
 
+        radio.social_links.all().delete()
+        for i, l in enumerate(social_links):
+            l['order'] = i
+            l['radio_id'] = radio.id
+            self.Meta.model_social_links.objects.create(**l)
+
+        return radio
 
 class AndroidApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
 
     channels = AndroidApplicationRadioChannelSerializer(many=True)
+    social_links = AndroidSocialLinkSerializer(many=True)
 
     class Meta:
         model = AndroidApplicationRadio
         model_channels = AndroidApplicationRadioChannel
+        model_social_links = AndroidSocialLink
         exclude = ()
 
 
 class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
 
     channels = IosApplicationRadioChannelSerializer(many=True)
+    social_links = IosSocialLinkSerializer(many=True)
 
     class Meta:
         model = IosApplicationRadio
         model_channels = IosApplicationRadioChannel
+        model_social_links = IosSocialLink
         exclude = ()

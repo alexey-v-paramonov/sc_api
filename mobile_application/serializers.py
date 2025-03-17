@@ -182,7 +182,7 @@ class ApplicationRadioSerializerBase:
     def create(self, validated_data):
 
         channels = validated_data.pop("channels")
-        social_links = validated_data.pop("social_links")
+        social_links = validated_data.pop("social_links", [])
         instance = self.Meta.model.objects.create(**validated_data)
 
         if instance:
@@ -200,7 +200,7 @@ class ApplicationRadioSerializerBase:
 
     def update(self, radio, validated_data):
         channels = validated_data.pop("channels")
-        social_links = validated_data.pop("social_links")
+        social_links = validated_data.pop("social_links", [])
         super().update(radio, validated_data)
 
         radio.channels.all().delete()

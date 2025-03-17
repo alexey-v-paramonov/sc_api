@@ -480,6 +480,7 @@ class SocialType:
     VK = "vk"
     RUTUBE = "rutube"
     OK = "ok"
+    # viber
 
     choices = (
         (WEBSITE, "Website"),

@@ -220,7 +220,7 @@ class ApplicationRadioSerializerBase:
 class AndroidApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
 
     channels = AndroidApplicationRadioChannelSerializer(many=True)
-    social_links = AndroidSocialLinkSerializer(many=True)
+    social_links = AndroidSocialLinkSerializer(many=True, required=False)
 
     class Meta:
         model = AndroidApplicationRadio
@@ -232,7 +232,7 @@ class AndroidApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomEr
 class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorMessagesModelSerializer):
 
     channels = IosApplicationRadioChannelSerializer(many=True)
-    social_links = IosSocialLinkSerializer(many=True)
+    social_links = IosSocialLinkSerializer(many=True, required=False)
 
     class Meta:
         model = IosApplicationRadio

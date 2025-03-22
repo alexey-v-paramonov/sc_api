@@ -151,6 +151,10 @@ class Command(BaseCommand):
                 if user.is_russian():
                     msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
                 else:
+                    # Notify admin as well
+                    sys_msg = EmailMessage(f"Low balance: {user.email}: {round(user.balance, 2)}", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
+                    sys_msg.send()
+                    
                     with get_connection(
                         host=settings.SC_EMAIL_HOST,
                         port=settings.SC_EMAIL_PORT,

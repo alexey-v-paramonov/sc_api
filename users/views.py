@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.utils.html import strip_tags
 
 
@@ -102,7 +102,19 @@ class PasswordResetView(APIView):
             template = get_template(template)
             content = template.render(ctx)
             text_content = strip_tags(content)
-            msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+            if lang == "ru":            
+                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+            else:
+                with get_connection(
+                    host=settings.SC_EMAIL_HOST,
+                    port=settings.SC_EMAIL_PORT,
+                    username=settings.SC_EMAIL_HOST_USER,
+                    password=settings.SC_EMAIL_HOST_PASSWORD,
+                    use_ssl=settings.SC_EMAIL_USE_SSL,
+                    use_tls=settings.SC_EMAIL_USE_TLS,
+                ) as connection:
+                    msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+                
             msg.attach_alternative(content, "text/html")
             msg.send()
 

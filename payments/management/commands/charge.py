@@ -6,7 +6,7 @@ from decimal import Decimal
 from users.models import User
 from payments.models import Charge, ChargedServiceType
 from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.conf import settings
 from radiotochka.billing import PRICE_PER_EXTRA_GB, PRICE_PER_EXTRA_GB_USD
 from django.utils import timezone
@@ -122,9 +122,22 @@ class Command(BaseCommand):
                 template = get_template(template)
                 content = template.render({"balance": round(user.balance, 2), "email": user.email, "currency": user.get_currency_display()})
                 text_content = strip_tags(content)
-                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+                if user.is_russian():
+                    msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+                else:
+                    with get_connection(
+                        host=settings.SC_EMAIL_HOST,
+                        port=settings.SC_EMAIL_PORT,
+                        username=settings.SC_EMAIL_HOST_USER,
+                        password=settings.SC_EMAIL_HOST_PASSWORD,
+                        use_ssl=settings.SC_EMAIL_USE_SSL,
+                        use_tls=settings.SC_EMAIL_USE_TLS,
+                    ) as connection:
+                        msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+
                 msg.attach_alternative(content, "text/html")
                 msg.send()
+
             elif user.balance < total_daily * 5:
                 template = "email/payment_reminder_en.html"
                 subject = f"Streaming.center: Low balance notification: {round(user.balance, 2)} {user.get_currency_display()}"
@@ -135,7 +148,19 @@ class Command(BaseCommand):
                 template = get_template(template)
                 content = template.render({"balance": round(user.balance, 2), "email": user.email, "currency": user.get_currency_display()})
                 text_content = strip_tags(content)
-                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+                if user.is_russian():
+                    msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+                else:
+                    with get_connection(
+                        host=settings.SC_EMAIL_HOST,
+                        port=settings.SC_EMAIL_PORT,
+                        username=settings.SC_EMAIL_HOST_USER,
+                        password=settings.SC_EMAIL_HOST_PASSWORD,
+                        use_ssl=settings.SC_EMAIL_USE_SSL,
+                        use_tls=settings.SC_EMAIL_USE_TLS,
+                    ) as connection:
+                        msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+
                 msg.attach_alternative(content, "text/html")
                 msg.send()
 

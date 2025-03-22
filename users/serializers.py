@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 from django.template.loader import get_template
 from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.conf import settings
 from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
 
@@ -99,7 +99,19 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
         template = get_template(template)
         content = template.render(validated_data)
         text_content = strip_tags(content)
-        msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+        if user.is_russian():        
+            msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+        else:
+            with get_connection(
+                host=settings.SC_EMAIL_HOST,
+                port=settings.SC_EMAIL_PORT,
+                username=settings.SC_EMAIL_HOST_USER,
+                password=settings.SC_EMAIL_HOST_PASSWORD,
+                use_ssl=settings.SC_EMAIL_USE_SSL,
+                use_tls=settings.SC_EMAIL_USE_TLS,
+            ) as connection:
+                msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+            
         msg.attach_alternative(content, "text/html")
         msg.send()
 

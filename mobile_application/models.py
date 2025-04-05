@@ -464,12 +464,12 @@ class SocialType:
     INSTAGRAM = "instagram"
     FACEBOOK = "facebook"
     YOUTUBE = "youtube"
-    WATSAPP = "watsapp"
+    WHATSAPP = "whatsapp"
     TELEGRAM = "telegram"
     PHONE = "phone"
     EMAIL = "email"
     LINKEDIN = "linkedin"
-    TOKTOK = "tiktok"
+    TIKTOK = "tiktok"
     PINTEREST = "pinterest"
     SNAPCHAT = "snapchat"
     REDDIT = "reddit"
@@ -487,12 +487,12 @@ class SocialType:
         (INSTAGRAM, "Instagram"),
         (FACEBOOK, "Facebook"),
         (YOUTUBE, "YouTube"),
-        (WATSAPP, "WhatsApp"),
+        (WHATSAPP, "WhatsApp"),
         (TELEGRAM, "Telegram"),
         (PHONE, "Phone"),
         (EMAIL, "Email"),
         (LINKEDIN, "LinkedIn"),
-        (TOKTOK, "TikTok"),
+        (TIKTOK, "TikTok"),
         (PINTEREST, "Pinterest"),
         (SNAPCHAT, "Snapchat"),
         (REDDIT, "Reddit"),

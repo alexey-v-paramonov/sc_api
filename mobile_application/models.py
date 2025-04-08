@@ -532,6 +532,10 @@ class SocialLinkBase(models.Model):
         blank=False,
         default=0
     )
+    def save(self, **kwargs):
+        if self.type == SocialType.WHATSAPP and not self.value.startswith("http"):
+            self.value = "https://wa.me/" + self.value
+        return super().save(**kwargs)
     class Meta(object):
         abstract = True
     

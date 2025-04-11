@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     if not Charge.objects.filter(
                         user=user,
                         service_type=ChargedServiceType.RADIO_SELF_HOSTED,
-                        created__date=timezone.now().date(),
+                        created__date=now.date(),
                         description=description
                     ).exists():
                         Charge.objects.create(
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                     if not Charge.objects.filter(
                         user=user,
                         service_type=ChargedServiceType.RADIO_HOSTED_STREAM,
-                        created__date=timezone.now().date(),
+                        created__date=now.date(),
                         description=hosted_radio.login,
                     ).exists():
                         Charge.objects.create(
@@ -89,7 +89,7 @@ class Command(BaseCommand):
                         if not Charge.objects.filter(
                             user=user,
                             service_type=ChargedServiceType.RADIO_HOSTED_DU,
-                            created__date=timezone.now().date(),
+                            created__date=now.date(),
                         ).exists():
                             Charge.objects.create(
                                 user=user,

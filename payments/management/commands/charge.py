@@ -152,7 +152,7 @@ class Command(BaseCommand):
                     msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
                 else:
                     # Notify admin as well
-                    sys_msg = EmailMessage(f"Low balance: {user.email}: {round(user.balance, 2)}", text_content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
+                    sys_msg = EmailMultiAlternatives(f"Low balance: {user.email}: {round(user.balance, 2)}", text_content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
                     sys_msg.attach_alternative(content, "text/html")
                     sys_msg.send()
 

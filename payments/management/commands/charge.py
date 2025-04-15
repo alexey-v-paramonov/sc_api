@@ -136,7 +136,11 @@ class Command(BaseCommand):
                         msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
 
                 msg.attach_alternative(content, "text/html")
-                msg.send()
+                try:
+                    msg.send()
+                except Exception as e:
+                    print("Failed to send email:", e)
+                    pass
 
             elif user.balance < total_daily * 5:
                 template = "email/payment_reminder_en.html"
@@ -154,7 +158,11 @@ class Command(BaseCommand):
                     # Notify admin as well
                     sys_msg = EmailMultiAlternatives(f"Low balance: {user.email}: {round(user.balance, 2)}", text_content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
                     sys_msg.attach_alternative(content, "text/html")
-                    sys_msg.send()
+                    try:
+                        sys_msg.send()
+                    except Exception as e:
+                        print("Failed to send email:", e)
+                        pass
 
                     with get_connection(
                         host=settings.SC_EMAIL_HOST,
@@ -167,8 +175,17 @@ class Command(BaseCommand):
                         msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
 
                 msg.attach_alternative(content, "text/html")
-                msg.send()
+                try:
+                    msg.send()
+                except Exception as e:
+                    print("Failed to send email:", e)
+                    pass
 
         content = f"RUB paid clients: {paid_clients_rub}\nUSD paid clients: {paid_clients_usd}\n"
         msg = EmailMessage(f"Daily Income: {total_rub:.2f} RUB, {total_usd:.2f} USD", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
-        msg.send()
+        try:
+            msg.send()
+        except Exception as e:
+            print("Failed to send email:", e)
+            pass
+        

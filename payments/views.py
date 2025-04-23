@@ -24,7 +24,7 @@ class InvoiceRequestViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         instance = serializer.save(user=self.request.user)
         try:
-            content = f"New invoice request from {self.request.user.email} ({self.request.user.get_language_display}) to: {instance.email} amount: {instance.amount}"
+            content = f"New invoice request from {self.request.user.email} ({self.request.user.get_language_display()}) to: {instance.email} amount: {instance.amount}"
             msg = EmailMessage(f"New Invoice request: {instance.email} - {instance.amount}$", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
             msg.send()
         except:

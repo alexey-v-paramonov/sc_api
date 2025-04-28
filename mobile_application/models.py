@@ -260,6 +260,9 @@ class BaseApplication(models.Model):
         blank=True,
         max_length=80
     )
+    use_mirror = models.BooleanField(
+        default=False,
+    )
 
     comment = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=False, blank=True)

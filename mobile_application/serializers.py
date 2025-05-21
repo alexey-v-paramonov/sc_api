@@ -2,6 +2,7 @@ import pathlib
 from urllib.parse import urlparse
 from PIL import Image
 from django.utils import timezone
+import os
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -242,6 +243,13 @@ class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorM
         exclude = ()
 
 class AndroidRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
+    filename = serializers.SerializerMethodField(read_only=True)
+
+    def get_filename(self, obj):
+        if obj.file and hasattr(obj.file, 'name'):
+            return os.path.basename(obj.file.name)
+        return None
+
     class Meta:
         model = AndroidRadioPreroll
         exclude = ()
@@ -249,6 +257,13 @@ class AndroidRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
 
 
 class IosRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
+    filename = serializers.SerializerMethodField(read_only=True)
+
+    def get_filename(self, obj):
+        if obj.file and hasattr(obj.file, 'name'):
+            return os.path.basename(obj.file.name)
+        return None
+
     class Meta:
         model = iOsRadioPreroll
         exclude = ()

@@ -1,4 +1,5 @@
 from pyfcm import FCMNotification
+from django.utils import timezone
 
 
 from django.shortcuts import render
@@ -162,8 +163,22 @@ class IosApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
     queryset = IosApplicationRadio.objects.all()
     app_model = IosApplication
 
+class RadioPrerollBase:
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        instance.radio.prerolls_update_ts = timezone.now()
+        instance.radio.save()
+        return instance
 
-class AndroidApplicationPrerollViewSet(viewsets.ModelViewSet):
+    def perform_destroy(self, instance):
+        instance.radio.prerolls_update_ts = timezone.now()
+        instance.radio.save()
+        return super().perform_destroy(instance)
+
+    def get_queryset(self):
+        return self.queryset.filter(radio__app_id=self.kwargs["app_id"], radio__app__user=self.request.user, radio_id=self.kwargs["radio_id"])
+    
+class AndroidApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated,
         UserOwnsApp
@@ -174,11 +189,9 @@ class AndroidApplicationPrerollViewSet(viewsets.ModelViewSet):
     queryset = AndroidRadioPreroll.objects.all()
     app_model = AndroidApplication
 
-    def get_queryset(self):
-        return self.queryset.filter(radio__app_id=self.kwargs["app_id"], radio__app__user=self.request.user, radio_id=self.kwargs["radio_id"])
 
 
-class IosApplicationPrerollViewSet(viewsets.ModelViewSet):
+class IosApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated,
         UserOwnsApp
@@ -188,9 +201,6 @@ class IosApplicationPrerollViewSet(viewsets.ModelViewSet):
     serializer_class = IosRadioPrerollSerializer
     queryset = iOsRadioPreroll.objects.all()
     app_model = IosApplication
-
-    def get_queryset(self):
-        return self.queryset.filter(radio__app_id=self.kwargs["app_id"], radio__app__user=self.request.user, radio_id=self.kwargs["radio_id"])
 
 
 android_app_router = routers.SimpleRouter()

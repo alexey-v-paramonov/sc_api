@@ -370,6 +370,10 @@ class ApplicationRadioBase(models.Model):
         blank=False,
         default=0
     )
+    prerolls_update_ts = models.DateTimeField(
+        null=False,
+        default=timezone.now,
+    )
 
     class Meta(object):
         abstract = True

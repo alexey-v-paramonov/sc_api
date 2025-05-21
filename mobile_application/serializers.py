@@ -15,14 +15,15 @@ from mobile_application.models import (
     IosApplicationRadioChannel,
     ServerType,
     AndroidSocialLink,
-    IosSocialLink
+    IosSocialLink,
+    AndroidRadioPreroll,
+    iOsRadioPreroll,
 )
 
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
 
-print(dir(serializers))
 class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     price = serializers.IntegerField(read_only=True)
@@ -239,3 +240,16 @@ class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorM
         model_channels = IosApplicationRadioChannel
         model_social_links = IosSocialLink
         exclude = ()
+
+class AndroidRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
+    class Meta:
+        model = AndroidRadioPreroll
+        exclude = ()
+        # extra_kwargs = {"radio": {"required": False, "allow_null": True}}
+
+
+class IosRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
+    class Meta:
+        model = iOsRadioPreroll
+        exclude = ()
+        # extra_kwargs = {"radio": {"required": False, "allow_null": True}}

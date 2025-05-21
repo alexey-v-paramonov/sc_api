@@ -562,3 +562,37 @@ class IosSocialLink(SocialLinkBase):
         on_delete=models.deletion.CASCADE
     )
     
+    
+class RadioPrerollBase(models.Model):
+
+
+    file = models.FileField(
+        upload_to="prerolls",
+        blank=False,
+        verbose_name="Radio preroll",
+        null=False,
+    )
+
+    class Meta(object):
+        abstract = True
+
+
+class AndroidRadioPreroll(RadioPrerollBase):
+    
+    radio = models.ForeignKey(
+        AndroidApplicationRadio,
+        related_name='prerolls',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+class iOsRadioPreroll(RadioPrerollBase):
+    
+    radio = models.ForeignKey(
+        IosApplicationRadio,
+        related_name='prerolls',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )

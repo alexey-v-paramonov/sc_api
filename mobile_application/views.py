@@ -19,8 +19,15 @@ from django.conf import settings
 
 from mobile_application.permissions import UserOwnsApp
 from mobile_application.form_parsers import MultiPartJSONParser
-from mobile_application.serializers import AndroidApplicationSerializer, IosApplicationSerializer, AndroidApplicationRadioSerializer, IosApplicationRadioSerializer
-from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio
+from mobile_application.serializers import (
+    AndroidApplicationSerializer,
+    IosApplicationSerializer,
+    AndroidApplicationRadioSerializer,
+    IosApplicationRadioSerializer,
+    AndroidRadioPrerollSerializer,
+    IosRadioPrerollSerializer,
+)
+from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio, AndroidRadioPreroll, iOsRadioPreroll
 
 
 
@@ -156,6 +163,30 @@ class IosApplicationRadioViewSet(AppRadioBase, viewsets.ModelViewSet):
     app_model = IosApplication
 
 
+class AndroidApplicationPrerollViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        UserOwnsApp
+    ]
+    parser_classes = [MultiPartJSONParser]
+
+    serializer_class = AndroidRadioPrerollSerializer
+    queryset = AndroidRadioPreroll.objects.all()
+    app_model = AndroidApplication
+
+
+class IosApplicationPrerollViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated,
+        UserOwnsApp
+    ]
+    parser_classes = [MultiPartJSONParser]
+
+    serializer_class = IosRadioPrerollSerializer
+    queryset = iOsRadioPreroll.objects.all()
+    app_model = IosApplication
+
+
 android_app_router = routers.SimpleRouter()
 ios_app_router = routers.SimpleRouter()
 
@@ -171,14 +202,29 @@ ios_app_router.register(
     IosApplicationViewSet,
     basename='ios_app'
 )
+
+# Radios API
 android_app_router.register(
     "android/(?P<app_id>[^/.]+)/radios",
     AndroidApplicationRadioViewSet,
     basename="android-app-radio",
 )
 
-android_app_router.register(
+ios_app_router.register(
     "ios/(?P<app_id>[^/.]+)/radios",
     IosApplicationRadioViewSet,
     basename="ios-app-radio",
+)
+
+# Prerolls API
+android_app_router.register(
+    "android/(?P<app_id>[^/.]+)/prerolls",
+    AndroidApplicationPrerollViewSet,
+    basename="android-app-prerolls",
+)
+
+ios_app_router.register(
+    "ios/(?P<app_id>[^/.]+)/prerolls",
+    IosApplicationPrerollViewSet,
+    basename="ios-app-prerolls",
 )

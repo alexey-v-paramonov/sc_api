@@ -174,6 +174,9 @@ class AndroidApplicationPrerollViewSet(viewsets.ModelViewSet):
     queryset = AndroidRadioPreroll.objects.all()
     app_model = AndroidApplication
 
+    def get_queryset(self):
+        return self.queryset.filter(radio__app_id=self.kwargs["app_id"], radio__app__user=self.request.user, radio_id=self.kwargs["radio_id"])
+
 
 class IosApplicationPrerollViewSet(viewsets.ModelViewSet):
     permission_classes = [
@@ -185,6 +188,9 @@ class IosApplicationPrerollViewSet(viewsets.ModelViewSet):
     serializer_class = IosRadioPrerollSerializer
     queryset = iOsRadioPreroll.objects.all()
     app_model = IosApplication
+
+    def get_queryset(self):
+        return self.queryset.filter(radio__app_id=self.kwargs["app_id"], radio__app__user=self.request.user, radio_id=self.kwargs["radio_id"])
 
 
 android_app_router = routers.SimpleRouter()
@@ -218,13 +224,13 @@ ios_app_router.register(
 
 # Prerolls API
 android_app_router.register(
-    "android/(?P<app_id>[^/.]+)/prerolls",
+    "android/(?P<app_id>[^/.]+)/radios/(?P<radio_id>[^/.]+)/prerolls",
     AndroidApplicationPrerollViewSet,
     basename="android-app-prerolls",
 )
 
 ios_app_router.register(
-    "ios/(?P<app_id>[^/.]+)/prerolls",
+    "ios/(?P<app_id>[^/.]+)/radios/(?P<radio_id>[^/.]+)/prerolls",
     IosApplicationPrerollViewSet,
     basename="ios-app-prerolls",
 )

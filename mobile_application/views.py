@@ -27,10 +27,20 @@ from mobile_application.serializers import (
     IosApplicationRadioSerializer,
     AndroidRadioPrerollSerializer,
     IosRadioPrerollSerializer,
+    AndroidPrerollImpressionSerializer,
+    iOSPrerollImpressionSerializer,    
 )
-from mobile_application.models import AndroidApplication, IosApplication, AndroidApplicationRadio, IosApplicationRadio, AndroidRadioPreroll, iOsRadioPreroll
+from mobile_application.models import (
+    AndroidApplication, 
+    IosApplication,
+    AndroidApplicationRadio,
+    IosApplicationRadio,
+    AndroidRadioPreroll,
+    iOsRadioPreroll,
+    AndroidPrerollImpression,
+    iOSPrerollImpression,
 
-
+)
 
 
 class AppBase:
@@ -189,6 +199,14 @@ class AndroidApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     queryset = AndroidRadioPreroll.objects.all()
     app_model = AndroidApplication
 
+    # @action(detail=True, methods=['post'])
+    # def save_ip(self, request):
+    #     # ip = request.META.get('REMOTE_ADDR')
+    #     # serializer = self.get_serializer(data={**request.data, 'ip': ip})
+    #     # serializer.is_valid(raise_exception=True)
+    #     # serializer.save()
+    #     return Response({}, status=status.HTTP_201_CREATED)
+
 
 
 class IosApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
@@ -203,8 +221,37 @@ class IosApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     app_model = IosApplication
 
 
+class BasePrerollImpressionViewSet(viewsets.ModelViewSet):
+    @action(detail=True, methods=['post'])
+    def save_ip(self, request, pk):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        serializer = self.get_serializer(data={**request.data, 'ip': ip, 'preroll': pk})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({}, status=status.HTTP_201_CREATED)
+
+class AndroidPrerollImpressionViewSet(BasePrerollImpressionViewSet):
+    app_model = AndroidRadioPreroll
+    queryset = AndroidRadioPreroll.objects.all()
+    serializer_class = AndroidPrerollImpressionSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class iOSPrerollImpressionViewSet(BasePrerollImpressionViewSet):
+    app_model = iOsRadioPreroll
+    queryset = iOsRadioPreroll.objects.all()
+    serializer_class = iOSPrerollImpressionSerializer
+    permission_classes = [permissions.AllowAny]
+
+    
+
 android_app_router = routers.SimpleRouter()
 ios_app_router = routers.SimpleRouter()
+impression_router = routers.SimpleRouter()
 
 
 android_app_router.register(
@@ -243,4 +290,15 @@ ios_app_router.register(
     "ios/(?P<app_id>[^/.]+)/radios/(?P<radio_id>[^/.]+)/prerolls",
     IosApplicationPrerollViewSet,
     basename="ios-app-prerolls",
+)
+
+impression_router.register(
+    "android-impressions/prerolls",
+    AndroidPrerollImpressionViewSet,
+    basename='android-preroll-impression'
+)
+impression_router.register(
+    "ios-impressions/prerolls",
+    iOSPrerollImpressionViewSet,
+    basename='ios-preroll-impression'
 )

@@ -19,6 +19,8 @@ from mobile_application.models import (
     IosSocialLink,
     AndroidRadioPreroll,
     iOsRadioPreroll,
+    AndroidPrerollImpression,
+    iOSPrerollImpression
 )
 
 from util.serializers import (
@@ -268,3 +270,13 @@ class IosRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
         model = iOsRadioPreroll
         exclude = ()
         # extra_kwargs = {"radio": {"required": False, "allow_null": True}}
+
+class AndroidPrerollImpressionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AndroidPrerollImpression
+        fields = '__all__'
+
+class iOSPrerollImpressionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = iOSPrerollImpression
+        fields = '__all__'        

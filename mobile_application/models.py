@@ -600,3 +600,34 @@ class iOsRadioPreroll(RadioPrerollBase):
         null=False,
         on_delete=models.deletion.CASCADE
     )
+
+class PrerollImpressionBase(models.Model):
+
+    created = models.DateTimeField(auto_now_add=True, null=False, blank=True)
+    ip =  models.GenericIPAddressField(
+        null=False,
+        blank=False,
+        verbose_name="IP address"
+    )
+
+    class Meta:
+        abstract = True
+
+class AndroidPrerollImpression(PrerollImpressionBase):
+    preroll = models.ForeignKey(
+        AndroidRadioPreroll,
+        related_name='impressions',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
+
+
+class iOSPrerollImpression(PrerollImpressionBase):
+    preroll = models.ForeignKey(
+        iOsRadioPreroll,
+        related_name='impressions',
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )

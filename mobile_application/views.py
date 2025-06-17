@@ -293,12 +293,12 @@ ios_app_router.register(
 )
 
 impression_router.register(
-    "android-impressions/prerolls",
+    "android/impressions/prerolls",
     AndroidPrerollImpressionViewSet,
     basename='android-preroll-impression'
 )
 impression_router.register(
-    "ios-impressions/prerolls",
+    "ios/impressions/prerolls",
     iOSPrerollImpressionViewSet,
     basename='ios-preroll-impression'
 )

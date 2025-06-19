@@ -257,9 +257,9 @@ class RadioPrerollBase:
             start_date = request.query_params.get('start_date')
             end_date = request.query_params.get('end_date')
             if start_date:
-                impressions = impressions.filter(created__gte=start_date)
+                impressions = impressions.filter(created__date__gte=start_date)
             if end_date:
-                impressions = impressions.filter(created__lte=end_date)
+                impressions = impressions.filter(created__date__lte=end_date)
         return impressions.count()
 
 class AndroidRadioPrerollSerializer(RadioPrerollBase, CustomErrorMessagesModelSerializer):

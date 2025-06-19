@@ -244,32 +244,40 @@ class IosApplicationRadioSerializer(ApplicationRadioSerializerBase, CustomErrorM
         model_social_links = IosSocialLink
         exclude = ()
 
-class AndroidRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
-    filename = serializers.SerializerMethodField(read_only=True)
-
+class RadioPrerollBase:
     def get_filename(self, obj):
         if obj.file and hasattr(obj.file, 'name'):
             return os.path.basename(obj.file.name)
         return None
+
+    def get_impressions(self, obj):
+        request = self.context.get('request')
+        impressions = obj.impressions.all()
+        if request:
+            start_date = request.query_params.get('start_date')
+            end_date = request.query_params.get('end_date')
+            if start_date:
+                impressions = impressions.filter(created__gte=start_date)
+            if end_date:
+                impressions = impressions.filter(created__lte=end_date)
+        return impressions.count()
+
+class AndroidRadioPrerollSerializer(RadioPrerollBase, CustomErrorMessagesModelSerializer):
+    filename = serializers.SerializerMethodField(read_only=True)
+    impressions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = AndroidRadioPreroll
         exclude = ()
-        # extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
 
-class IosRadioPrerollSerializer(CustomErrorMessagesModelSerializer):
+class IosRadioPrerollSerializer(RadioPrerollBase, CustomErrorMessagesModelSerializer):
     filename = serializers.SerializerMethodField(read_only=True)
-
-    def get_filename(self, obj):
-        if obj.file and hasattr(obj.file, 'name'):
-            return os.path.basename(obj.file.name)
-        return None
+    impressions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = iOsRadioPreroll
         exclude = ()
-        # extra_kwargs = {"radio": {"required": False, "allow_null": True}}
 
 class AndroidPrerollImpressionSerializer(serializers.ModelSerializer):
     class Meta:

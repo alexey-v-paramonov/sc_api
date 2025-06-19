@@ -199,16 +199,6 @@ class AndroidApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     queryset = AndroidRadioPreroll.objects.all()
     app_model = AndroidApplication
 
-    # @action(detail=True, methods=['post'])
-    # def save_ip(self, request):
-    #     # ip = request.META.get('REMOTE_ADDR')
-    #     # serializer = self.get_serializer(data={**request.data, 'ip': ip})
-    #     # serializer.is_valid(raise_exception=True)
-    #     # serializer.save()
-    #     return Response({}, status=status.HTTP_201_CREATED)
-
-
-
 class IosApplicationPrerollViewSet(RadioPrerollBase, viewsets.ModelViewSet):
     permission_classes = [
         permissions.IsAuthenticated,

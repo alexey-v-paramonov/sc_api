@@ -41,6 +41,12 @@ class UserSettingsSerializer(CustomErrorMessagesModelSerializer, EmailValidatior
         if password and len(password) < 8:
             raise serializers.ValidationError("length")
         return password
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        return super().update(instance, validated_data)
     
     class Meta:
         model = User

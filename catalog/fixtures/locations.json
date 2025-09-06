@@ -1,0 +1,95 @@
+[
+  {
+    "model": "catalog.country", "pk": 1, "fields": { "name": "Россия", "name_eng": "Russia" }
+  },
+  {
+    "model": "catalog.country", "pk": 2, "fields": { "name": "Украина", "name_eng": "Ukraine" }
+  },
+  {
+    "model": "catalog.country", "pk": 3, "fields": { "name": "Беларусь", "name_eng": "Belarus" }
+  },
+  {
+    "model": "catalog.country", "pk": 4, "fields": { "name": "Казахстан", "name_eng": "Kazakhstan" }
+  },
+  {
+    "model": "catalog.country", "pk": 5, "fields": { "name": "США", "name_eng": "USA" }
+  },
+  {
+    "model": "catalog.country", "pk": 6, "fields": { "name": "Великобритания", "name_eng": "United Kingdom" }
+  },
+  {
+    "model": "catalog.country", "pk": 7, "fields": { "name": "Германия", "name_eng": "Germany" }
+  },
+  {
+    "model": "catalog.country", "pk": 8, "fields": { "name": "Франция", "name_eng": "France" }
+  },
+  {
+    "model": "catalog.region", "pk": 1, "fields": { "name": "Москва и Московская область", "name_eng": "Moscow and Moscow Oblast", "country": 1 }
+  },
+  {
+    "model": "catalog.region", "pk": 2, "fields": { "name": "Санкт-Петербург и Ленинградская область", "name_eng": "Saint Petersburg and Leningrad Oblast", "country": 1 }
+  },
+  {
+    "model": "catalog.region", "pk": 3, "fields": { "name": "Киевская область", "name_eng": "Kyiv Oblast", "country": 2 }
+  },
+  {
+    "model": "catalog.region", "pk": 4, "fields": { "name": "Минская область", "name_eng": "Minsk Oblast", "country": 3 }
+  },
+  {
+    "model": "catalog.region", "pk": 5, "fields": { "name": "Алматинская область", "name_eng": "Almaty Oblast", "country": 4 }
+  },
+  {
+    "model": "catalog.region", "pk": 6, "fields": { "name": "Калифорния", "name_eng": "California", "country": 5 }
+  },
+  {
+    "model": "catalog.region", "pk": 7, "fields": { "name": "Нью-Йорк", "name_eng": "New York", "country": 5 }
+  },
+  {
+    "model": "catalog.region", "pk": 8, "fields": { "name": "Англия", "name_eng": "England", "country": 6 }
+  },
+  {
+    "model": "catalog.region", "pk": 9, "fields": { "name": "Бавария", "name_eng": "Bavaria", "country": 7 }
+  },
+  {
+    "model": "catalog.region", "pk": 10, "fields": { "name": "Иль-де-Франс", "name_eng": "Île-de-France", "country": 8 }
+  },
+  {
+    "model": "catalog.city", "pk": 1, "fields": { "name": "Москва", "name_eng": "Moscow", "region": 1 }
+  },
+  {
+    "model": "catalog.city", "pk": 2, "fields": { "name": "Санкт-Петербург", "name_eng": "Saint Petersburg", "region": 2 }
+  },
+  {
+    "model": "catalog.city", "pk": 3, "fields": { "name": "Киев", "name_eng": "Kyiv", "region": 3 }
+  },
+  {
+    "model": "catalog.city", "pk": 4, "fields": { "name": "Минск", "name_eng": "Minsk", "region": 4 }
+  },
+  {
+    "model": "catalog.city", "pk": 5, "fields": { "name": "Алматы", "name_eng": "Almaty", "region": 5 }
+  },
+  {
+    "model": "catalog.city", "pk": 6, "fields": { "name": "Лос-Анджелес", "name_eng": "Los Angeles", "region": 6 }
+  },
+  {
+    "model": "catalog.city", "pk": 7, "fields": { "name": "Сан-Франциско", "name_eng": "San Francisco", "region": 6 }
+  },
+  {
+    "model": "catalog.city", "pk": 8, "fields": { "name": "Нью-Йорк", "name_eng": "New York City", "region": 7 }
+  },
+  {
+    "model": "catalog.city", "pk": 9, "fields": { "name": "Лондон", "name_eng": "London", "region": 8 }
+  },
+  {
+    "model": "catalog.city", "pk": 10, "fields": { "name": "Манчестер", "name_eng": "Manchester", "region": 8 }
+  },
+  {
+    "model": "catalog.city", "pk": 11, "fields": { "name": "Мюнхен", "name_eng": "Munich", "region": 9 }
+  },
+  {
+    "model": "catalog.city", "pk": 12, "fields": { "name": "Берлин", "name_eng": "Berlin", "region": 9 }
+  },
+  {
+    "model": "catalog.city", "pk": 13, "fields": { "name": "Париж", "name_eng": "Paris", "region": 10 }
+  }
+]

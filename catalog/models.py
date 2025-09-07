@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
@@ -78,6 +79,14 @@ class Radio(models.Model):
     genres = models.ManyToManyField(Genre, related_name='radios')
     total_votes = models.PositiveIntegerField(default=0)
     average_rating = models.FloatField(default=0.0)
+
+    user = models.ForeignKey(
+        User,
+        verbose_name="Owner",
+        blank=False,
+        null=False,
+        on_delete=models.deletion.CASCADE
+    )
 
 
     def __str__(self):

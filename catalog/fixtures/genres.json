@@ -1,530 +1,554 @@
 [
-  {
+{
     "model": "catalog.genre",
     "pk": 1,
     "fields": {
-      "name": "Поп",
-      "name_eng": "Pop"
+        "name": "Лаунж",
+        "name_eng": "Lounge"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 2,
     "fields": {
-      "name": "Рок",
-      "name_eng": "Rock"
+        "name": "Детское",
+        "name_eng": "Children"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 3,
     "fields": {
-      "name": "Хип-хоп",
-      "name_eng": "Hip-Hop"
+        "name": "Разговорное",
+        "name_eng": "Talk"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 4,
     "fields": {
-      "name": "Рэп",
-      "name_eng": "Rap"
+        "name": "Новости",
+        "name_eng": "News"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 5,
     "fields": {
-      "name": "Электронная",
-      "name_eng": "Electronic"
+        "name": "Информационное",
+        "name_eng": "Informational"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 6,
     "fields": {
-      "name": "Танцевальная",
-      "name_eng": "Dance"
+        "name": "Рэп",
+        "name_eng": "Rap"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 7,
     "fields": {
-      "name": "Джаз",
-      "name_eng": "Jazz"
+        "name": "Блюз",
+        "name_eng": "Blues"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 8,
     "fields": {
-      "name": "Блюз",
-      "name_eng": "Blues"
+        "name": "Классический Рок",
+        "name_eng": "Rock Classics"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 9,
     "fields": {
-      "name": "Классическая",
-      "name_eng": "Classical"
+        "name": "Кантри",
+        "name_eng": "Country"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 10,
     "fields": {
-      "name": "R&B",
-      "name_eng": "R&B"
+        "name": "Танцевальное",
+        "name_eng": "Dance"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 11,
     "fields": {
-      "name": "Соул",
-      "name_eng": "Soul"
+        "name": "Диско",
+        "name_eng": "Disco"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 12,
     "fields": {
-      "name": "Регги",
-      "name_eng": "Reggae"
+        "name": "Фанк",
+        "name_eng": "Funk"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 13,
     "fields": {
-      "name": "Кантри",
-      "name_eng": "Country"
+        "name": "Гранж",
+        "name_eng": "Grunge"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 14,
     "fields": {
-      "name": "Фолк",
-      "name_eng": "Folk"
+        "name": "Хип-хоп",
+        "name_eng": "Hip-Hop"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 15,
     "fields": {
-      "name": "Метал",
-      "name_eng": "Metal"
+        "name": "Джаз",
+        "name_eng": "Jazz"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 16,
     "fields": {
-      "name": "Панк",
-      "name_eng": "Punk"
+        "name": "Металл",
+        "name_eng": "Metal"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 17,
     "fields": {
-      "name": "Альтернатива",
-      "name_eng": "Alternative"
+        "name": "Старые песни",
+        "name_eng": "Oldies"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 18,
     "fields": {
-      "name": "Инди",
-      "name_eng": "Indie"
+        "name": "Поп",
+        "name_eng": "Pop"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 19,
     "fields": {
-      "name": "Техно",
-      "name_eng": "Techno"
+        "name": "R&B",
+        "name_eng": "R&B"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 20,
     "fields": {
-      "name": "Хаус",
-      "name_eng": "House"
+        "name": "Регги",
+        "name_eng": "Reggae"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 21,
     "fields": {
-      "name": "Транс",
-      "name_eng": "Trance"
+        "name": "Рок",
+        "name_eng": "Rock"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 22,
     "fields": {
-      "name": "Драм-н-бейс",
-      "name_eng": "Drum and Bass"
+        "name": "Техно",
+        "name_eng": "Techno"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 23,
     "fields": {
-      "name": "Эмбиент",
-      "name_eng": "Ambient"
+        "name": "Индастриал",
+        "name_eng": "Industrial"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 24,
     "fields": {
-      "name": "Лаунж",
-      "name_eng": "Lounge"
+        "name": "Альтернатива",
+        "name_eng": "Alternative"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 25,
     "fields": {
-      "name": "Фанк",
-      "name_eng": "Funk"
+        "name": "Ска",
+        "name_eng": "Ska"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 26,
     "fields": {
-      "name": "Диско",
-      "name_eng": "Disco"
+        "name": "Хэви-метал",
+        "name_eng": "Heavy Metal"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 27,
     "fields": {
-      "name": "Госпел",
-      "name_eng": "Gospel"
+        "name": "Саундтрэки",
+        "name_eng": "Soundtracks"
     }
-  },
-  {
-    "model": "catalog.genre",
-    "pk": 28,
-    "fields": {
-      "name": "Латина",
-      "name_eng": "Latin"
-    }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 29,
     "fields": {
-      "name": "Сальса",
-      "name_eng": "Salsa"
+        "name": "Эмбиент",
+        "name_eng": "Ambient"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 30,
     "fields": {
-      "name": "Босса-нова",
-      "name_eng": "Bossa Nova"
+        "name": "Трип-хоп",
+        "name_eng": "Trip hop"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 31,
     "fields": {
-      "name": "Ска",
-      "name_eng": "Ska"
+        "name": "Транс",
+        "name_eng": "Trance"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 32,
     "fields": {
-      "name": "Хард-рок",
-      "name_eng": "Hard Rock"
+        "name": "Классическое",
+        "name_eng": "Classical"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 33,
     "fields": {
-      "name": "Хэви-метал",
-      "name_eng": "Heavy Metal"
+        "name": "Инструментальное",
+        "name_eng": "Instrumental"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 34,
     "fields": {
-      "name": "Гранж",
-      "name_eng": "Grunge"
+        "name": "Хаус",
+        "name_eng": "House"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 35,
     "fields": {
-      "name": "Прогрессивный рок",
-      "name_eng": "Progressive Rock"
+        "name": "Клипы",
+        "name_eng": "Clips"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 36,
     "fields": {
-      "name": "Психоделический рок",
-      "name_eng": "Psychedelic Rock"
+        "name": "Соул",
+        "name_eng": "Soul"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 37,
     "fields": {
-      "name": "Синти-поп",
-      "name_eng": "Synth-pop"
+        "name": "Басс",
+        "name_eng": "The bass"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 38,
     "fields": {
-      "name": "Нью-вейв",
-      "name_eng": "New Wave"
+        "name": "Панк",
+        "name_eng": "Punk"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 39,
     "fields": {
-      "name": "Дабстеп",
-      "name_eng": "Dubstep"
+        "name": "Этно",
+        "name_eng": "Ethno"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 40,
     "fields": {
-      "name": "Трэп",
-      "name_eng": "Trap"
+        "name": "Электронное",
+        "name_eng": "Electronic"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 41,
     "fields": {
-      "name": "Чилаут",
-      "name_eng": "Chillout"
+        "name": "Евродэнс",
+        "name_eng": "Eurodance"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 42,
     "fields": {
-      "name": "Опера",
-      "name_eng": "Opera"
+        "name": "Юмор",
+        "name_eng": "Humor"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 43,
     "fields": {
-      "name": "Инструментальная",
-      "name_eng": "Instrumental"
+        "name": "Топ",
+        "name_eng": "Top"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 44,
     "fields": {
-      "name": "А капелла",
-      "name_eng": "A cappella"
+        "name": "Джангл",
+        "name_eng": "Jungle"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 45,
     "fields": {
-      "name": "Блюграсс",
-      "name_eng": "Bluegrass"
+        "name": "Психоделик",
+        "name_eng": "Psychedelic"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 46,
     "fields": {
-      "name": "Кельтская",
-      "name_eng": "Celtic"
+        "name": "Рэйв",
+        "name_eng": "Rave"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 47,
     "fields": {
-      "name": "Мировая музыка",
-      "name_eng": "World Music"
+        "name": "Ретро",
+        "name_eng": "Retro"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 48,
     "fields": {
-      "name": "Африканская",
-      "name_eng": "African"
+        "name": "Тяжелый рок",
+        "name_eng": "Heavy rock"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 49,
     "fields": {
-      "name": "Азиатская",
-      "name_eng": "Asian"
+        "name": "Фолк",
+        "name_eng": "Folk"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 50,
     "fields": {
-      "name": "Индийская",
-      "name_eng": "Indian"
+        "name": "Латинское",
+        "name_eng": "Latin"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 51,
     "fields": {
-      "name": "Карибская",
-      "name_eng": "Caribbean"
+        "name": "Шансон",
+        "name_eng": "Chanson"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 52,
     "fields": {
-      "name": "Реггетон",
-      "name_eng": "Reggaeton"
+        "name": "Опера",
+        "name_eng": "Opera"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 53,
     "fields": {
-      "name": "Электро-свинг",
-      "name_eng": "Electro Swing"
+        "name": "Клубное",
+        "name_eng": "Club"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 54,
     "fields": {
-      "name": "Глитч-хоп",
-      "name_eng": "Glitch Hop"
+        "name": "Фристайл",
+        "name_eng": "Freestyle"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 55,
     "fields": {
-      "name": "Индастриал",
-      "name_eng": "Industrial"
+        "name": "Религия",
+        "name_eng": "Gospel"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 56,
     "fields": {
-      "name": "Готик-рок",
-      "name_eng": "Gothic Rock"
+        "name": "Разное",
+        "name_eng": "Various"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 57,
     "fields": {
-      "name": "Викинг-метал",
-      "name_eng": "Viking Metal"
+        "name": "Драм-н-бейс",
+        "name_eng": "Drum and Bass"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 58,
     "fields": {
-      "name": "Фолк-метал",
-      "name_eng": "Folk Metal"
+        "name": "Dj сеты",
+        "name_eng": "Dj sets"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 59,
     "fields": {
-      "name": "Пауэр-метал",
-      "name_eng": "Power Metal"
+        "name": "Аудиокниги",
+        "name_eng": "Audiobooks"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 60,
     "fields": {
-      "name": "Дэт-метал",
-      "name_eng": "Death Metal"
+        "name": "Спорт",
+        "name_eng": "Sport"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 61,
     "fields": {
-      "name": "Блэк-метал",
-      "name_eng": "Black Metal"
+        "name": "Чилаут",
+        "name_eng": "Chillout"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 62,
     "fields": {
-      "name": "Дум-метал",
-      "name_eng": "Doom Metal"
+        "name": "Босса-нова",
+        "name_eng": "Bossa Nova"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 63,
     "fields": {
-      "name": "Краут-рок",
-      "name_eng": "Krautrock"
+        "name": "Сальса",
+        "name_eng": "Salsa"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 64,
     "fields": {
-      "name": "Шугейз",
-      "name_eng": "Shoegaze"
+        "name": "Инди",
+        "name_eng": "Indie"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 65,
     "fields": {
-      "name": "Пост-панк",
-      "name_eng": "Post-punk"
+        "name": "Нью-вейв",
+        "name_eng": "New Wave"
     }
-  },
-  {
+},
+{
     "model": "catalog.genre",
     "pk": 66,
     "fields": {
-      "name": "IDM",
-      "name_eng": "IDM"
+        "name": "Мировая музыка",
+        "name_eng": "World Music"
     }
-  }
+},
+{
+    "model": "catalog.genre",
+    "pk": 67,
+    "fields": {
+        "name": "Африканская",
+        "name_eng": "African"
+    }
+},
+{
+    "model": "catalog.genre",
+    "pk": 68,
+    "fields": {
+        "name": "Азиатская",
+        "name_eng": "Asian"
+    }
+},
+{
+    "model": "catalog.genre",
+    "pk": 69,
+    "fields": {
+        "name": "Индийская",
+        "name_eng": "Indian"
+    }
+},
+{
+    "model": "catalog.genre",
+    "pk": 70,
+    "fields": {
+        "name": "IDM",
+        "name_eng": "IDM"
+    }
+}
 ]

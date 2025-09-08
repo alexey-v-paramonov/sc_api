@@ -1,0 +1,546 @@
+[
+{
+    "model": "catalog.language",
+    "pk": 1,
+    "fields": {
+        "name": "Русский",
+        "name_eng": "Russian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 2,
+    "fields": {
+        "name": "Английский",
+        "name_eng": "English"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 3,
+    "fields": {
+        "name": "Украинский",
+        "name_eng": "Ukrainian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 5,
+    "fields": {
+        "name": "Испанский",
+        "name_eng": "Spanish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 7,
+    "fields": {
+        "name": "Японский",
+        "name_eng": "Japanese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 8,
+    "fields": {
+        "name": "Немецкий",
+        "name_eng": "German"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 9,
+    "fields": {
+        "name": "Французский",
+        "name_eng": "French"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 10,
+    "fields": {
+        "name": "Корейский",
+        "name_eng": "Korean"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 11,
+    "fields": {
+        "name": "Турецкий",
+        "name_eng": "Turkish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 13,
+    "fields": {
+        "name": "Польский",
+        "name_eng": "Polish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 14,
+    "fields": {
+        "name": "Азербайджанский",
+        "name_eng": "Azerbaijani"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 15,
+    "fields": {
+        "name": "Узбекский",
+        "name_eng": "Uzbek"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 16,
+    "fields": {
+        "name": "Белорусский",
+        "name_eng": "Belarusian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 17,
+    "fields": {
+        "name": "Грузинский",
+        "name_eng": "Georgian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 18,
+    "fields": {
+        "name": "Казахский",
+        "name_eng": "Kazakh"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 19,
+    "fields": {
+        "name": "Китайский",
+        "name_eng": "Chinese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 20,
+    "fields": {
+        "name": "Арабский",
+        "name_eng": "Arabic"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 21,
+    "fields": {
+        "name": "Хинди",
+        "name_eng": "Hindi"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 22,
+    "fields": {
+        "name": "Татарский",
+        "name_eng": "Tatar"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 23,
+    "fields": {
+        "name": "Иврит",
+        "name_eng": "Hebrew"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 24,
+    "fields": {
+        "name": "Итальянский",
+        "name_eng": "Italian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 25,
+    "fields": {
+        "name": "Болгарский",
+        "name_eng": "Bulgarian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 26,
+    "fields": {
+        "name": "Сербский",
+        "name_eng": "Serbian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 27,
+    "fields": {
+        "name": "Бенгальский",
+        "name_eng": "Bengali"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 28,
+    "fields": {
+        "name": "Португальский",
+        "name_eng": "Portuguese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 29,
+    "fields": {
+        "name": "Панджаби",
+        "name_eng": "Punjabi"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 30,
+    "fields": {
+        "name": "Маратхи",
+        "name_eng": "Marathi"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 31,
+    "fields": {
+        "name": "Телугу",
+        "name_eng": "Telugu"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 32,
+    "fields": {
+        "name": "Вьетнамский",
+        "name_eng": "Vietnamese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 33,
+    "fields": {
+        "name": "Тамильский",
+        "name_eng": "Tamil"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 34,
+    "fields": {
+        "name": "Урду",
+        "name_eng": "Urdu"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 35,
+    "fields": {
+        "name": "Яванский",
+        "name_eng": "Javanese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 36,
+    "fields": {
+        "name": "Гуджарати",
+        "name_eng": "Gujarati"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 37,
+    "fields": {
+        "name": "Персидский (Фарси)",
+        "name_eng": "Persian (Farsi)"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 38,
+    "fields": {
+        "name": "Бходжпури",
+        "name_eng": "Bhojpuri"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 39,
+    "fields": {
+        "name": "Хауса",
+        "name_eng": "Hausa"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 40,
+    "fields": {
+        "name": "Каннада",
+        "name_eng": "Kannada"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 41,
+    "fields": {
+        "name": "Индонезийский",
+        "name_eng": "Indonesian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 42,
+    "fields": {
+        "name": "Йоруба",
+        "name_eng": "Yoruba"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 43,
+    "fields": {
+        "name": "Малаялам",
+        "name_eng": "Malayalam"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 44,
+    "fields": {
+        "name": "Ория",
+        "name_eng": "Odia (Oriya)"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 45,
+    "fields": {
+        "name": "Майтхили",
+        "name_eng": "Maithili"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 46,
+    "fields": {
+        "name": "Бирманский",
+        "name_eng": "Burmese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 47,
+    "fields": {
+        "name": "Суданский",
+        "name_eng": "Sundanese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 48,
+    "fields": {
+        "name": "Игбо",
+        "name_eng": "Igbo"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 49,
+    "fields": {
+        "name": "Синдхи",
+        "name_eng": "Sindhi"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 50,
+    "fields": {
+        "name": "Румынский",
+        "name_eng": "Romanian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 51,
+    "fields": {
+        "name": "Тагальский (Филиппинский)",
+        "name_eng": "Tagalog (Filipino)"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 52,
+    "fields": {
+        "name": "Нидерландский",
+        "name_eng": "Dutch"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 53,
+    "fields": {
+        "name": "Амхарский",
+        "name_eng": "Amharic"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 54,
+    "fields": {
+        "name": "Пушту",
+        "name_eng": "Pashto"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 55,
+    "fields": {
+        "name": "Тайский",
+        "name_eng": "Thai"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 56,
+    "fields": {
+        "name": "Кхмерский",
+        "name_eng": "Khmer"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 57,
+    "fields": {
+        "name": "Сомалийский",
+        "name_eng": "Somali"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 58,
+    "fields": {
+        "name": "Непальский",
+        "name_eng": "Nepali"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 59,
+    "fields": {
+        "name": "Сингальский",
+        "name_eng": "Sinhalese"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 60,
+    "fields": {
+        "name": "Курдский",
+        "name_eng": "Kurdish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 61,
+    "fields": {
+        "name": "Греческий",
+        "name_eng": "Greek"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 62,
+    "fields": {
+        "name": "Чеченский",
+        "name_eng": "Chechen"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 63,
+    "fields": {
+        "name": "Армянский",
+        "name_eng": "Armenian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 64,
+    "fields": {
+        "name": "Дагестанский (Аварский)",
+        "name_eng": "Dagestani (Avar)"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 65,
+    "fields": {
+        "name": "Монгольский",
+        "name_eng": "Mongolian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 66,
+    "fields": {
+        "name": "Финский",
+        "name_eng": "Finnish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 67,
+    "fields": {
+        "name": "Шведский",
+        "name_eng": "Swedish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 68,
+    "fields": {
+        "name": "Норвежский",
+        "name_eng": "Norwegian"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 69,
+    "fields": {
+        "name": "Датский",
+        "name_eng": "Danish"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 70,
+    "fields": {
+        "name": "Молдавский",
+        "name_eng": "Moldovan"
+    }
+},
+{
+    "model": "catalog.language",
+    "pk": 71,
+    "fields": {
+        "name": "Венгерский",
+        "name_eng": "Hungarian"
+    }
+}
+]

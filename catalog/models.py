@@ -30,8 +30,8 @@ class Language(models.Model):
 
 
 class Country(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    name_eng = models.CharField(max_length=100, unique=True, null=True, blank=True)
+    name = models.CharField(max_length=64, unique=True)
+    name_eng = models.CharField(max_length=64, unique=True, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "countries"
@@ -50,18 +50,20 @@ class Genre(models.Model):
 
 
 class Region(models.Model):
-    name = models.CharField(max_length=100)
-    name_eng = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=128)
+    name_eng = models.CharField(max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='regions')
 
     def __str__(self):
         return self.name
 
 class City(models.Model):
-    name = models.CharField(max_length=100)
-    name_eng = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=128)
+    name_eng = models.CharField(max_length=128, null=True, blank=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='cities')
-
+    longitude = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
     def __str__(self):
         return self.name
 

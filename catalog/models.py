@@ -61,7 +61,7 @@ class City(models.Model):
     name = models.CharField(max_length=128)
     name_eng = models.CharField(max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='cities')
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='cities')
+    region = models.ForeignKey(Region, null=True, on_delete=models.CASCADE, related_name='cities')
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     def __str__(self):

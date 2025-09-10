@@ -42,8 +42,25 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        country_id = self.request.query_params.get('country_id')
+        if country_id:
+            queryset = queryset.filter(country_id=country_id)
+        return queryset
+
 
 class CityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        country_id = self.request.query_params.get('country_id')
+        region_id = self.request.query_params.get('region_id')
+        if country_id:
+            queryset = queryset.filter(country_id=country_id)
+        if region_id:
+            queryset = queryset.filter(region_id=region_id)
+        return queryset
 

@@ -49,11 +49,11 @@ class RadioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Radio
         fields = [
-            'id', 'name', 'description', 'enabled', 'website_url', 'logo',
+            'id', 'name', 'slug', 'description', 'enabled', 'website_url', 'logo',
             'languages', 'country', 'region', 'city', 'genres', 'streams',
             'total_votes', 'average_rating', 'user'
         ]
-        read_only_fields = ['id', 'enabled', 'total_votes', 'average_rating']
+        read_only_fields = ['id', 'slug', 'enabled', 'total_votes', 'average_rating']
 
     def __init__(self, *args, **kwargs):
         # Call the superclass's __init__ first
@@ -65,7 +65,16 @@ class RadioSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         streams_data = validated_data.pop('streams')
+        languages_data = validated_data.pop('languages', None)
+        genres_data = validated_data.pop('genres', None)
+        
         radio = Radio.objects.create(**validated_data)
+
+        if languages_data:
+            radio.languages.set(languages_data)
+        if genres_data:
+            radio.genres.set(genres_data)
+
         for stream_data in streams_data:
             Stream.objects.create(radio=radio, **stream_data)
         return radio
@@ -101,7 +110,15 @@ class RadioSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         streams_data = validated_data.pop('streams', None)
+        languages_data = validated_data.pop('languages', None)
+        genres_data = validated_data.pop('genres', None)
+        
         instance = super().update(instance, validated_data)
+
+        if languages_data is not None:
+            instance.languages.set(languages_data)
+        if genres_data is not None:
+            instance.genres.set(genres_data)
 
         if streams_data is not None:
             instance.streams.all().delete()

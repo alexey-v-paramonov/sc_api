@@ -12,6 +12,7 @@ class RadioViewSet(viewsets.ModelViewSet):
     queryset = Radio.objects.filter(enabled=True)
     serializer_class = RadioSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # lookup_field = 'slug'
     # parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 

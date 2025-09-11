@@ -1,5 +1,6 @@
 
 from django.db import models
+from slugify import slugify
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 from django.contrib.auth import get_user_model
@@ -71,6 +72,7 @@ class City(models.Model):
 
 class Radio(models.Model):
     name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     enabled = models.BooleanField(default=True)
     website_url = models.URLField(blank=True)
@@ -91,9 +93,22 @@ class Radio(models.Model):
         on_delete=models.deletion.CASCADE
     )
 
-
     def __str__(self):
         return self.name
+
+    def _generate_unique_slug(self):
+        base_slug = slugify(self.name) if self.name else "radio"
+        slug = base_slug
+        counter = 1
+        while Radio.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._generate_unique_slug()
+        super().save(*args, **kwargs)
 
     def update_rating(self):
         """

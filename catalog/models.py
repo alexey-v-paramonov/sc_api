@@ -10,14 +10,14 @@ User = get_user_model()
 def validate_logo_image(image):
     """
     Validator for the radio logo.
-    Checks if the image is square and has a minimum size of 256x256 pixels.
+    Checks if the image is square and has a minimum size of 250x250 pixels.
     """
     try:
         width, height = get_image_dimensions(image)
         if width != height:
             raise ValidationError("The logo must be a square image.")
-        if width < 256:
-            raise ValidationError("The minimum size for the logo is 256x256 pixels.")
+        if width < 250:
+            raise ValidationError("The minimum size for the logo is 250x250 pixels.")
     except (TypeError, AttributeError):
         raise ValidationError("Invalid image file.")
 

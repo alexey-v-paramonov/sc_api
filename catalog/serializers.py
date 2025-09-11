@@ -1,5 +1,7 @@
 
 from rest_framework import serializers
+import requests
+from requests.exceptions import RequestException
 from .models import Radio, Language, Country, Genre, Stream, Vote, Region, City
 
 
@@ -38,11 +40,10 @@ class StreamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stream
         fields = ['id', 'stream_url', 'audio_format', 'bitrate', 'server_type']
+        read_only_fields = ['id']
 
 
 class RadioSerializer(serializers.ModelSerializer):
-    languages = LanguageSerializer(many=True, read_only=True)
-    genres = GenreSerializer(many=True, read_only=True)
     streams = StreamSerializer(many=True)
 
     class Meta:
@@ -52,7 +53,15 @@ class RadioSerializer(serializers.ModelSerializer):
             'languages', 'country', 'region', 'city', 'genres', 'streams',
             'total_votes', 'average_rating', 'user'
         ]
-        read_only_fields = ['total_votes', 'average_rating']
+        read_only_fields = ['id', 'enabled', 'total_votes', 'average_rating']
+
+    def __init__(self, *args, **kwargs):
+        # Call the superclass's __init__ first
+        super().__init__(*args, **kwargs)
+
+        # If an instance is being updated, the 'logo' field is not required.
+        if self.instance:
+            self.fields['logo'].required = False
 
     def create(self, validated_data):
         streams_data = validated_data.pop('streams')
@@ -60,6 +69,35 @@ class RadioSerializer(serializers.ModelSerializer):
         for stream_data in streams_data:
             Stream.objects.create(radio=radio, **stream_data)
         return radio
+
+    def validate_website_url(self, value):
+        if not value:
+            return value  # Don't validate if the URL is empty
+
+        if not (value.startswith('http://') or value.startswith('https://')):
+            raise serializers.ValidationError("url_invalid")
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+
+        try:
+            # Use HEAD request to be efficient and not download the whole page
+            response = requests.head(value, timeout=5, headers=headers, allow_redirects=True)
+
+            # Check for a successful status code (e.g., 200 OK)
+            response.raise_for_status()
+
+            # Check if the Content-Type header indicates an HTML document
+            content_type = response.headers.get('Content-Type', '')
+            if 'text/html' not in content_type:
+                raise serializers.serializers.ValidationError("content_type")
+
+        except RequestException as e:
+            # This will catch connection errors, timeouts, invalid URLs, etc.
+            raise serializers.ValidationError("connection_error")
+
+        return value
 
     def update(self, instance, validated_data):
         streams_data = validated_data.pop('streams', None)

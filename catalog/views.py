@@ -22,7 +22,8 @@ class RadioViewSet(viewsets.ModelViewSet):
         if 'genres' in request_data:
             data['genres'] = request_data.getlist('genres')
         if 'language' in request_data:
-            data['language'] = request_data.getlist('language')        
+            data['languages'] = request_data.getlist('language')        
+            data.pop('language', None)
 
         # Normalize 'streams'
         if 'streams' in data:
@@ -41,6 +42,8 @@ class RadioViewSet(viewsets.ModelViewSet):
                 streams_data = streams_data[0]
             
             data['streams'] = streams_data
+        if 'region' in data and data['region'] == 'null':
+            data['region'] = None
 
         # # You can add similar normalization for 'genres' and 'language' if they also face issues
         # # For example:

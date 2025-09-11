@@ -12,16 +12,46 @@ class RadioViewSet(viewsets.ModelViewSet):
     queryset = Radio.objects.filter(enabled=True)
     serializer_class = RadioSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
+    # parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def _normalize_data(self, request):
+        
+        request_data = request.data
+        data = request_data.copy()
+        if 'genres' in request_data:
+            data['genres'] = request_data.getlist('genres')
+        if 'language' in request_data:
+            data['language'] = request_data.getlist('language')        
+
+        # Normalize 'streams'
+        if 'streams' in data:
+            streams_data = data['streams']
+            if isinstance(streams_data, str):
+                print("Streams is a string, attempting to parse as JSON")
+                try:
+                    streams_data = json.loads(streams_data)
+                except json.JSONDecodeError:
+                    # Let the serializer handle the invalid format error
+                    pass
+            
+            # Handle potential nesting from form parsers
+            if isinstance(streams_data, list) and len(streams_data) > 0 and isinstance(streams_data[0], list):
+                print("Streams is a list of lists, flattening")
+                streams_data = streams_data[0]
+            
+            data['streams'] = streams_data
+
+        # # You can add similar normalization for 'genres' and 'language' if they also face issues
+        # # For example:
+        # if 'genres' in data and isinstance(data['genres'], list) and len(data['genres']) == 1:
+        #     if isinstance(data['genres'][0], str) and ',' in data['genres'][0]:
+        #         data.setlist('genres', data['genres'][0].split(','))
+        data['user'] = request.user.id
+        return data.dict()
 
     def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        if 'streams' in data and isinstance(data.get('streams'), str):
-            try:
-                data['streams'] = json.loads(data['streams'])
-            except json.JSONDecodeError:
-                return Response({'streams': ['Invalid JSON format.']}, status=400)
-        
+        data = self._normalize_data(request)
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -31,22 +61,11 @@ class RadioViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        data = request.data.copy()
-        if 'streams' in data and isinstance(data.get('streams'), str):
-            try:
-                data['streams'] = json.loads(data['streams'])
-            except json.JSONDecodeError:
-                return Response({'streams': ['Invalid JSON format.']}, status=400)
-
+        data = self._normalize_data(request)
         serializer = self.get_serializer(instance, data=data, partial=partial)
+        
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been used, we need to reload the instance
-            # from the database to get the updated data.
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
 
         return Response(serializer.data)
 

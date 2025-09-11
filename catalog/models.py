@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.images import get_image_dimensions
 from django.contrib.auth import get_user_model
+from mobile_application.models import ServerType
 
 User = get_user_model()
 
@@ -117,9 +118,17 @@ class Stream(models.Model):
         ('other', 'Other'),
     ]
     radio = models.ForeignKey(Radio, on_delete=models.CASCADE, related_name='streams')
-    url = models.URLField()
+    stream_url = models.URLField()
     audio_format = models.CharField(max_length=10, choices=AUDIO_FORMAT_CHOICES)
     bitrate = models.PositiveIntegerField(help_text="in kbps")
+    server_type = models.CharField(
+        "Server type",
+        max_length=20,
+        choices=ServerType.choices,
+        blank=False,
+        null=False,
+        default=ServerType.SHOUTCAST,
+    )
 
     def __str__(self):
         return f"{self.radio.name} - {self.get_audio_format_display()} ({self.bitrate} kbps)"

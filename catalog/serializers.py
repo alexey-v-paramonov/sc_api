@@ -37,14 +37,11 @@ class GenreSerializer(serializers.ModelSerializer):
 class StreamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stream
-        fields = ['id', 'url', 'audio_format', 'bitrate']
+        fields = ['id', 'stream_url', 'audio_format', 'bitrate', 'server_type']
 
 
 class RadioSerializer(serializers.ModelSerializer):
     languages = LanguageSerializer(many=True, read_only=True)
-    country = CountrySerializer(read_only=True)
-    region = RegionSerializer(read_only=True)
-    city = CitySerializer(read_only=True)
     genres = GenreSerializer(many=True, read_only=True)
     streams = StreamSerializer(many=True)
 
@@ -53,7 +50,7 @@ class RadioSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'enabled', 'website_url', 'logo',
             'languages', 'country', 'region', 'city', 'genres', 'streams',
-            'total_votes', 'average_rating'
+            'total_votes', 'average_rating', 'user'
         ]
         read_only_fields = ['total_votes', 'average_rating']
 

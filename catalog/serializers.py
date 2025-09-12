@@ -42,7 +42,6 @@ class StreamSerializer(serializers.ModelSerializer):
         """
         Validates that the stream URL is a connectable audio stream.
         """
-        print("Checking:", value)        
         if not (value.startswith('http://') or value.startswith('https://')):
             raise serializers.ValidationError("url_invalid")
 

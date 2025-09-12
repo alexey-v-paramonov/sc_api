@@ -16,6 +16,12 @@ class RadioViewSet(viewsets.ModelViewSet):
     # parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            return Radio.objects.filter(user=user)
+        return Radio.objects.none()
+
     def _normalize_data(self, request):
         
         request_data = request.data

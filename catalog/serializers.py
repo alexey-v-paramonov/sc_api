@@ -138,7 +138,7 @@ class RadioSerializer(serializers.ModelSerializer):
             # Check if the Content-Type header indicates an HTML document
             content_type = response.headers.get('Content-Type', '')
             if 'text/html' not in content_type:
-                raise serializers.serializers.ValidationError("content_type")
+                raise serializers.ValidationError("content_type")
 
         except RequestException as e:
             # This will catch connection errors, timeouts, invalid URLs, etc.

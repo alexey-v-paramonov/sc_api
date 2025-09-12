@@ -37,6 +37,44 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class StreamSerializer(serializers.ModelSerializer):
+
+    def validate_stream_url(self, value):
+        """
+        Validates that the stream URL is a connectable audio stream.
+        """
+        print("Checking:", value)        
+        if not (value.startswith('http://') or value.startswith('https://')):
+            raise serializers.ValidationError("url_invalid")
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+            'Icy-MetaData': '1'  # Request metadata from Shoutcast/Icecast servers
+        }
+
+        try:
+            # Use stream=True to avoid downloading the entire file
+            response = requests.get(value, timeout=5, headers=headers, stream=True)
+            response.raise_for_status()  # Check for HTTP errors like 404 or 500
+
+            # server_type = self.initial_data.get('server_type', '').lower()
+            # if server_type == 'icecast':
+            #     # Read the first few bytes of the stream to check for "icecast"
+            #     first_chunk = next(response.iter_content(chunk_size=512), b'')
+            #     if b'icecast' in first_chunk.lower():
+            #         return value
+
+            # Check if Content-Type header indicates an audio stream
+            content_type = response.headers.get('Content-Type', '').lower()
+            if 'audio' not in content_type:
+                raise serializers.ValidationError("content_type_not_audio")
+
+
+        except RequestException:
+            # Catches connection errors, timeouts, DNS errors, etc.
+            raise serializers.ValidationError("connection_error")
+
+        return value
+        
     class Meta:
         model = Stream
         fields = ['id', 'stream_url', 'audio_format', 'bitrate', 'server_type']

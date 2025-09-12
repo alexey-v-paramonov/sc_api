@@ -9,7 +9,7 @@ from .serializers import (
 
 
 class RadioViewSet(viewsets.ModelViewSet):
-    queryset = Radio.objects.filter(enabled=True)
+    queryset = Radio.objects.all()
     serializer_class = RadioSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # lookup_field = 'slug'

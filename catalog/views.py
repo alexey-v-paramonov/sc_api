@@ -11,7 +11,7 @@ from .serializers import (
 class RadioViewSet(viewsets.ModelViewSet):
     queryset = Radio.objects.all()
     serializer_class = RadioSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
     # lookup_field = 'slug'
     # parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
@@ -83,16 +83,19 @@ class RadioViewSet(viewsets.ModelViewSet):
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CountryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Country.objects.order_by('name_eng')
     serializer_class = CountrySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class VoteViewSet(viewsets.ModelViewSet):
@@ -109,6 +112,7 @@ class VoteViewSet(viewsets.ModelViewSet):
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.order_by('name_eng')
     serializer_class = RegionSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()

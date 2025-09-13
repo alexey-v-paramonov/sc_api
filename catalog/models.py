@@ -111,6 +111,25 @@ class Radio(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self._generate_unique_slug()
+
+        # Resize logo if needed
+        if self.logo:
+            try:
+                self.logo.open()
+                img = Image.open(self.logo)
+                width, height = img.size
+                if width > 512 or height > 512:
+                    img = img.resize((512, 512), Image.LANCZOS)
+                    buffer = BytesIO()
+                    img_format = img.format if img.format else 'PNG'
+                    img.save(buffer, format=img_format)
+                    buffer.seek(0)
+                    file_name = self.logo.name.split('/')[-1]
+                    self.logo.save(file_name, ContentFile(buffer.read()), save=False)
+                self.logo.close()
+            except Exception:
+                pass  # If resizing fails, save original
+
         super().save(*args, **kwargs)
 
     def update_rating(self):

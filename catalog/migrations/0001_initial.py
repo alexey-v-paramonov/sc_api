@@ -82,7 +82,7 @@ class Migration(migrations.Migration):
                 (
                     "logo",
                     models.ImageField(
-                        upload_to="app_radio_logos/",
+                        upload_to="catalog_logos/",
                         validators=[catalog.models.validate_logo_image],
                     ),
                 ),

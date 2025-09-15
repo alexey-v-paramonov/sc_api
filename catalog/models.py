@@ -79,7 +79,7 @@ class Radio(models.Model):
     description = models.TextField(blank=True)
     enabled = models.BooleanField(default=True)
     website_url = models.URLField(blank=True)
-    logo = models.ImageField(upload_to='app_radio_logos/', validators=[validate_logo_image])
+    logo = models.ImageField(upload_to='catalog_logos/', validators=[validate_logo_image])
     languages = models.ManyToManyField(Language, related_name='radios')
     country = models.ForeignKey(Country, on_delete=models.PROTECT, related_name='radios')
     region = models.ForeignKey(Region, on_delete=models.PROTECT, related_name='radios', null=True, blank=True)

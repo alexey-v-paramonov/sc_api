@@ -126,7 +126,6 @@ class Radio(models.Model):
                     buffer.seek(0)
                     file_name = self.logo.name.split('/')[-1]
                     self.logo.save(file_name, ContentFile(buffer.read()), save=False)
-                self.logo.close()
             except Exception:
                 pass  # If resizing fails, save original
 

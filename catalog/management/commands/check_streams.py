@@ -27,44 +27,49 @@ class Command(BaseCommand):
     async def check_stream_url(self, stream, timeout):
         """
         Asynchronously check if a stream URL is valid and returns audio content
-        Based on StreamSerializer.validate_stream_url
+        Sets Stream.enabled True/False based on result
         """
         url = stream.stream_url
-        
+        result = False
         if not (url.startswith('http://') or url.startswith('https://')):
             self.stdout.write(self.style.WARNING(f"Invalid URL format: {url}"))
-            return False
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-            'Icy-MetaData': '1'  # Request metadata from Shoutcast/Icecast servers
-        }
-
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, timeout=timeout) as response:
-                    if not response.ok:
-                        self.stdout.write(self.style.WARNING(f"HTTP error {response.status}: {url}"))
-                        return False
-                    
-                    # Check if Content-Type header indicates an audio stream
-                    content_type = response.headers.get('Content-Type', '').lower()
-                    if 'audio' not in content_type:
-                        self.stdout.write(self.style.WARNING(f"Not audio content: {url} (Content-Type: {content_type})"))
-                        return False
-                    
-                    self.stdout.write(self.style.SUCCESS(f"Valid audio stream: {url}"))
-                    return True
-                    
-        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-            self.stdout.write(self.style.WARNING(f"Connection error: {url} ({str(e)})"))
-            return False
+            result = False
+        else:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
+                'Icy-MetaData': '1'
+            }
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url, headers=headers, timeout=timeout) as response:
+                        if not response.ok:
+                            self.stdout.write(self.style.WARNING(f"HTTP error {response.status}: {url}"))
+                            result = False
+                        else:
+                            content_type = response.headers.get('Content-Type', '').lower()
+                            if 'audio' not in content_type:
+                                self.stdout.write(self.style.WARNING(f"Not audio content: {url} (Content-Type: {content_type})"))
+                                result = False
+                            else:
+                                self.stdout.write(self.style.SUCCESS(f"Valid audio stream: {url}"))
+                                result = True
+            except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+                self.stdout.write(self.style.WARNING(f"Connection error: {url} ({str(e)})"))
+                result = False
+        # Update Stream.enabled in DB
+        await self.update_stream_status(stream.id, result)
+        return result
 
     async def process_batch(self, streams_batch, timeout):
         """Process a batch of streams concurrently"""
         tasks = [self.check_stream_url(stream, timeout) for stream in streams_batch]
         results = await asyncio.gather(*tasks)
         return dict(zip([stream.id for stream in streams_batch], results))
+    @sync_to_async
+    def update_stream_status(self, stream_id, enabled):
+        """Update stream enabled status"""
+        from catalog.models import Stream
+        Stream.objects.filter(id=stream_id).update(enabled=enabled)
 
     @sync_to_async
     def get_all_radios_with_streams(self):

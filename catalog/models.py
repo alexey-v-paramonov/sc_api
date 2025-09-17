@@ -165,6 +165,7 @@ class Stream(models.Model):
         null=False,
         default=ServerType.SHOUTCAST,
     )
+    enabled = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.radio.name} - {self.get_audio_format_display()} ({self.bitrate} kbps)"

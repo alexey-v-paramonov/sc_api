@@ -14,14 +14,14 @@ class Command(BaseCommand):
         parser.add_argument(
             '--batch-size',
             type=int,
-            default=10,
-            help='Number of stream URLs to check concurrently (default: 10)'
+            default=20,
+            help='Number of stream URLs to check concurrently (default: 20)'
         )
         parser.add_argument(
             '--timeout',
             type=int,
-            default=5,
-            help='Timeout in seconds for each stream check (default: 5)'
+            default=15,
+            help='Timeout in seconds for each stream check (default: 15)'
         )
 
     async def check_stream_url(self, stream, timeout):

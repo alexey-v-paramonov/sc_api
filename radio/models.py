@@ -236,6 +236,9 @@ class SelfHostedRadio(BaseRadio):
         if self.is_blocked:
             return 0
 
+        if self.is_trial_period():
+            return 0
+
 
         if self.status != RadioHostingStatus.READY:
             return 0

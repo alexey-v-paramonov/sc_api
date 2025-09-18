@@ -232,6 +232,13 @@ class SelfHostedRadio(BaseRadio):
     def is_trial_period(self):
         return (timezone.now() - self.ts_created).days < settings.FREE_TRIAL_DAYS
 
+    def trial_period_hours_left(self):
+        if not self.is_trial_period():
+            return 0
+        delta = timezone.now() - self.ts_created
+        return max(0, settings.FREE_TRIAL_DAYS * 24 - delta.days * 24 - delta.seconds // 3600)
+        
+
     def price(self):
         if self.is_blocked:
             return 0

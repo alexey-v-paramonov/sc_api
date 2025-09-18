@@ -8,6 +8,7 @@ from mobile_application.models import ServerType
 from PIL import Image
 from django.core.files.base import ContentFile
 from io import BytesIO
+from django_extensions.db.models import TimeStampedModel
 
 User = get_user_model()
 
@@ -73,7 +74,7 @@ class City(models.Model):
         return self.name
 
 
-class Radio(models.Model):
+class Radio(TimeStampedModel):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
@@ -86,7 +87,7 @@ class Radio(models.Model):
     city = models.ForeignKey(City, on_delete=models.PROTECT, related_name='radios', null=True, blank=True)
     genres = models.ManyToManyField(Genre, related_name='radios')
     total_votes = models.PositiveIntegerField(default=0)
-    average_rating = models.FloatField(default=0.0)
+    total_score = models.PositiveIntegerField(default=0)
 
     user = models.ForeignKey(
         User,
@@ -138,13 +139,13 @@ class Radio(models.Model):
         votes = self.votes.all()
         self.total_votes = votes.count()
         if self.total_votes > 0:
-            self.average_rating = sum(vote.rating for vote in votes) / self.total_votes
+            self.total_score = sum(vote.rating for vote in votes) / self.total_votes
         else:
-            self.average_rating = 0.0
-        self.save(update_fields=['total_votes', 'average_rating'])
+            self.total_score = 0.0
+        self.save(update_fields=['total_votes', 'total_score'])
 
 
-class Stream(models.Model):
+class Stream(TimeStampedModel):
     AUDIO_FORMAT_CHOICES = [
         ('mp3', 'MP3'),
         ('aac', 'AAC'),
@@ -166,12 +167,13 @@ class Stream(models.Model):
         default=ServerType.SHOUTCAST,
     )
     enabled = models.BooleanField(default=True)
+    # disabled_reason = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"{self.radio.name} - {self.get_audio_format_display()} ({self.bitrate} kbps)"
 
 
-class Vote(models.Model):
+class Vote(TimeStampedModel):
     radio = models.ForeignKey(Radio, on_delete=models.CASCADE, related_name='votes')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votes')
     rating = models.PositiveSmallIntegerField()

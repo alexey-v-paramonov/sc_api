@@ -88,9 +88,9 @@ class RadioSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'slug', 'description', 'enabled', 'website_url', 'logo',
             'languages', 'country', 'region', 'city', 'genres', 'streams',
-            'total_votes', 'average_rating', 'user'
+            'total_votes', 'total_score', 'user'
         ]
-        read_only_fields = ['id', 'slug', 'enabled', 'total_votes', 'average_rating']
+        read_only_fields = ['id', 'slug', 'enabled', 'total_votes', 'total_score']
 
     def __init__(self, *args, **kwargs):
         # Call the superclass's __init__ first

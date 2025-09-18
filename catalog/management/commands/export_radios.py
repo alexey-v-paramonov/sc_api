@@ -1,13 +1,30 @@
+import json
+
 from django.core.management.base import BaseCommand
 from catalog.models import Radio
 from django.core.serializers.json import DjangoJSONEncoder
-import json
+from django.db.models import F, ExpressionWrapper, FloatField, Case, When, Value
 
 class Command(BaseCommand):
     help = 'Export all Radio models with related Stream, Country, Region, City, Genre to a JSON file.'
 
     def handle(self, *args, **options):
-        radios = Radio.objects.select_related('country', 'region', 'city', 'user').prefetch_related('genres', 'languages', 'streams').all()
+        radios = Radio.objects.select_related(
+            'country', 'region', 'city', 'user'
+        ).prefetch_related(
+            'genres', 'languages', 'streams'
+        ).filter(enabled=True)
+        radios = radios.annotate(
+            rating=Case(
+                When(total_votes=0, then=Value(None, output_field=FloatField())),
+                When(total_score=0, then=Value(None, output_field=FloatField())),
+                default=ExpressionWrapper(
+                    F('total_score') * 1.0 / F('total_votes'),
+                    output_field=FloatField()
+                ),
+                output_field=FloatField()
+            )
+        )
         data = []
         for radio in radios:
             data.append({
@@ -49,10 +66,10 @@ class Command(BaseCommand):
                         'bitrate': stream.bitrate,
                         'server_type': stream.server_type,
                     }
-                    for stream in radio.streams.all()
+                    for stream in radio.streams.filter(enabled=True).order_by('-bitrate')
                 ],
                 'total_votes': radio.total_votes,
-                'average_rating': radio.average_rating,
+                'total_score': radio.total_score,
                 'user_id': radio.user.id,
             })
         with open('exported_radios.json', 'w', encoding='utf-8') as f:

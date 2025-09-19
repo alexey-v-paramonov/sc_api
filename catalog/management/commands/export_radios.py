@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 ),
                 output_field=FloatField()
             )
-        ).order_by()('-rating', 'name')
+        ).order_by('-rating', 'name')
         data = []
         for radio in radios:
             data.append({
@@ -72,6 +72,7 @@ class Command(BaseCommand):
                 'total_votes': radio.total_votes,
                 'total_score': radio.total_score,
                 'user_id': radio.user.id,
+                'rating': radio.rating,
             })
         with open('exported_radios.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)

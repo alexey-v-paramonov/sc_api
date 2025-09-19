@@ -37,6 +37,7 @@ class Command(BaseCommand):
                 'logo': radio.logo.url if radio.logo else None,
                 'country': {
                     'id': radio.country.id,
+                    'iso2': radio.country.iso2,
                     'name': radio.country.name,
                     'name_eng': radio.country.name_eng,
                 } if radio.country else None,

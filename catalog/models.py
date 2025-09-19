@@ -38,6 +38,7 @@ class Language(models.Model):
 class Country(models.Model):
     name = models.CharField(max_length=64, unique=True)
     name_eng = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    iso2 = models.CharField(max_length=2, unique=True, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "countries"

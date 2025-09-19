@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 ),
                 output_field=FloatField()
             )
-        )
+        ).order_by()('-rating', 'name')
         data = []
         for radio in radios:
             data.append({

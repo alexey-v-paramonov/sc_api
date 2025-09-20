@@ -73,6 +73,7 @@ class Command(BaseCommand):
                 'total_score': radio.total_score,
                 'user_id': radio.user.id,
                 'rating': radio.rating,
+                'created': radio.created,
             })
         with open('exported_radios.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)

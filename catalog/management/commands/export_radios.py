@@ -16,8 +16,8 @@ class Command(BaseCommand):
         ).filter(enabled=True)
         radios = radios.annotate(
             rating=Case(
-                When(total_votes=0, then=Value(None, output_field=FloatField())),
-                When(total_score=0, then=Value(None, output_field=FloatField())),
+                When(total_votes=0, then=Value(0, output_field=FloatField())),
+                When(total_score=0, then=Value(0, output_field=FloatField())),
                 default=ExpressionWrapper(
                     F('total_score') * 1.0 / F('total_votes'),
                     output_field=FloatField()

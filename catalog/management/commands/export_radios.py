@@ -28,7 +28,7 @@ class Command(BaseCommand):
         data = []
         for radio in radios:
             streams = radio.streams.filter(enabled=True).order_by('-bitrate')
-            default_stream = next([stream.stream_url for stream in streams if stream.stream_url.startswith("https://")], None) if streams else None
+            default_stream = next((stream.stream_url for stream in streams if stream.stream_url.startswith("https:")), None)
             data.append({
                 'id': radio.id,
                 'name': radio.name,

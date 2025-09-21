@@ -27,6 +27,8 @@ class Command(BaseCommand):
         ).order_by('-rating', 'name')
         data = []
         for radio in radios:
+            streams = radio.streams.filter(enabled=True).order_by('-bitrate')
+            default_stream = next(stream.stream_url for stream in streams if stream.stream_url.startswith("https://")) if streams else None
             data.append({
                 'id': radio.id,
                 'name': radio.name,
@@ -67,13 +69,14 @@ class Command(BaseCommand):
                         'bitrate': stream.bitrate,
                         'server_type': stream.server_type,
                     }
-                    for stream in radio.streams.filter(enabled=True).order_by('-bitrate')
+                    for stream in streams
                 ],
                 'total_votes': radio.total_votes,
                 'total_score': radio.total_score,
                 'user_id': radio.user.id,
                 'rating': radio.rating,
                 'created': radio.created,
+                'default_stream': default_stream,
             })
         with open('exported_radios.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, cls=DjangoJSONEncoder, ensure_ascii=False, indent=2)

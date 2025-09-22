@@ -111,7 +111,8 @@ class Radio(TimeStampedModel):
         return slug
 
     def save(self, *args, **kwargs):
-        if not self.slug:
+        # Generate slug only when creating a new radio (not updating)
+        if not self.pk and not self.slug:
             self.slug = self._generate_unique_slug()
 
         # Resize logo if needed

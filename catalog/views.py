@@ -115,21 +115,28 @@ class VoteViewSet(APIView):
         if not ip:
             return Response({"error": "ip_undefined"}, status=400)
 
+        score = request.data.get('score')
+        if score is None:
+            return Response({"error": "score_not_set"}, status=400)
+        
         try:
             radio = Radio.objects.get(id=radio_id)
         except Radio.DoesNotExist:
             return Response({"error": "radio_not_found"}, status=400)
 
-        if Vote.objects.filter(radio=radio, ip=ip, created__gte=timezone.now()-timezone.timedelta(hours=1)).exists():
+        # Delete Vote object older than 1 hour
+        Vote.objects.filter(created__lt=timezone.now()-timezone.timedelta(hours=1)).delete()
+        if Vote.objects.filter(radio=radio, ip=ip).exists():
             return Response({"error": "vote_exists"}, status=403)
             
         Vote.objects.create(
             radio=radio,
-            ip=ip
+            ip=ip,
         )
         
-        # Delete Vote object older than 1 hour
-        Vote.objects.filter(created__lt=timezone.now()-timezone.timedelta(hours=1)).delete()
+        radio.total_votes += 1
+        radio.total_score += int(score)
+        radio.save(update_fields=['total_votes', 'total_score'])
         return Response({}, status=201)
 
 

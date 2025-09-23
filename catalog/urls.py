@@ -12,8 +12,11 @@ router.register(r'countries', CountryViewSet)
 router.register(r'regions', RegionViewSet)
 router.register(r'cities', CityViewSet)
 router.register(r'genres', GenreViewSet)
-router.register(r'votes', VoteViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),
 ]
+
+urlpatterns += path(r'/', VoteViewSet.as_view()),
+

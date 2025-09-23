@@ -1,3 +1,7 @@
+from django.utils import timezone
+
+from rest_framework.views import APIView
+
 from rest_framework import viewsets, permissions, parsers
 from rest_framework.response import Response
 import json
@@ -98,15 +102,35 @@ class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class VoteViewSet(viewsets.ModelViewSet):
-    queryset = Vote.objects.all()
-    serializer_class = VoteSerializer
-    permission_classes = [permissions.AllowAny]
+class VoteViewSet(APIView):
+    
+    permission_classes = (permissions.AllowAny, )
+    
+    def post(self, request):
+        radio_id=request.data.get('radio')
+        if not radio_id:
+            return Response({"error": "radio_not_set"}, status=400)
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"request": self.request})
-        return context
+        ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+        if not ip:
+            return Response({"error": "ip_undefined"}, status=400)
+
+        try:
+            radio = Radio.objects.get(id=radio_id)
+        except Radio.DoesNotExist:
+            return Response({"error": "radio_not_found"}, status=400)
+
+        if Vote.objects.filter(radio=radio, ip=ip, created__gte=timezone.now()-timezone.timedelta(hours=1)).exists():
+            return Response({"error": "vote_exists"}, status=403)
+            
+        Vote.objects.create(
+            radio=radio,
+            ip=ip
+        )
+        
+        # Delete Vote object older than 1 hour
+        Vote.objects.filter(created__lt=timezone.now()-timezone.timedelta(hours=1)).delete()
+        return Response({}, status=201)
 
 
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):

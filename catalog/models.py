@@ -134,18 +134,6 @@ class Radio(TimeStampedModel):
 
         super().save(*args, **kwargs)
 
-    def update_rating(self):
-        """
-        Recalculates the average rating and total votes for the radio.
-        """
-        votes = self.votes.all()
-        self.total_votes = votes.count()
-        if self.total_votes > 0:
-            self.total_score = sum(vote.rating for vote in votes) / self.total_votes
-        else:
-            self.total_score = 0.0
-        self.save(update_fields=['total_votes', 'total_score'])
-
 
 class Stream(TimeStampedModel):
     AUDIO_FORMAT_CHOICES = [
@@ -176,18 +164,13 @@ class Stream(TimeStampedModel):
 
 
 class Vote(TimeStampedModel):
+
     radio = models.ForeignKey(Radio, on_delete=models.CASCADE, related_name='votes')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votes')
-    rating = models.PositiveSmallIntegerField()
+    ip =  models.GenericIPAddressField(
+        null=False,
+        blank=False,
+        verbose_name="IP address"
+    )
 
     class Meta:
-        unique_together = ('radio', 'user')
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.radio.update_rating()
-
-    def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
-        self.radio.update_rating()
-
+        unique_together = ('radio', 'ip')

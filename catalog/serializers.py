@@ -167,7 +167,7 @@ class RadioSerializer(serializers.ModelSerializer):
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
-        fields = ['id', 'radio', 'rating']
+        fields = ['id', 'radio',]
         read_only_fields = ['id']
 
     def validate_rating(self, value):

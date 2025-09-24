@@ -107,7 +107,7 @@ class VoteViewSet(APIView):
     permission_classes = (permissions.AllowAny, )
     
     def post(self, request):
-        radio_id=request.data.get('radio')
+        radio_id = request.data.get('radio_id')
         if not radio_id:
             return Response({"error": "radio_not_set"}, status=400)
 

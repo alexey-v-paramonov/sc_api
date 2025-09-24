@@ -18,5 +18,5 @@ urlpatterns = [
     path('', include(router.urls)),
 ]
 
-urlpatterns += path(r'/', VoteViewSet.as_view()),
+urlpatterns += path(r'vote', VoteViewSet.as_view()),
 

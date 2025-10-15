@@ -1,5 +1,6 @@
 import socket
 import paramiko
+import ipaddress
 
 from rest_framework import serializers
 from radio.models import SelfHostedRadio, HostedRadio, RadioServer
@@ -78,6 +79,14 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
         ssh_password = data.get('ssh_password', None)
         ssh_port = data.get('ssh_port', None)
         domain = data.get('domain', None)
+        
+        try:
+            ip = ipaddress.ip_address(ip)
+            if ip.is_loopback:
+                raise serializers.ValidationError({"ip": "invalid_ip"})
+        except ValueError:
+            raise serializers.ValidationError({"ip": "invalid_ip"})
+
         if domain:
 
             # Check if domain resolves to the IP specified

@@ -106,11 +106,11 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
             try:
                 s.connect((ip, int(ssh_port)))
+                s.shutdown(socket.SHUT_RDWR)
             except Exception:
                 raise serializers.ValidationError(
                     {"ip": "ssh_port_connection_failed"})
             finally:
-                s.shutdown(socket.SHUT_RDWR)
                 s.close()
 
             # Check SSH credentials

@@ -81,20 +81,20 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
         domain = data.get('domain', None)
         
         try:
-            ip = ipaddress.ip_address(ip)
-            if ip.is_loopback:
-                raise serializers.ValidationError({"ip": "invalid_ip"})
+            ip_check = ipaddress.ip_address(ip)
+            if ip_check.is_loopback:
+                raise serializers.ValidationError({"ip": "invalid_ip", "message": "Loopback IP addresses are not allowed."})
         except ValueError:
-            raise serializers.ValidationError({"ip": "invalid_ip"})
+            raise serializers.ValidationError({"ip": "invalid_ip", "message": "Invalid IP address."})
 
         if domain:
 
             # Check if domain resolves to the IP specified
             try:
                 domain_ip = socket.gethostbyname(domain)
-            except:
+            except Exception as e:
                 raise serializers.ValidationError(
-                    {"domain": "wrong_ip_resolved"})
+                    {"domain": "wrong_ip_resolved", "message": str(e)})
 
             if domain_ip != ip:
                 raise serializers.ValidationError({"domain": "wrong_ip"})
@@ -107,9 +107,9 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
             try:
                 s.connect((ip, int(ssh_port)))
                 s.shutdown(socket.SHUT_RDWR)
-            except Exception:
+            except Exception as e:
                 raise serializers.ValidationError(
-                    {"ip": "ssh_port_connection_failed"})
+                    {"ip": "ssh_port_connection_failed", "message": str(e)})
             finally:
                 s.close()
 
@@ -120,10 +120,10 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
                 print(ip, ssh_username, ssh_password, ssh_port)
                 ssh.connect(ip, username=ssh_username, password=ssh_password,
                             port=ssh_port, allow_agent=False, look_for_keys=False)
-            except Exception:
+            except Exception as e:
                 ssh.close()
                 raise serializers.ValidationError(
-                    {"ip": "ssh_connection_failed"})
+                    {"ip": "ssh_connection_failed", "message": str(e)})
 
             _, stdout, _ = ssh.exec_command(
                 'cat /etc/system-release /etc/issue 2>/dev/null')

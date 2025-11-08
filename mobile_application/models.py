@@ -357,6 +357,9 @@ class ApplicationRadioBase(models.Model):
     allow_shoutbox =  models.BooleanField(
         default=True,
     )
+    allow_history =  models.BooleanField(
+        default=True,
+    )
     allow_likes =  models.BooleanField(
         default=True,
     )

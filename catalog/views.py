@@ -1,14 +1,17 @@
 from django.utils import timezone
+from django.db.models import Q, Prefetch
 
 from rest_framework.views import APIView
 
 from rest_framework import viewsets, permissions, parsers
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 import json
-from .models import Radio, Language, Country, Genre, Vote, Region, City
+from .models import Radio, Language, Country, Genre, Vote, Region, City, Stream
 from .serializers import (
     RadioSerializer, LanguageSerializer, CountrySerializer,
-    GenreSerializer, VoteSerializer, RegionSerializer, CitySerializer
+    GenreSerializer, VoteSerializer, RegionSerializer, CitySerializer,
+    PublicRadioSerializer
 )
 
 
@@ -166,4 +169,163 @@ class CityViewSet(viewsets.ReadOnlyModelViewSet):
         if region_id:
             queryset = queryset.filter(region_id=region_id)
         return queryset
+
+
+class CatalogPagination(PageNumberPagination):
+    """Custom pagination for public catalog"""
+    page_size = 30
+    page_size_query_param = 'per_page'
+    max_page_size = 100
+
+
+class PublicRadioCatalogViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Public API endpoint for radio catalog.
+    Does not require authentication.
+    Supports filtering, searching, sorting, and pagination.
+    """
+    serializer_class = PublicRadioSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = CatalogPagination
+
+    def get_queryset(self):
+        """
+        Build queryset with filtering, searching, and sorting
+        """
+        queryset = Radio.objects.filter(enabled=True).select_related(
+            'country', 'region', 'city'
+        ).prefetch_related(
+            'genres', 'languages', 
+            Prefetch('streams', queryset=Stream.objects.filter(enabled=True))
+        )
+
+        # Get query parameters
+        search = self.request.query_params.get('search', '').strip()
+        genre = self.request.query_params.get('genre', '').strip()
+        country = self.request.query_params.get('country', '').strip()
+        region = self.request.query_params.get('region', '').strip()
+        city = self.request.query_params.get('city', '').strip()
+        language = self.request.query_params.get('language', '').strip()
+        sort = self.request.query_params.get('sort', 'rating').strip()
+
+        # Apply search filter (minimum 3 characters)
+        if search and len(search) >= 3:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(description__icontains=search) |
+                Q(genres__name_eng__icontains=search) |
+                Q(genres__name__icontains=search) |
+                Q(country__name_eng__icontains=search) |
+                Q(country__name__icontains=search) |
+                Q(city__name_eng__icontains=search) |
+                Q(city__name__icontains=search)
+            ).distinct()
+
+        # Apply filters
+        if genre:
+            queryset = queryset.filter(
+                Q(genres__name_eng__iexact=genre) | Q(genres__name__iexact=genre)
+            )
+        
+        if country:
+            queryset = queryset.filter(
+                Q(country__name_eng__iexact=country) | Q(country__name__iexact=country)
+            )
+        
+        if region:
+            queryset = queryset.filter(
+                Q(region__name_eng__iexact=region) | Q(region__name__iexact=region)
+            )
+        
+        if city:
+            queryset = queryset.filter(
+                Q(city__name_eng__iexact=city) | Q(city__name__iexact=city)
+            )
+        
+        if language:
+            queryset = queryset.filter(
+                Q(languages__name_eng__iexact=language) | Q(languages__name__iexact=language)
+            )
+
+        # Apply sorting
+        if sort == 'votes':
+            queryset = queryset.order_by('-total_votes')
+        elif sort == 'created':
+            queryset = queryset.order_by('-created')
+        else:  # default to rating
+            # Sort by rating calculation: total_score / total_votes (handle division by zero)
+            queryset = queryset.extra(
+                select={'rating_calc': 'CASE WHEN total_votes > 0 THEN CAST(total_score AS FLOAT) / total_votes ELSE 0 END'}
+            ).order_by('-rating_calc')
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        """
+        Override list method to add filters in response
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response_data = self.get_paginated_response(serializer.data)
+            
+            # Add filters to response
+            filters = self._get_available_filters(queryset)
+            response_data.data['filters'] = filters
+            
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'total': queryset.count(),
+            'results': serializer.data,
+            'filters': self._get_available_filters(queryset)
+        })
+
+    def _get_available_filters(self, queryset):
+        """
+        Get available filter options based on current queryset
+        """
+        # Get distinct values for each filter
+        genres = Genre.objects.filter(
+            radios__in=queryset
+        ).distinct().values_list('name_eng', flat=True)
+        
+        countries = Country.objects.filter(
+            radios__in=queryset
+        ).distinct().values_list('name_eng', flat=True)
+        
+        regions = Region.objects.filter(
+            radios__in=queryset
+        ).exclude(name_eng__isnull=True).distinct().values_list('name_eng', flat=True)
+        
+        cities = City.objects.filter(
+            radios__in=queryset
+        ).exclude(name_eng__isnull=True).distinct().values_list('name_eng', flat=True)
+        
+        languages = Language.objects.filter(
+            radios__in=queryset
+        ).distinct().values_list('name_eng', flat=True)
+
+        return {
+            'genres': sorted([g for g in genres if g]),
+            'countries': sorted([c for c in countries if c]),
+            'regions': sorted([r for r in regions if r]),
+            'cities': sorted([c for c in cities if c]),
+            'languages': sorted([lang for lang in languages if lang])
+        }
+
+    def get_paginated_response(self, data):
+        """
+        Customize paginated response format
+        """
+        return Response({
+            'total': self.paginator.page.paginator.count,
+            'total_pages': self.paginator.page.paginator.num_pages,
+            'current_page': self.paginator.page.number,
+            'per_page': self.paginator.page_size,
+            'results': data,
+        })
 

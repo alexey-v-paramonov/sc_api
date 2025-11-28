@@ -139,7 +139,7 @@ class RadioSerializer(serializers.ModelSerializer):
             if 'text/html' not in content_type:
                 raise serializers.ValidationError("content_type")
 
-        except RequestException as e:
+        except RequestException:
             # This will catch connection errors, timeouts, invalid URLs, etc.
             raise serializers.ValidationError("connection_error")
 
@@ -185,3 +185,52 @@ class VoteSerializer(serializers.ModelSerializer):
             defaults={'rating': rating}
         )
         return vote
+
+
+class PublicStreamSerializer(serializers.ModelSerializer):
+    """Serializer for public stream data"""
+    class Meta:
+        model = Stream
+        fields = ['id', 'stream_url', 'bitrate', 'audio_format']
+
+
+class PublicRadioSerializer(serializers.ModelSerializer):
+    """Serializer for public radio catalog"""
+    country_code = serializers.CharField(source='country.iso2', read_only=True)
+    country_name = serializers.CharField(source='country.name_eng', read_only=True)
+    region_name = serializers.CharField(source='region.name_eng', read_only=True)
+    city_name = serializers.CharField(source='city.name_eng', read_only=True)
+    rating = serializers.SerializerMethodField()
+    genres = serializers.SerializerMethodField()
+    languages = serializers.SerializerMethodField()
+    streams = PublicStreamSerializer(many=True, read_only=True)
+    default_stream = serializers.SerializerMethodField()
+    created = serializers.DateField(source='created_at', format='%Y-%m-%d', read_only=True)
+
+    class Meta:
+        model = Radio
+        fields = [
+            'id', 'name', 'slug', 'description', 'enabled', 'website_url', 'logo',
+            'country_code', 'country_name', 'region_name', 'city_name',
+            'rating', 'total_votes', 'created', 'genres', 'languages',
+            'default_stream', 'streams'
+        ]
+
+    def get_rating(self, obj):
+        """Calculate average rating from total_score and total_votes"""
+        if obj.total_votes > 0:
+            return round(obj.total_score / obj.total_votes, 1)
+        return 0.0
+
+    def get_genres(self, obj):
+        """Return list of genre names"""
+        return [genre.name_eng or genre.name for genre in obj.genres.all()]
+
+    def get_languages(self, obj):
+        """Return list of language names"""
+        return [lang.name_eng or lang.name for lang in obj.languages.all()]
+
+    def get_default_stream(self, obj):
+        """Return the URL of the first enabled stream"""
+        first_stream = obj.streams.filter(enabled=True).first()
+        return first_stream.stream_url if first_stream else None

@@ -15,7 +15,6 @@ from django.utils import timezone
 
 from radio.models import RadioServer, HostedRadio, SelfHostedRadio
 from payments.models import ChargedServiceType, Charge
-from users.models import Currency
 
 logger = logging.getLogger('tts')
 

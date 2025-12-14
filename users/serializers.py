@@ -17,7 +17,8 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.conf import settings
 from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
-
+from ipware import get_client_ip
+from ipwhois import IPWhois
 class EmailValidatiorBase:
 
     def validate_email(self, email):
@@ -69,6 +70,13 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
 
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
+        client_ip, _ = get_client_ip(self.context["request"])
+        if client_ip is not None:
+            whois = IPWhois(client_ip)
+            results = whois.lookup_rdap()
+            asn_description = results.get("asn_description", "")
+            if asn_description.lower().find("vdsina") >= 0:
+                raise serializers.ValidationError("ip_invalid")
 
         if 'password' in validated_data:
             user.set_password(validated_data['password'])

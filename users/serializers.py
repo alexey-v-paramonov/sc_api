@@ -1,4 +1,6 @@
 import random
+import logging
+
 from time import time
 from rest_framework import serializers
 from users.models import User
@@ -19,6 +21,9 @@ from django.conf import settings
 from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
 from ipware import get_client_ip
 from ipwhois import IPWhois
+
+logger = logging.getLogger('django')
+
 class EmailValidatiorBase:
 
     def validate_email(self, email):
@@ -71,16 +76,19 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
         client_ip, _ = get_client_ip(self.context["request"])
+        logger.info("Create user request IP: %s", client_ip)
         if client_ip is not None:
             whois = IPWhois(client_ip)
             results = whois.lookup_rdap()
             asn_description = results.get("asn_description", "")
+            logger.info("Create user Whois: %s", asn_description)
             if asn_description.lower().find("vdsina") >= 0:
                 raise serializers.ValidationError("ip_invalid")
 
         if 'password' in validated_data:
             user.set_password(validated_data['password'])
             user.save()
+            logger.info("User created, IP: %s", client_ip)
         # No password: generate the password automatically, create demo account
         else:
             passstr = "qwertyuiopasdfghjkzxcvbnmQWERTYUIPASDFGHJKLZXCVBNM234567890"

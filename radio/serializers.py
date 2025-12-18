@@ -1,6 +1,7 @@
 import socket
 import paramiko
 import ipaddress
+import dns.resolver
 
 from rest_framework import serializers
 from radio.models import SelfHostedRadio, HostedRadio, RadioServer
@@ -91,12 +92,13 @@ class SelfHostedRadioSerializer(CustomErrorMessagesModelSerializer):
 
             # Check if domain resolves to the IP specified
             try:
-                domain_ip = socket.gethostbyname(domain)
+                # domain_ip = socket.gethostbyname(domain)
+                domain_ips = set([r.to_text() for r in dns.resolver.resolve(domain, "A")])
             except Exception as e:
                 raise serializers.ValidationError(
                     {"domain": "wrong_ip_resolved", "message": str(e)})
 
-            if domain_ip != ip:
+            if ip not in domain_ips:
                 raise serializers.ValidationError({"domain": "wrong_ip"})
 
         # Check SSH port connection

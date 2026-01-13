@@ -52,7 +52,7 @@ class StreamSerializer(serializers.ModelSerializer):
 
         try:
             # Use stream=True to avoid downloading the entire file
-            response = requests.get(value, timeout=5, headers=headers, stream=True)
+            response = requests.get(value, timeout=5, headers=headers, stream=True, verify=False)
             response.raise_for_status()  # Check for HTTP errors like 404 or 500
 
             # server_type = self.initial_data.get('server_type', '').lower()
@@ -129,7 +129,7 @@ class RadioSerializer(serializers.ModelSerializer):
 
         try:
             # Use HEAD request to be efficient and not download the whole page
-            response = requests.head(value, timeout=5, headers=headers, allow_redirects=True)
+            response = requests.head(value, timeout=5, headers=headers, allow_redirects=True, verify=False)
 
             # Check for a successful status code (e.g., 200 OK)
             response.raise_for_status()

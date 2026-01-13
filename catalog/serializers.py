@@ -1,9 +1,15 @@
+import ssl
+import requests
+from urllib3.util.ssl_ import create_urllib3_context
 
 from rest_framework import serializers
-import requests
 from requests.exceptions import RequestException
 from .models import Radio, Language, Country, Genre, Stream, Vote, Region, City
 
+class LegacyHTTPSAdapter(requests.adapters.HTTPAdapter):
+    def init_poolmanager(self, *args, **kwargs):
+        kwargs['ssl_context'] = ctx
+        return super().init_poolmanager(*args, **kwargs)
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,8 +57,15 @@ class StreamSerializer(serializers.ModelSerializer):
         }
 
         try:
+            ctx = create_urllib3_context()
+            ctx.set_ciphers('DEFAULT@SECLEVEL=1')  # Critical for OpenSSL 3.0+
+            session = requests.Session()
+            session.mount('https://', LegacyHTTPSAdapter())
+
             # Use stream=True to avoid downloading the entire file
-            response = requests.get(value, timeout=5, headers=headers, stream=True, verify=False)
+            # response = requests.get(value, timeout=5, headers=headers, stream=True, verify=False)
+            response = session.get(value, timeout=5, headers=headers, stream=True)
+
             response.raise_for_status()  # Check for HTTP errors like 404 or 500
 
             # server_type = self.initial_data.get('server_type', '').lower()

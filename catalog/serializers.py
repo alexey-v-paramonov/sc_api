@@ -6,6 +6,8 @@ from rest_framework import serializers
 from requests.exceptions import RequestException
 from .models import Radio, Language, Country, Genre, Stream, Vote, Region, City
 
+ctx = create_urllib3_context()
+ctx.set_ciphers('DEFAULT@SECLEVEL=1')  # Critical for OpenSSL 3.0+
 class LegacyHTTPSAdapter(requests.adapters.HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         kwargs['ssl_context'] = ctx
@@ -57,8 +59,6 @@ class StreamSerializer(serializers.ModelSerializer):
         }
 
         try:
-            ctx = create_urllib3_context()
-            ctx.set_ciphers('DEFAULT@SECLEVEL=1')  # Critical for OpenSSL 3.0+
             session = requests.Session()
             session.mount('https://', LegacyHTTPSAdapter())
 

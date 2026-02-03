@@ -4,6 +4,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Q
 
+from users.models import Language
+
 User = get_user_model()
 
 
@@ -17,7 +19,8 @@ class Command(BaseCommand):
 
         # Get users who registered before a week ago
         users = User.objects.filter(
-            date_joined__lt=week_ago
+            date_joined__lt=week_ago,
+            language=Language.ENG
         )
 
         # Import models here to avoid circular imports

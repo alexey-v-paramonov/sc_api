@@ -21,7 +21,7 @@ class Command(BaseCommand):
         )
 
         # Import models here to avoid circular imports
-        from mobile_application.models import BaseApplication
+        from mobile_application.models import AndroidApplication, IosApplication
         from catalog.models import Radio as CatalogRadio
         from payments.models import InvoiceRequest, Charge
         from radio.models import SelfHostedRadio, HostedRadio
@@ -30,7 +30,9 @@ class Command(BaseCommand):
 
         for user in users:
             # Check if user has any mobile applications
-            has_mobile_app = BaseApplication.objects.filter(user=user).exists()
+            has_android_app = AndroidApplication.objects.filter(user=user).exists()
+            has_ios_app = IosApplication.objects.filter(user=user).exists()
+            has_mobile_app = has_android_app or has_ios_app
             
             # Check if user has any catalog radios
             has_catalog_radio = CatalogRadio.objects.filter(user=user).exists()

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db.models import Q
 
 from users.models import Language
@@ -16,10 +16,14 @@ class Command(BaseCommand):
         # Calculate the date for "a week ago"
         today = timezone.now()
         week_ago = today - timedelta(days=7)
+        start_date = datetime(2025, 12, 16)
+        if timezone.is_aware(today):
+            start_date = timezone.make_aware(start_date)
 
-        # Get users who registered before a week ago
+        # Get users who registered before a week ago but after 2025-12-16
         users = User.objects.filter(
             date_joined__lt=week_ago,
+            date_joined__gte=start_date,
             language=Language.ENG
         )
 
@@ -60,7 +64,7 @@ class Command(BaseCommand):
         # Output the results
         if stalled_users:
             self.stdout.write(self.style.SUCCESS(
-                f'\nFound {len(stalled_users)} stalled user(s) who registered before {week_ago.date()}:\n'
+                f'\nFound {len(stalled_users)} stalled user(s) who registered between {start_date.date()} and {week_ago.date()}:\n'
             ))
             self.stdout.write('-' * 80)
             self.stdout.write(f'{"ID":<10} {"Email":<40} {"Registration Date":<30}')
@@ -77,6 +81,6 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'Total: {len(stalled_users)} user(s)\n'))
         else:
             self.stdout.write(self.style.WARNING(
-                f'\nNo stalled users found who registered before {week_ago.date()}\n'
+                f'\nNo stalled users found who registered between {start_date.date()} and {week_ago.date()}\n'
             ))
 

@@ -47,6 +47,11 @@ class User(AbstractUser):
     subscribed = models.BooleanField(
         default=True,
     )
+    stale_notification_sent_ts = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When a stale-user notification was sent to this user.",
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

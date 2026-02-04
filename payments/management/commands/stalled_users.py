@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import timedelta, datetime
-from django.db.models import Q
 
 from users.models import Language
 
@@ -24,7 +23,8 @@ class Command(BaseCommand):
         users = User.objects.filter(
             date_joined__lt=week_ago,
             date_joined__gte=start_date,
-            language=Language.ENG
+            language=Language.ENG,
+            stale_notification_sent_ts__isnull=True,
         )
 
         # Import models here to avoid circular imports
@@ -60,6 +60,8 @@ class Command(BaseCommand):
                     'email': user.email,
                     'date_joined': user.date_joined
                 })
+                user.stale_notification_sent_ts = today
+                user.save(update_fields=["stale_notification_sent_ts",])
 
         # Output the results
         if stalled_users:

@@ -84,6 +84,9 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
             if asn_description.lower().find("vdsina") >= 0:
                 raise serializers.ValidationError("ip_invalid")
 
+        if 'password' not in validated_data:
+            raise serializers.ValidationError("password_required")
+        
         user = super(UserSerializer, self).create(validated_data)
 
         if 'password' in validated_data:

@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Confirm your email - Streaming.center</title>
+</head>
+
+<body>
+    <h4>Welcome to Streaming.center!</h4>
+    <p>Thank you for signing up for a demo account. To complete your registration and activate your test radio station, please confirm your email address by clicking the link below:</p>
+    <p><a href="https://app.{{domain}}/api/confirm-email/?token={{token}}">https://app.{{domain}}/api/confirm-email/?token={{token}}</a></p>
+    <p>After confirming your email, you will receive access to your demo radio station.</p>
+    
+    <h4>Your account credentials</h4>
+    <p><b>Email</b>: {{ user.email }}</p>
+    <p><b>Password</b>: {{ password }}</p>
+    <p><b>URL</b>: <a href="https://app.streaming.center">https://app.streaming.center</a></p>
+    
+    <p>&nbsp;</p>
+    <p>If you didn't request this, please ignore this email.</p>
+    <p>&nbsp;</p>
+    <p>Feel free to contact us if you have any questions!</p>
+    <p>Email: <a href="mailto:info@streaming.center">info@streaming.center</a></p>
+    <p>Telegram: <a href="https://t.me/StreamingCenter_eng">https://t.me/StreamingCenter_eng</a></p>
+</body>
+
+</html>

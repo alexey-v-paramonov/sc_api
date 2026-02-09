@@ -3,7 +3,7 @@ import logging
 
 from time import time
 from rest_framework import serializers
-from users.models import User
+from users.models import User, EmailConfirmationToken
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
     CustomErrorMessagesSerializer
@@ -18,7 +18,6 @@ from django.template.loader import get_template
 from django.utils.html import strip_tags
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.conf import settings
-from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
 from ipware import get_client_ip
 from ipwhois import IPWhois
 
@@ -84,17 +83,41 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
             if asn_description.lower().find("vdsina") >= 0:
                 raise serializers.ValidationError("ip_invalid")
 
-        if 'password' not in validated_data:
-            raise serializers.ValidationError("password_required")
-        
         user = super(UserSerializer, self).create(validated_data)
 
         if 'password' in validated_data:
+            # User with password: regular registration
             user.set_password(validated_data['password'])
+            user.email_confirmed = True  # Assume confirmed for regular registration
             user.save()
             logger.info("User created, IP: %s", client_ip)
-        # No password: generate the password automatically, create demo account
+            
+            template = "email/registration/reg_en.html"
+            subject = "Welcome to Streaming.center!"
+            if user.is_russian():
+                template = "email/registration/reg_ru.html"
+                subject = "Добро пожаловать на Radio-Tochka.com!"
+
+            template = get_template(template)
+            content = template.render(validated_data)
+            text_content = strip_tags(content)
+            if user.is_russian():        
+                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+            else:
+                with get_connection(
+                    host=settings.SC_EMAIL_HOST,
+                    port=settings.SC_EMAIL_PORT,
+                    username=settings.SC_EMAIL_HOST_USER,
+                    password=settings.SC_EMAIL_HOST_PASSWORD,
+                    use_ssl=settings.SC_EMAIL_USE_SSL,
+                    use_tls=settings.SC_EMAIL_USE_TLS,
+                ) as connection:
+                    msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+                
+            msg.attach_alternative(content, "text/html")
+            msg.send()
         else:
+            # No password: demo account - generate password and send confirmation email
             passstr = "qwertyuiopasdfghjkzxcvbnmQWERTYUIPASDFGHJKLZXCVBNM234567890"
             random.seed(time())
             pwd = ""
@@ -102,44 +125,47 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
                 c = random.randint(0, len(passstr) - 1)
                 pwd = pwd + passstr[c]
             user.set_password(pwd)
+            user.email_confirmed = False  # Email not confirmed yet
             user.save()
             validated_data['password'] = pwd
-            HostedRadio.objects.create(
-                user=user,
-                server=RadioServer.objects.filter(available=True).first(),
-                login=f"radio{user.id}",
-                initial_audio_format=AudioFormat.MP3,
-                initial_bitrate=128,
-                initial_listeners=5,
-                initial_du=5,
-                copyright_type=CopyrightType.TEST,
-                is_demo=True,
-            )
-
-        template = "email/registration/reg_en.html"
-        subject = "Welcome to Streaming.center!"
-        if user.is_russian():
-            template = "email/registration/reg_ru.html"
-            subject = "Добро пожаловать на Radio-Tochka.com!"
-
-        template = get_template(template)
-        content = template.render(validated_data)
-        text_content = strip_tags(content)
-        if user.is_russian():        
-            msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
-        else:
-            with get_connection(
-                host=settings.SC_EMAIL_HOST,
-                port=settings.SC_EMAIL_PORT,
-                username=settings.SC_EMAIL_HOST_USER,
-                password=settings.SC_EMAIL_HOST_PASSWORD,
-                use_ssl=settings.SC_EMAIL_USE_SSL,
-                use_tls=settings.SC_EMAIL_USE_TLS,
-            ) as connection:
-                msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
             
-        msg.attach_alternative(content, "text/html")
-        msg.send()
+            # Create confirmation token
+            confirmation_token = EmailConfirmationToken.objects.create(user=user)
+            
+            # Send confirmation email
+            domain = "streaming.center"
+            template = "email/email_confirmation_en.html"
+            subject = "Confirm your email - Streaming.center"
+            if user.is_russian():
+                domain = "radio-tochka.com"
+                template = "email/email_confirmation_ru.html"
+                subject = "Подтвердите email - Radio-Tochka.com"
+            
+            ctx = {
+                "user": user,
+                "token": confirmation_token.token,
+                "domain": domain,
+                "password": pwd
+            }
+            template = get_template(template)
+            content = template.render(ctx)
+            text_content = strip_tags(content)
+            if user.is_russian():        
+                msg = EmailMultiAlternatives(subject, text_content, settings.ADMIN_EMAIL, [user.email,])
+            else:
+                with get_connection(
+                    host=settings.SC_EMAIL_HOST,
+                    port=settings.SC_EMAIL_PORT,
+                    username=settings.SC_EMAIL_HOST_USER,
+                    password=settings.SC_EMAIL_HOST_PASSWORD,
+                    use_ssl=settings.SC_EMAIL_USE_SSL,
+                    use_tls=settings.SC_EMAIL_USE_TLS,
+                ) as connection:
+                    msg = EmailMultiAlternatives(subject, text_content, settings.SC_ADMIN_EMAIL, [user.email,], connection=connection)
+                
+            msg.attach_alternative(content, "text/html")
+            msg.send()
+            logger.info("Demo user created, IP: %s, waiting for email confirmation", client_ip)
 
         return user
     

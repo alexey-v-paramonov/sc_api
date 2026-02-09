@@ -5,7 +5,7 @@ from django.urls import path
 from django.http import HttpResponseRedirect
 from rest_framework.authtoken.models import Token
 
-from users.models import User
+from users.models import User, EmailConfirmationToken
 
 
 class UserAdmin(UserAdmin):
@@ -47,3 +47,12 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+@admin.register(EmailConfirmationToken)
+class EmailConfirmationTokenAdmin(admin.ModelAdmin):
+    list_display = ('user', 'token', 'created_at')
+    search_fields = ('user__email', 'token')
+    list_filter = ('created_at',)
+    readonly_fields = ('token', 'created_at')
+    ordering = ('-created_at',)

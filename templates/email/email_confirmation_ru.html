@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Подтвердите email - Radio-Tochka.com</title>
+</head>
+
+<body>
+    <h4>Добро пожаловать на Radio-Tochka.com!</h4>
+    <p>Спасибо за регистрацию демо-аккаунта. Чтобы завершить регистрацию и активировать тестовую радиостанцию, пожалуйста, подтвердите свой адрес электронной почты, нажав на ссылку ниже:</p>
+    <p><a href="https://app.{{domain}}/api/confirm-email/?token={{token}}">https://app.{{domain}}/api/confirm-email/?token={{token}}</a></p>
+    <p>После подтверждения email вы получите доступ к Вашей демо радиостанции.</p>
+    
+    <h4>Данные для входа в личный кабинет</h4>
+    <p><b>Email</b>: {{ user.email }}</p>
+    <p><b>Пароль</b>: {{ password }}</p>
+    <p><b>URL</b>: <a href="https://app.radio-tochka.com">https://app.radio-tochka.com</a></p>
+    
+    <p>&nbsp;</p>
+    <p>Если вы не отправляли этот запрос, просто проигнорируйте это письмо.</p>
+    <p>&nbsp;</p>
+    <p>Будем рады помочь, если у Вас есть вопросы!</p>
+    <p>Email: <a href="mailto:info@radio-tochka.com">info@radio-tochka.com</a></p>
+    <p>Telegram: <a href="https://t.me/StreamingCenter">https://t.me/StreamingCenter</a></p>
+</body>
+
+</html>

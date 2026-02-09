@@ -13,12 +13,17 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.utils.html import strip_tags
+from django.shortcuts import render
 
 
 from users.serializers import UserSerializer, PasswordResetConfirmSerializer, UserSettingsSerializer
-from users.models import User
+from users.models import User, EmailConfirmationToken
 from rest_framework import viewsets
 from rest_framework import routers
+from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
+import logging
+
+logger = logging.getLogger('django')
 
 class UsersView(viewsets.ModelViewSet):
 
@@ -135,6 +140,89 @@ class PasswordResetConfirmView(APIView):
             return Response({})
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailConfirmationView(APIView):
+    """
+    View to confirm email address for demo accounts via HTML page (GET request).
+    When confirmed, creates the HostedRadio instance.
+    """
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        token = request.GET.get("token", "").strip()
+        
+        # Detect language early to serve correct failure page if needed
+        host = request.get_host().lower()
+        is_ru_domain = "radio-tochka.com" in host
+        failed_template = "email_confirmation_failed_ru.html" if is_ru_domain else "email_confirmation_failed_en.html"
+        
+        if not token:
+            return render(request, failed_template)
+        
+        try:
+            confirmation_token = EmailConfirmationToken.objects.get(token=token)
+        except (EmailConfirmationToken.DoesNotExist, ValueError):
+            return render(request, failed_template)
+        
+        user = confirmation_token.user
+        
+        # Check if email is already confirmed
+        if user.email_confirmed:
+            # Maybe show success but say already confirmed? 
+            # Or just show success to avoid confusion.
+            # Let's show success with "Already confirmed" message implicitly or explicitly.
+            # For simplicity, let's just show the success page as if it just happened or a generic "Confirmed" state.
+            # But the user logic below deletes the token, so we can't get here via valid token usually.
+            # However, if we don't delete token immediately or if logic changes.
+            # Since we delete the token, this block might be redundant if token is deleted.
+            # But if we keep token for some reason (we don't), let's just proceed to success render.
+            pass
+        else:
+            # Confirm email
+            user.email_confirmed = True
+            user.save()
+            
+            # Create HostedRadio for demo account
+            if not HostedRadio.objects.filter(user=user).exists():
+                HostedRadio.objects.create(
+                    user=user,
+                    server=RadioServer.objects.filter(available=True).first(),
+                    login=f"radio{user.id}",
+                    initial_audio_format=AudioFormat.MP3,
+                    initial_bitrate=128,
+                    initial_listeners=5,
+                    initial_du=5,
+                    copyright_type=CopyrightType.TEST,
+                    is_demo=True,
+                )
+            
+            logger.info("Email confirmed for user: %s, HostedRadio created", user.email)
+            
+            # Delete the token after successful confirmation
+            confirmation_token.delete()
+        
+        # Prepare context for success page based on language
+        domain = "streaming.center"
+        title = "Email Confirmed!"
+        message = "Your email has been successfully confirmed. You can now login to your demo account."
+        button_text = "Login to Dashboard"
+        
+        if user.is_russian():
+            domain = "radio-tochka.com"
+            title = "Email Подтвержден!"
+            message = "Ваш email был успешно подтвержден. Теперь Вы можете войти в свой демо-аккаунт."
+            button_text = "Войти в личный кабинет"
+        
+        context = {
+            "title": title,
+            "message": message,
+            "button_text": button_text,
+            "domain": domain
+        }
+        
+        return render(request, "email_confirmation_success.html", context)
+
 
 users_router = routers.SimpleRouter()
 users_router.register(r"users", UsersView)

@@ -1,7 +1,7 @@
 
 from django.urls import path
 
-from users.views import users_router, PasswordResetView, PasswordResetConfirmView
+from users.views import users_router, PasswordResetView, PasswordResetConfirmView, EmailConfirmationView
 #UsersView
 
 urlpatterns = users_router.urls

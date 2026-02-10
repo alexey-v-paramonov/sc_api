@@ -225,13 +225,13 @@ class EmailConfirmationView(View):
         # Prepare context for success page
         domain = "streaming.center"
         title = "Email Confirmed!"
-        message = "Your email has been successfully confirmed. You can now login to your demo account."
+        message = "Your email has been successfully confirmed. Your free trial demo radio station will be created within 5 minutes and the credentials will be sent to your email."
         button_text = "Login to Dashboard"
         
         if user.is_russian():
             domain = "radio-tochka.com"
             title = "Email Подтвержден!"
-            message = "Ваш email был успешно подтвержден. Теперь вы можете войти в свой демо-аккаунт."
+            message = "Ваш email был успешно подтвержден. Ваша бесплатная пробная демо радиостанция будет создана в течение 5 минут, и учетные данные будут отправлены на ваш email."
             button_text = "Войти в личный кабинет"
         
         context = {

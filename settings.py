@@ -167,3 +167,9 @@ FREE_TRIAL_DAYS = 2
 
 SPEECHKIT_PRICE_PER_SYMBOL_RUB = 0.004
 SPEECHKIT_PRICE_PER_SYMBOL_USD = 0.004 / 80.
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://streaming.center',
+    'https://radio-tochka.com',
+]
+

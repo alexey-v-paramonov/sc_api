@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подтвердите email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Подтвердите Ваш email адрес</h1>
+        <p>Пожалуйста, нажмите кнопку ниже, чтобы подтвердить Ваш email адрес и активировать демо радиостанцию.</p>
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="token" value="{{ token }}">
+            <button type="submit" class="btn">Подтвердить Email</button>
+        </form>
+    </div>
+</body>
+</html>

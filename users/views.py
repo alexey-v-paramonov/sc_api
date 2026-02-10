@@ -14,6 +14,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.utils.html import strip_tags
 from django.shortcuts import render
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 from users.serializers import UserSerializer, PasswordResetConfirmSerializer, UserSettingsSerializer
@@ -142,17 +145,41 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EmailConfirmationView(APIView):
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class EmailConfirmationView(View):
     """
-    View to confirm email address for demo accounts via HTML page (GET request).
-    When confirmed, creates the HostedRadio instance.
+    Two-step email confirmation to prevent automatic confirmation by email scanners.
+    GET: Shows confirmation prompt page with button
+    POST: Actually performs the confirmation and creates HostedRadio
     """
-    permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
+        """Show confirmation prompt page - does NOT auto-confirm"""
         token = request.GET.get("token", "").strip()
         
-        # Detect language early to serve correct failure page if needed
+        # Detect language early
+        host = request.get_host().lower()
+        is_ru_domain = "radio-tochka.com" in host
+        failed_template = "email_confirmation_failed_ru.html" if is_ru_domain else "email_confirmation_failed_en.html"
+        prompt_template = "email_confirmation_prompt_ru.html" if is_ru_domain else "email_confirmation_prompt_en.html"
+        
+        if not token:
+            return render(request, failed_template)
+        
+        # Validate token exists
+        try:
+            EmailConfirmationToken.objects.get(token=token)
+        except (EmailConfirmationToken.DoesNotExist, ValueError):
+            return render(request, failed_template)
+        
+        # Show prompt page with confirmation button
+        return render(request, prompt_template, {"token": token})
+
+    def post(self, request):
+        """Actually perform the confirmation after user clicks button"""
+        token = request.POST.get("token", "").strip()
+        
+        # Detect language
         host = request.get_host().lower()
         is_ru_domain = "radio-tochka.com" in host
         failed_template = "email_confirmation_failed_ru.html" if is_ru_domain else "email_confirmation_failed_en.html"
@@ -169,14 +196,7 @@ class EmailConfirmationView(APIView):
         
         # Check if email is already confirmed
         if user.email_confirmed:
-            # Maybe show success but say already confirmed? 
-            # Or just show success to avoid confusion.
-            # Let's show success with "Already confirmed" message implicitly or explicitly.
-            # For simplicity, let's just show the success page as if it just happened or a generic "Confirmed" state.
-            # But the user logic below deletes the token, so we can't get here via valid token usually.
-            # However, if we don't delete token immediately or if logic changes.
-            # Since we delete the token, this block might be redundant if token is deleted.
-            # But if we keep token for some reason (we don't), let's just proceed to success render.
+            # Already confirmed - just show success
             pass
         else:
             # Confirm email
@@ -202,7 +222,7 @@ class EmailConfirmationView(APIView):
             # Delete the token after successful confirmation
             confirmation_token.delete()
         
-        # Prepare context for success page based on language
+        # Prepare context for success page
         domain = "streaming.center"
         title = "Email Confirmed!"
         message = "Your email has been successfully confirmed. You can now login to your demo account."
@@ -211,7 +231,7 @@ class EmailConfirmationView(APIView):
         if user.is_russian():
             domain = "radio-tochka.com"
             title = "Email Подтвержден!"
-            message = "Ваш email был успешно подтвержден. Теперь Вы можете войти в свой демо-аккаунт."
+            message = "Ваш email был успешно подтвержден. Теперь вы можете войти в свой демо-аккаунт."
             button_text = "Войти в личный кабинет"
         
         context = {

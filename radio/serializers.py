@@ -8,8 +8,7 @@ from radio.models import SelfHostedRadio, HostedRadio, RadioServer
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
 )
-from django.conf import settings
-from django.db.models import Sum
+from configparser import ConfigParser
 
 
 class RadioServerSerializer(serializers.ModelSerializer):
@@ -25,7 +24,14 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
     server_data = RadioServerSerializer(source='server', read_only=True)
     
     def to_internal_value(self, data):
-        data['server'] = RadioServer.objects.filter(available=True).first().id
+        HARDCODED_CONFIG_PATH = "/opt/bin/utils.ini"
+        cp = ConfigParser()
+        cp.read(HARDCODED_CONFIG_PATH)               
+        hostip = cp.get("Server", "HOST_IP")
+        server = RadioServer.objects.get(ip=hostip)
+        
+        data['server'] = server.id
+        # RadioServer.objects.filter(available=True).first().id
         data['login'] = data['login'].lower()
         
         return super().to_internal_value(data)

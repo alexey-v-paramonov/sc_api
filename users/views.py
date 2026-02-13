@@ -1,3 +1,7 @@
+import logging
+from configparser import ConfigParser
+
+
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -24,7 +28,7 @@ from users.models import User, EmailConfirmationToken
 from rest_framework import viewsets
 from rest_framework import routers
 from radio.models import HostedRadio, RadioServer, AudioFormat, CopyrightType
-import logging
+
 
 logger = logging.getLogger('django')
 
@@ -205,9 +209,14 @@ class EmailConfirmationView(View):
             
             # Create HostedRadio for demo account
             if not HostedRadio.objects.filter(user=user).exists():
+                HARDCODED_CONFIG_PATH = "/opt/bin/utils.ini"
+                cp = ConfigParser()
+                cp.read(HARDCODED_CONFIG_PATH)               
+                hostip = cp.get("Server", "HOST_IP")
+                server = RadioServer.objects.get(ip=hostip)
                 HostedRadio.objects.create(
                     user=user,
-                    server=RadioServer.objects.filter(available=True).first(),
+                    server=server,
                     login=f"radio{user.id}",
                     initial_audio_format=AudioFormat.MP3,
                     initial_bitrate=128,

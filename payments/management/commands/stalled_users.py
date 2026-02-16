@@ -24,6 +24,7 @@ class Command(BaseCommand):
             date_joined__lt=week_ago,
             date_joined__gte=start_date,
             language=Language.ENG,
+            email_confirmed=True,
             stale_notification_sent_ts__isnull=True,
         )
 

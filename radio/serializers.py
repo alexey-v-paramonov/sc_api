@@ -26,10 +26,10 @@ class HostedRadioSerializer(CustomErrorMessagesModelSerializer):
     def to_internal_value(self, data):
         HARDCODED_CONFIG_PATH = "/opt/bin/utils.ini"
         cp = ConfigParser()
-        cp.read(HARDCODED_CONFIG_PATH)               
+        cp.read(HARDCODED_CONFIG_PATH)         
         hostip = cp.get("Server", "HOST_IP")
         server = RadioServer.objects.get(ip=hostip)
-        
+
         data['server'] = server.id
         # RadioServer.objects.filter(available=True).first().id
         data['login'] = data['login'].lower()

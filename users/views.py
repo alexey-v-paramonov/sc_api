@@ -20,7 +20,7 @@ from django.utils.html import strip_tags
 from django.shortcuts import render
 from django.views import View
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 
 
 from users.serializers import UserSerializer, PasswordResetConfirmSerializer, UserSettingsSerializer
@@ -149,12 +149,15 @@ class PasswordResetConfirmView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(ensure_csrf_cookie, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class EmailConfirmationView(View):
     """
     Two-step email confirmation to prevent automatic confirmation by email scanners.
     GET: Shows confirmation prompt page with button
     POST: Actually performs the confirmation and creates HostedRadio
+    
+    Note: CSRF exempt because this is accessed via email link from external context.
+    The token itself provides security (cryptographically secure UUID, single-use, user-specific).
     """
 
     def get(self, request):

@@ -288,26 +288,30 @@ class PublicRadioCatalogViewSet(viewsets.ReadOnlyModelViewSet):
         """
         Get available filter options based on current queryset
         """
+        # Get lang parameter to determine which field to use
+        lang = self.request.query_params.get('lang', '').strip()
+        name_field = 'name' if lang == 'ru' else 'name_eng'
+        
         # Get distinct values for each filter
         genres = Genre.objects.filter(
             radios__in=queryset
-        ).distinct().values_list('name_eng', flat=True)
+        ).distinct().values_list(name_field, flat=True)
         
         countries = Country.objects.filter(
             radios__in=queryset
-        ).distinct().values_list('name_eng', flat=True)
+        ).distinct().values_list(name_field, flat=True)
         
         regions = Region.objects.filter(
             radios__in=queryset
-        ).exclude(name_eng__isnull=True).distinct().values_list('name_eng', flat=True)
+        ).exclude(**{f'{name_field}__isnull': True}).distinct().values_list(name_field, flat=True)
         
         cities = City.objects.filter(
             radios__in=queryset
-        ).exclude(name_eng__isnull=True).distinct().values_list('name_eng', flat=True)
+        ).exclude(**{f'{name_field}__isnull': True}).distinct().values_list(name_field, flat=True)
         
         languages = Language.objects.filter(
             radios__in=queryset
-        ).distinct().values_list('name_eng', flat=True)
+        ).distinct().values_list(name_field, flat=True)
 
         return {
             'genres': sorted([g for g in genres if g]),

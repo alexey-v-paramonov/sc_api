@@ -237,11 +237,21 @@ class PublicRadioSerializer(serializers.ModelSerializer):
 
     def get_genres(self, obj):
         """Return list of genre names"""
+        request = self.context.get('request')
+        lang = request.query_params.get('lang', '').strip() if request else ''
+        
+        if lang == 'ru':
+            return [genre.name or genre.name_eng for genre in obj.genres.all()]
         return [genre.name_eng or genre.name for genre in obj.genres.all()]
 
     def get_languages(self, obj):
         """Return list of language names"""
-        return [lang.name_eng or lang.name for lang in obj.languages.all()]
+        request = self.context.get('request')
+        lang = request.query_params.get('lang', '').strip() if request else ''
+        
+        if lang == 'ru':
+            return [lang_obj.name or lang_obj.name_eng for lang_obj in obj.languages.all()]
+        return [lang_obj.name_eng or lang_obj.name for lang_obj in obj.languages.all()]
 
     def get_default_stream(self, obj):
         """Return the URL of the first enabled stream"""

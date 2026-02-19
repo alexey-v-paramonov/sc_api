@@ -264,12 +264,14 @@ class SelfHostedRadio(BaseRadio):
 
         # Eng
         price = settings.BASE_PRICE_USD
+        max_price = 35
         if self.is_unbranded:
             price += 5
+            max_price = 40
 
         if self.radios_num > 5:
-            return (self.radios_num - 5) + price
-        return price
+            price = (self.radios_num - 5) + price
+        return min(price, max_price)
 
 
 class HostedRadio(BaseRadio):

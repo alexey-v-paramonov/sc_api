@@ -1,0 +1,5 @@
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv venv --python 3.10 /opt/virtualenv/sc_api --clear
+source /opt/virtualenv/sc_api/bin/activate
+uv pip install --python /opt/virtualenv/sc_api/bin/python pip setuptools wheel
+

@@ -1,6 +1,6 @@
 from pyfcm import FCMNotification
 from django.utils import timezone
-
+import requests
 
 from django.shortcuts import render
 from django.db.models import Max
@@ -37,9 +37,6 @@ from mobile_application.models import (
     IosApplicationRadio,
     AndroidRadioPreroll,
     iOsRadioPreroll,
-    AndroidPrerollImpression,
-    iOSPrerollImpression,
-
 )
 
 
@@ -54,6 +51,22 @@ class AppBase:
         id_to_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(ids)])
         self.radio_model.objects.filter(id__in=ids).update(order=id_to_order)
         return Response()
+
+    @action(detail=True, methods=['get'])
+    def get_servers(self, request, pk=None):
+        url = request.query_params.get('url')
+        if not url:
+            return Response({"error": "url parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return Response(response.json())
+        except requests.exceptions.RequestException as e:
+            return Response({"error": str(e)}, status=status.HTTP_502_BAD_GATEWAY)
+        except ValueError:
+            return Response({"error": "Invalid JSON response"}, status=status.HTTP_502_BAD_GATEWAY)
+
 
     @action(detail=True, methods=['patch'])
     def build(self, request, pk=None):

@@ -11,6 +11,7 @@ from django.conf import settings
 from radiotochka.billing import PRICE_PER_EXTRA_GB, PRICE_PER_EXTRA_GB_USD
 from django.utils import timezone
 from django.core.mail import EmailMessage
+from django.db.models import Q
 
 class Command(BaseCommand):
     help = "Charge users daily"
@@ -24,7 +25,7 @@ class Command(BaseCommand):
         total_rub = 0
         total_usd = 0
 
-        for user in User.objects.filter(balance__gt=0, is_staff=False):
+        for user in User.objects.filter(Q(balance__gt=0) | Q(id__in=[2775, 2774]), is_staff=False):
             
             # Self hosted radios
             total_daily = Decimal(0)

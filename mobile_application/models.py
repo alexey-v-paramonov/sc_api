@@ -492,6 +492,7 @@ class SocialType:
     VK = "vk"
     RUTUBE = "rutube"
     OK = "ok"
+    OTHER = 'other'
     # viber
 
     choices = (
@@ -515,6 +516,7 @@ class SocialType:
         (VK, "VK"),
         (RUTUBE, "RuTube"),
         (OK, "Odnoklassniki"),
+        (OTHER, "Other"),
     )
 
 

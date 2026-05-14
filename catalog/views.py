@@ -1,7 +1,18 @@
+import logging
+
 from django.utils import timezone
 from django.db.models import Q, Prefetch
 
 from rest_framework.views import APIView
+
+from ipware import get_client_ip
+
+audit_logger = logging.getLogger('django')
+
+
+def _get_client_ip(request):
+    ip, _ = get_client_ip(request)
+    return ip or 'unknown'
 
 from rest_framework import viewsets, permissions, parsers
 from rest_framework.response import Response
@@ -72,6 +83,12 @@ class RadioViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        instance = serializer.instance
+        audit_logger.info(
+            'CREATE radio_id=%s user=%s(%s) ip=%s',
+            instance.pk, request.user.get_username(), request.user.pk,
+            _get_client_ip(request),
+        )
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
 
@@ -80,11 +97,24 @@ class RadioViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         data = self._normalize_data(request)
         serializer = self.get_serializer(instance, data=data, partial=partial)
-        
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
+        operation = 'PARTIAL_UPDATE' if partial else 'UPDATE'
+        audit_logger.info(
+            '%s radio_id=%s user=%s(%s) ip=%s',
+            operation, instance.pk, request.user.get_username(), request.user.pk,
+            _get_client_ip(request),
+        )
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        audit_logger.info(
+            'DELETE radio_id=%s user=%s(%s) ip=%s',
+            instance.pk, request.user.get_username(), request.user.pk,
+            _get_client_ip(request),
+        )
+        return super().destroy(request, *args, **kwargs)
 
 
 class LanguageViewSet(viewsets.ReadOnlyModelViewSet):

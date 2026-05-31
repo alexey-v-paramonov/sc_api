@@ -112,6 +112,8 @@ class AndroidApplicationViewSet(AppBase, viewsets.ModelViewSet):
 
         result = push_service.notify(
             topic_name=app.package_name,
+            notification_title=title,
+            notification_body=text,
             data_payload=message_payload,
         )
 

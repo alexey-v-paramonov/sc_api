@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueValidator
 from django.template.loader import get_template
 from django.utils.html import strip_tags
-from django.core.mail import EmailMultiAlternatives, get_connection
+from django.core.mail import EmailMultiAlternatives, EmailMessage, get_connection
 from django.conf import settings
 from ipware import get_client_ip
 from ipwhois import IPWhois
@@ -87,6 +87,10 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
         user = super().create(validated_data)
         user._client_ip = client_ip
         user._asn_description = asn_description
+
+        admin_template = get_template('email/user_created.html')
+        admin_content = admin_template.render({'user': user, 'ip': client_ip, 'asn_description': asn_description})
+        EmailMessage("New User", admin_content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL]).send()
 
         if 'password' in validated_data:
             # User with password: regular registration

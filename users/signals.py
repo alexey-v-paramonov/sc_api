@@ -11,10 +11,11 @@ def user_post_save(sender, instance, created, **kwargs):
     if not created:
         return
 
+    client_ip = getattr(instance, '_client_ip', None)
+    asn_description = getattr(instance, '_asn_description', '')
 
-    # Send email to admin
     template = get_template('email/user_created.html')
-    content = template.render({'user': instance})
-    msg = EmailMessage("New User", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL,])
+    content = template.render({'user': instance, 'ip': client_ip, 'asn_description': asn_description})
+    msg = EmailMessage("New User", content, settings.ADMIN_EMAIL, to=[settings.ADMIN_EMAIL])
     msg.send()
 

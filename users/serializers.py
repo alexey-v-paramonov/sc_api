@@ -75,6 +75,7 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
     def create(self, validated_data):
         client_ip, _ = get_client_ip(self.context["request"])
         logger.info("Create user request IP: %s", client_ip)
+        asn_description = ""
         if client_ip is not None:
             whois = IPWhois(client_ip)
             results = whois.lookup_rdap()
@@ -83,7 +84,9 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
             if asn_description.lower().find("vdsina") >= 0:
                 raise serializers.ValidationError("ip_invalid")
 
-        user = super(UserSerializer, self).create(validated_data)
+        user = super().create(validated_data)
+        user._client_ip = client_ip
+        user._asn_description = asn_description
 
         if 'password' in validated_data:
             # User with password: regular registration

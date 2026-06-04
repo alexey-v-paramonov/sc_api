@@ -59,6 +59,11 @@ class ServerType:
         (OTHER, 'Other'),
     )
 
+class Version(models.TextChoices):
+
+    V1_0 = "v1.0", "Version 1.0 (Older design)"
+    V2_0 = "v2.0", "Version 2.0 (New design)"
+
 class BaseApplication(models.Model):
 
     title = models.CharField(
@@ -264,6 +269,12 @@ class BaseApplication(models.Model):
     )
     use_mirror = models.BooleanField(
         default=False,
+    )
+
+    version = models.CharField(
+        max_length=10,
+        choices=Version.choices,
+        default=Version.V2_0,
     )
 
     comment = models.TextField(null=True, blank=True)

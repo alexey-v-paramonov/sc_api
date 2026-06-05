@@ -20,7 +20,8 @@ from mobile_application.models import (
     AndroidRadioPreroll,
     iOsRadioPreroll,
     AndroidPrerollImpression,
-    iOSPrerollImpression
+    iOSPrerollImpression,
+    Version,
 )
 
 from util.serializers import (
@@ -30,6 +31,7 @@ from util.serializers import (
 class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     price = serializers.IntegerField(read_only=True)
+    version = serializers.ChoiceField(choices=Version.choices)
 
     def validate_allow_website_url(self, _):
         # Parse formData boolean value
@@ -82,8 +84,7 @@ class AndroidApplicationSerializer(ApplicationBaseSerializer):
             missing_parts.append('radio')
 
         if not app.is_paid and app.user.balance < app.price:
-            if app.version > 1:
-                missing_parts.append('payment')
+            missing_parts.append('payment')
         return missing_parts
 
 

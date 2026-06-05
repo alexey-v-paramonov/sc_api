@@ -110,12 +110,6 @@ class BaseApplication(models.Model):
         default=False,
     )
 
-    version = models.PositiveIntegerField(
-        null=False,
-        blank=True,
-        default=1,
-    )
-
     build_date = models.DateTimeField(
         null=True,
         blank=True,

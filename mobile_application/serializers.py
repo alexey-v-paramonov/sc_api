@@ -21,7 +21,6 @@ from mobile_application.models import (
     iOsRadioPreroll,
     AndroidPrerollImpression,
     iOSPrerollImpression,
-    Version,
 )
 
 from util.serializers import (
@@ -31,8 +30,6 @@ from util.serializers import (
 class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
     build_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     price = serializers.IntegerField(read_only=True)
-    version = serializers.ChoiceField(choices=Version.choices)
-
     def validate_allow_website_url(self, _):
         # Parse formData boolean value
         return self.initial_data.get('allow_website_url', "true") == 'true'

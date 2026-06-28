@@ -280,6 +280,17 @@ class BaseApplication(models.Model):
     comment = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=False, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Version 2 apps use the cover/logo as the background, so the default
+        # text colours are light. Apply them on creation when the colours are
+        # still at the (v1) model defaults.
+        if self._state.adding and self.version_code == Version.V2_0:
+            if self.font_color == "#000000":
+                self.font_color = "#ffffff"
+            if self.text_secondary_color == "#333333":
+                self.text_secondary_color = "#dedede"
+        super().save(*args, **kwargs)
+
     def schedule_build(self):
         self.status = AppStatus.QUEUED
         self.save()

@@ -262,6 +262,10 @@ class BaseApplication(models.Model):
     allow_website_url = models.BooleanField(
         default=True,
     )
+
+    allow_countdown_timer = models.BooleanField(
+        default=True,
+    )
     package_name  = models.CharField(
         null=True,
         blank=True,

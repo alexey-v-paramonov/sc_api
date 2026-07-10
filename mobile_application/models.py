@@ -263,9 +263,6 @@ class BaseApplication(models.Model):
         default=True,
     )
 
-    allow_countdown_timer = models.BooleanField(
-        default=True,
-    )
     package_name  = models.CharField(
         null=True,
         blank=True,

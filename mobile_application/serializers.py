@@ -34,9 +34,6 @@ class ApplicationBaseSerializer(CustomErrorMessagesModelSerializer):
         # Parse formData boolean value
         return self.initial_data.get('allow_website_url', "true") == 'true'
 
-    def validate_allow_countdown_timer(self, _):
-        # Parse formData boolean value
-        return self.initial_data.get('allow_countdown_timer', "true") == 'true'
 
     def validate_icon(self, i):
         try:

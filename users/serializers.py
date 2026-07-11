@@ -4,7 +4,7 @@ import logging
 from time import time
 from rest_framework import serializers
 from users.models import User, EmailConfirmationToken, Language
-from util.captcha import verify_smartcaptcha
+from util.captcha import verify_smartcaptcha, verify_turnstile
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
     CustomErrorMessagesSerializer
@@ -74,14 +74,21 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
         return token.key
 
     def validate(self, data):
-        # Yandex SmartCaptcha is only shown on the Russian sites, so only
-        # enforce it for Russian-language sign-ups.
-        if data.get('language') == Language.RU:
-            request = self.context.get('request')
+        # Each site shows a different captcha provider: Yandex SmartCaptcha on
+        # the Russian sites, Cloudflare Turnstile on the English ones. Enforce
+        # the matching one based on the sign-up language.
+        request = self.context.get('request')
+        client_ip = get_client_ip(request)[0] if request else None
+        language = data.get('language')
+
+        if language == Language.RU:
             token = request.data.get('smart-token', '') if request else ''
-            client_ip = get_client_ip(request)[0] if request else None
             if not verify_smartcaptcha(token, client_ip):
                 raise serializers.ValidationError({'smart-token': 'captcha_invalid'})
+        elif language == Language.ENG:
+            token = request.data.get('cf-turnstile-response', '') if request else ''
+            if not verify_turnstile(token, client_ip):
+                raise serializers.ValidationError({'cf-turnstile-response': 'captcha_invalid'})
         return data
 
     def create(self, validated_data):

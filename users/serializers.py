@@ -3,7 +3,8 @@ import logging
 
 from time import time
 from rest_framework import serializers
-from users.models import User, EmailConfirmationToken
+from users.models import User, EmailConfirmationToken, Language
+from util.captcha import verify_smartcaptcha
 from util.serializers import (
     CustomErrorMessagesModelSerializer,
     CustomErrorMessagesSerializer
@@ -71,6 +72,17 @@ class UserSerializer(CustomErrorMessagesModelSerializer, EmailValidatiorBase):
     def get_token(self, user):
         token, _ = Token.objects.get_or_create(user=user)
         return token.key
+
+    def validate(self, data):
+        # Yandex SmartCaptcha is only shown on the Russian sites, so only
+        # enforce it for Russian-language sign-ups.
+        if data.get('language') == Language.RU:
+            request = self.context.get('request')
+            token = request.data.get('smart-token', '') if request else ''
+            client_ip = get_client_ip(request)[0] if request else None
+            if not verify_smartcaptcha(token, client_ip):
+                raise serializers.ValidationError({'smart-token': 'captcha_invalid'})
+        return data
 
     def create(self, validated_data):
         client_ip, _ = get_client_ip(self.context["request"])

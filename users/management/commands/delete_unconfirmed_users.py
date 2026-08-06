@@ -1,5 +1,5 @@
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -8,11 +8,18 @@ from users.models import User, EmailConfirmationToken
 
 logger = logging.getLogger('django')
 
+# Users registered before the email confirmation system existed (introduced in
+# commit caf3ae4 on 2026-02-09) may have email_confirmed=False simply because
+# the field didn't exist yet. Never consider those for deletion. We use the day
+# after the feature launch (2026-02-10) to be safe.
+EMAIL_CONFIRMATION_ERA_START = datetime(2026, 2, 10, tzinfo=timezone.utc)
+
 
 class Command(BaseCommand):
     help = (
         'Delete unconfirmed user accounts older than 7 days that have no related '
-        'objects (no payments, charges, radios or apps)'
+        'objects (no payments, charges, radios or apps). Only users registered '
+        'after the email confirmation system was introduced are considered.'
     )
 
     def add_arguments(self, parser):
@@ -35,12 +42,14 @@ class Command(BaseCommand):
         # Calculate cutoff date
         cutoff_date = timezone.now() - timedelta(days=days)
 
-        # Find unconfirmed users created before cutoff date.
-        # Only delete "inactive" accounts: users that never did anything and
-        # have no related objects (payments, charges, radios or apps). This
-        # protects older accounts that predate the email_confirmed field.
+        # Find unconfirmed users created after the email confirmation system
+        # existed and before the cutoff date. Only delete "inactive" accounts:
+        # users that never did anything and have no related objects (payments,
+        # charges, radios or apps). Accounts that predate the email_confirmed
+        # field are always ignored.
         unconfirmed_users = User.objects.filter(
             email_confirmed=False,
+            date_joined__gte=EMAIL_CONFIRMATION_ERA_START,
             date_joined__lt=cutoff_date,
         ).exclude(
             userpayment__isnull=False,

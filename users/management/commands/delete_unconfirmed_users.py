@@ -90,3 +90,7 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'Successfully deleted {deleted_count} unconfirmed users older than {days} days.')
             )
             logger.info(f'Deleted {deleted_count} unconfirmed users older than {days} days')
+
+        self.stdout.write(
+            self.style.SUCCESS(f'Total delete candidates: {count}.')
+        )

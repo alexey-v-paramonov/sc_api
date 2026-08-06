@@ -1,14 +1,19 @@
+import logging
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from datetime import timedelta
+
 from users.models import User, EmailConfirmationToken
-import logging
 
 logger = logging.getLogger('django')
 
 
 class Command(BaseCommand):
-    help = 'Delete unconfirmed user accounts older than 7 days'
+    help = (
+        'Delete unconfirmed user accounts older than 7 days that have no related '
+        'objects (no payments, charges, radios or apps)'
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -26,37 +31,52 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         days = options['days']
         dry_run = options['dry_run']
-        
+
         # Calculate cutoff date
         cutoff_date = timezone.now() - timedelta(days=days)
-        
-        # Find unconfirmed users created before cutoff date
+
+        # Find unconfirmed users created before cutoff date.
+        # Only delete "inactive" accounts: users that never did anything and
+        # have no related objects (payments, charges, radios or apps). This
+        # protects older accounts that predate the email_confirmed field.
         unconfirmed_users = User.objects.filter(
             email_confirmed=False,
-            date_joined__lt=cutoff_date
+            date_joined__lt=cutoff_date,
+        ).exclude(
+            userpayment__isnull=False,
+        ).exclude(
+            charge__isnull=False,
+        ).exclude(
+            selfhostedradio__isnull=False,
+        ).exclude(
+            hostedradio__isnull=False,
+        ).exclude(
+            androidapplication__isnull=False,
+        ).exclude(
+            iosapplication__isnull=False,
         )
-        
+
         count = unconfirmed_users.count()
-        
+
         if count == 0:
-            self.stdout.write(self.style.SUCCESS('No unconfirmed users to delete.'))
+            self.stdout.write(self.style.SUCCESS('No inactive unconfirmed users to delete.'))
             return
-        
+
         if dry_run:
-            self.stdout.write(self.style.WARNING(f'DRY RUN: Would delete {count} unconfirmed users:'))
+            self.stdout.write(self.style.WARNING(f'DRY RUN: Would delete {count} inactive unconfirmed users:'))
             for user in unconfirmed_users:
                 self.stdout.write(f'  - {user.email} (created: {user.date_joined})')
         else:
             # Delete associated confirmation tokens first
             EmailConfirmationToken.objects.filter(user__in=unconfirmed_users).delete()
-            
+
             # Log and delete users
             for user in unconfirmed_users:
-                logger.info(f'Deleting unconfirmed user: {user.email} (created: {user.date_joined})')
+                logger.info(f'Deleting inactive unconfirmed user: {user.email} (created: {user.date_joined})')
                 self.stdout.write(f'  - Deleting {user.email}')
-            
+
             deleted_count, _ = unconfirmed_users.delete()
-            
+
             self.stdout.write(
                 self.style.SUCCESS(f'Successfully deleted {deleted_count} unconfirmed users older than {days} days.')
             )

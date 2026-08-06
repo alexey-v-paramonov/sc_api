@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -12,7 +13,9 @@ logger = logging.getLogger('django')
 # commit caf3ae4 on 2026-02-09) may have email_confirmed=False simply because
 # the field didn't exist yet. Never consider those for deletion. We use the day
 # after the feature launch (2026-02-10) to be safe.
-EMAIL_CONFIRMATION_ERA_START = datetime(2026, 2, 10, tzinfo=timezone.utc)
+# The value must be timezone-aware only when USE_TZ is enabled, otherwise MySQL
+# (naive datetimes) rejects it.
+EMAIL_CONFIRMATION_ERA_START = timezone.make_aware(datetime(2026, 2, 10)) if settings.USE_TZ else datetime(2026, 2, 10)
 
 
 class Command(BaseCommand):
